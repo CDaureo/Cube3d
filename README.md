@@ -1,165 +1,243 @@
-# cub3D
+# cub3D - Plan de Desarrollo 🎯
 
-## Mi primer RayCaster con miniLibX
-
-## 🎮 Parte Obligatoria
-
-### Nombre del Programa
-`cub3D`
-
-### Argumentos
-Un archivo de descripción de escena con extensión `.cub`
-
-### Funciones Externas Permitidas
-- `open`, `close`, `read`, `write`, `printf`, `malloc`, `free`, `perror`, `strerror`, `exit`
-- `gettimeofday`
-- Todas las funciones de la librería matemática (`-lm`)
-- Todas las funciones de miniLibX
-
-### Funcionalidades Requeridas
-
-#### 1. **Renderizado 3D**
-- Crear una representación gráfica 3D "realista" del interior de un laberinto desde perspectiva de primera persona
-- Usar principios de ray-casting
-
-#### 2. **Texturas**
-- Mostrar diferentes texturas de pared según la orientación:
-  - Norte (NO)
-  - Sur (SO)
-  - Este (EA)
-  - Oeste (WE)
-
-#### 3. **Colores**
-- Configurar colores diferentes para:
-  - Suelo (Floor - F)
-  - Techo (Ceiling - C)
-- Formato RGB en rango [0,255]
-
-#### 4. **Controles**
-- **Flechas izquierda/derecha**: Mirar a izquierda/derecha en el laberinto
-- **W, A, S, D**: Mover el punto de vista a través del laberinto
-- **ESC**: Cerrar ventana y salir del programa
-- **Cruz roja de la ventana**: Cerrar ventana y salir del programa
-
-#### 5. **Archivo de Configuración (.cub)**
-
-##### Caracteres del Mapa
-- `0` - Espacio vacío
-- `1` - Pared
-- `N`, `S`, `E`, `W` - Posición inicial y orientación del jugador
-
-##### Ejemplo de Mapa Válido
-```
-111111
-100101
-101001
-1100N1
-111111
-```
-
-##### Reglas del Mapa
-- El mapa debe estar cerrado/rodeado por paredes
-- Los espacios son válidos y deben manejarse correctamente
-- El mapa debe ser la última sección del archivo
-- Cada elemento puede estar separado por una o más líneas vacías
-
-##### Formato de Elementos
-```
-NO ./path_to_the_north_texture
-SO ./path_to_the_south_texture
-WE ./path_to_the_west_texture
-EA ./path_to_the_east_texture
-
-F 220,100,0
-C 225,30,0
-
-1111111111111111111111111
-1000000000110000000000001
-1011000001110000000000001
-...
-```
-
-##### Ejemplo Completo de .cub
-```
-NO ./path_to_the_north_texture
-SO ./path_to_the_south_texture
-WE ./path_to_the_west_texture
-EA ./path_to_the_east_texture
-
-F 220,100,0
-C 225,30,0
-
-1111111111111111111111111
-1000000000110000000000001
-1011000001110000000000001
-1001000000000000000000001
-111111111011000001110000000000001
-100000000011000001110111111111111
-11110111111111011100000010001
-11110111111111011101010010001
-11000000110101011100000010001
-10000000000000001100000010001
-10000000000000001101010010001
-11000001110101011111011110N0111
-11110111 1110101 101111010001
-11111111 1111111 111111111111
-```
-
-#### 6. **Manejo de Errores**
-- Si hay algún error de configuración, el programa debe:
-  - Salir correctamente
-  - Mostrar `"Error\n"`
-  - Seguido de un mensaje de error explícito
+Este documento describe **el plan completo de desarrollo** del proyecto **cub3D**, organizado por fases y prioridades, siguiendo los requisitos habituales del proyecto (42 / miniLibX).
 
 ---
 
-## 🌟 Parte Bonus
-
-Los bonus **solo se evaluarán** si la parte obligatoria es **perfecta**.
-
-**Perfecta significa**:
-- Completa en todos los aspectos
-- Sin fallos, incluso con uso incorrecto
-- Obtener TODOS los puntos en la parte obligatoria
-
-Si la parte obligatoria no obtiene todos los puntos, los bonus serán **completamente IGNORADOS**.
-
-### Posibles Bonus (a implementar según criterio)
-- Colisiones con las paredes
-- Un minimapa
-- Puertas que se pueden abrir/cerrar
-- Objetos animados
-- Rotación del mouse
-- Etc.
+## 📋 Orden de Implementación por Prioridad
 
 ---
 
-## 🛠️ Compilación
+## 🧱 Fase 1: Configuración Inicial (PRIORITARIA)
 
-```bash
-make        # Compila el proyecto
-make clean  # Elimina objetos
-make fclean # Elimina objetos y ejecutable
-make re     # Recompila todo
-make bonus  # Compila con bonuses (si aplica)
-```
+### 📁 Estructura del proyecto
+
+* Configurar **Makefile básico**
+* Crear estructura de directorios:
+
+  * `src/`
+  * `include/`
+  * `maps/`
+  * `textures/`
+* Incluir **libft** si es necesaria
 
 ---
 
-## 🚀 Uso
+### 📄 Parsing del archivo `.cub`
 
-```bash
-./cub3D <archivo_de_mapa.cub>
-```
+* ✅ Validar extensión `.cub`
+* ✅ Leer y almacenar rutas de texturas:
 
-Ejemplo:
-```bash
-./cub3D maps/map.cub
-```
+  * `NO`, `SO`, `WE`, `EA`
+* ✅ Parsear colores:
 
-## 📖 Recursos Útiles
+  * Suelo `F` (RGB)
+  * Techo `C` (RGB)
+* ✅ Extraer y almacenar el mapa
 
-- [Wolfenstein 3D Original](http://users.atw.hu/wolf3d/)
-- Documentación de miniLibX
-- Tutoriales de ray-casting disponibles en internet
-- Documentación de la librería matemática (`man 3 math`)
+---
+
+### 🧩 Validación del mapa
+
+* ✅ Verificar caracteres válidos:
+
+  * `0`, `1`, `N`, `S`, `E`, `W`
+* ✅ Encontrar posición inicial del jugador
+
+  * Solo **una** posición válida
+* ✅ Determinar orientación inicial del jugador
+* ✅ Validar que el mapa esté **cerrado por paredes**
+* ✅ Manejar espacios correctamente dentro del mapa
+
+---
+
+### 🚨 Manejo de errores
+
+* ✅ Mostrar errores con el formato:
+
+  ```
+  Error\n<mensaje explicativo>
+  ```
+* ✅ Liberar **toda la memoria** correctamente en caso de error
+* ✅ Validar existencia y accesibilidad de las rutas de texturas
+
+---
+
+## 🖼️ Fase 2: Configuración de miniLibX (CRÍTICA)
+
+### 🪟 Inicialización de ventana
+
+* Inicializar **miniLibX**
+* Crear ventana con tamaño definido
+* Configurar hooks básicos:
+
+  * Cierre de ventana (X roja)
+
+---
+
+### 🖌️ Gestión de imágenes
+
+* Cargar texturas desde archivos
+* Crear **buffer de imagen** para el renderizado
+* Implementar `pixel_put` optimizado (uso de imagen, no ventana directa)
+
+---
+
+## 🧠 Fase 3: Motor de Ray-Casting (CORE DEL PROYECTO)
+
+### 📐 Algoritmo DDA (Digital Differential Analyzer)
+
+* Implementar cálculo de rayos por columna
+* Detectar colisiones con paredes
+* Determinar distancia **perpendicular** al muro
+
+---
+
+### 🧱 Renderizado de paredes
+
+* Calcular altura de las líneas de pared
+* Seleccionar textura según orientación:
+
+  * Norte / Sur / Este / Oeste
+* Mapear correctamente texturas a columnas de píxeles
+* Aplicar **corrección de distorsión fisheye**
+
+---
+
+### 🎨 Renderizado de suelo y techo
+
+* Rellenar píxeles superiores con color `C`
+* Rellenar píxeles inferiores con color `F`
+
+---
+
+## 🎮 Fase 4: Controles y Movimiento (JUGABILIDAD)
+
+### ⌨️ Sistema de input
+
+* Capturar eventos de teclado
+* Implementar rotación:
+
+  * Flecha izquierda
+  * Flecha derecha
+* Implementar movimiento:
+
+  * `W` avanzar
+  * `S` retroceder
+  * `A` strafe izquierda
+  * `D` strafe derecha
+
+---
+
+### 🧭 Cálculo de movimiento
+
+* Actualizar posición del jugador
+* Actualizar vector de dirección
+* Validar colisiones básicas
+
+  * El jugador **no puede atravesar paredes**
+
+---
+
+### ❌ Eventos de cierre
+
+* Tecla `ESC` para salir
+* Click en la cruz roja para cerrar la ventana
+
+---
+
+## 🧪 Fase 5: Testing y Optimización (PRE-ENTREGA)
+
+### ✅ Validación completa
+
+* Probar mapas válidos e inválidos
+* Verificar fugas de memoria con **valgrind**
+* Probar texturas corruptas o inexistentes
+* Validar gestión de ventana:
+
+  * Minimizar
+  * Cambiar de foco
+
+---
+
+### 🚀 Optimización
+
+* Mejorar rendimiento del renderizado
+* Optimizar cálculos del ray-casting
+* Asegurar **mínimo 60 FPS**
+
+---
+
+## 🌟 Fase 6: Bonus (SOLO SI LA PARTE OBLIGATORIA ES PERFECTA)
+
+### 🧱 Colisiones mejoradas
+
+* Sliding wall collision
+* Hitboxes más precisas
+
+---
+
+### 🗺️ Minimap
+
+* Vista 2D del mapa
+* Indicador de posición y dirección del jugador
+
+---
+
+### 🚪 Puertas interactivas
+
+* Abrir / cerrar con tecla (ej: `E`)
+* Animación de apertura
+
+---
+
+### 👾 Sprites animados
+
+* Objetos estáticos y dinámicos
+* Sistema de sprites ordenados por distancia
+
+---
+
+### 🖱️ Rotación con mouse
+
+* Capturar movimiento del mouse
+* Rotación suave de cámara
+
+---
+
+## 📊 Checklist de Funciones Externas Permitidas
+
+* `open`, `close`, `read`, `write`
+* `printf`, `malloc`, `free`
+* `perror`, `strerror`, `exit`
+* `gettimeofday`
+* Librería matemática (`-lm`):
+
+  * `sin`, `cos`, `tan`, `sqrt`, etc.
+* **Todas las funciones de miniLibX**
+
+---
+
+## ⚠️ Criterios de Éxito
+
+* ✅ Renderizado 3D fluido
+* ✅ Texturas correctas según orientación
+* ✅ Colores de suelo y techo configurables
+* ✅ Controles responsivos
+* ✅ Parsing robusto con manejo de errores
+* ✅ Sin fugas de memoria
+* ✅ Gestión de ventana impecable
+
+---
+
+## 🚨 Errores Comunes a Evitar
+
+* ❌ No validar correctamente el cierre del mapa
+* ❌ No manejar espacios dentro del mapa
+* ❌ Distorsión fisheye sin corregir
+* ❌ Fugas de memoria en texturas o ventana
+* ❌ No liberar recursos al cerrar el programa
+
+---
+
+💡 **Consejo final:** Implementa cada fase de forma incremental y verifica su estabilidad antes de continuar. Un parser sólido y un ray-casting limpio son la base del éxito en **cub3D**.
