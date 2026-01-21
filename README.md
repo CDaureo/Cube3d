@@ -26,7 +26,7 @@ Este documento describe **el plan completo de desarrollo** del proyecto **cub3D*
 ### 📄 Parsing del archivo `.cub`
 
 * ✅ Validar extensión `.cub`
-* ❌ Leer y almacenar rutas de texturas:
+* ✅ Leer y almacenar rutas de texturas:
 
   * `NO`, `SO`, `WE`, `EA`
 * ❌ Parsear colores:

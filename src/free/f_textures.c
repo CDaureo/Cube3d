@@ -1,29 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                          :+:      :+:    :+:   */
+/*   f_textures.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/19 13:43:09 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/19 14:07:24 by cdaureo-         ###   ########.fr       */
+/*   Created: 2026/01/21 13:11:52 by cdaureo-          #+#    #+#             */
+/*   Updated: 2026/01/21 13:12:49 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
-
-/*File Validator*/
-int validate_extension(const char *file)
+#include "cub3d.h"
+/* Libera las rutas de texturas */
+void	free_textures(t_game *game)
 {
-    size_t len;
-
-	len = ft_strlen(file);
-	if (!file)
-		return (0);
-	if (len < 4)
-		return (0);
-	if (ft_strcmp(file + len - 4, ".cub") == 0)
-		return(1);
-	return(0);    
+	if (game->textures.north)
+		free(game->textures.north);
+	if (game->textures.south)
+		free(game->textures.south);
+	if (game->textures.west)
+		free(game->textures.west);
+	if (game->textures.east)
+		free(game->textures.east);
 }
-
