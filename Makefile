@@ -24,12 +24,16 @@ SRC_DIR  = ./src
 PARSING_DIR = $(SRC_DIR)/parsing
 UTILS_DIR = $(SRC_DIR)/utils
 FREE_DIR = $(SRC_DIR)/free
+VALIDATE_DIR = $(SRC_DIR)/validate
 
-
-SRC = main.c \
+SRC = $(SRC_DIR)/main.c \
 	$(PARSING_DIR)/parser.c \
-	$(UTILS_DIR)/trim.c \
-	$(FREE_DIR)/f_textures.c
+	$(PARSING_DIR)/p_colors.c \
+	$(PARSING_DIR)/p_textures.c \
+	$(UTILS_DIR)/u_trim.c \
+	$(UTILS_DIR)/u_blank.c \
+	$(FREE_DIR)/f_textures.c \
+	$(VALIDATE_DIR)/validator.c
 
 OBJ = $(SRC:.c=.o)
 
