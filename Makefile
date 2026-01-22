@@ -29,10 +29,14 @@ VALIDATE_DIR = $(SRC_DIR)/validate
 SRC = $(SRC_DIR)/main.c \
 	$(PARSING_DIR)/parser.c \
 	$(PARSING_DIR)/p_colors.c \
+	$(PARSING_DIR)/p_map.c \
 	$(PARSING_DIR)/p_textures.c \
 	$(UTILS_DIR)/u_trim.c \
+	$(UTILS_DIR)/u_maps.c \
 	$(UTILS_DIR)/u_blank.c \
 	$(FREE_DIR)/f_textures.c \
+	$(FREE_DIR)/f_map.c \
+	$(FREE_DIR)/f_game.c \
 	$(VALIDATE_DIR)/validator.c
 
 OBJ = $(SRC:.c=.o)

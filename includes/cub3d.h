@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/21 14:11:36 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/22 13:09:14 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,13 @@ int	finalize_map(t_map *map);
 /* Utils */
 char	*trim_whitespace(char *str);
 int		is_blank(const char *s);
+int is_allow_chars(char c);
+int sanitize_row(const char *row);
+int push_row(t_map *map, char *row_dup);
+
+
 /* Free */
+void cleanup_game(t_game *game);
 void	free_textures(t_game *game);
 void	free_map(t_map *map);
 

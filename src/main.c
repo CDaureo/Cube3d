@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:07:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/21 13:56:00 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/22 13:09:49 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,18 @@ int	main(int argc, char **argv)
     memset(&game, 0, sizeof(t_game));
 
     if (!parse_file(argv[1], &game))
-        return 1;
+        return (cleanup_game(&game),1);
+
+            // Debug: imprimir información parseada
+    printf("✅ Parsing completado:\n");
+    printf("  Texturas: N=%s S=%s W=%s E=%s\n",
+           game.textures.north, game.textures.south,
+           game.textures.west, game.textures.east);
+    printf("  Colores: Floor=0x%06X Ceiling=0x%06X\n",
+           game.colors.floor_color, game.colors.ceiling_color);
+    printf("  Mapa: %dx%d\n", game.maps.width, game.maps.height);
+    printf("  Jugador: (%d,%d) orientación=%c\n",
+           game.maps.player_x, game.maps.player_y, game.maps.player_dir);
 
     // Aquí seguirías con la inicialización de MLX y el loop
     // init_mlx(&game);
