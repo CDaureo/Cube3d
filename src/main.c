@@ -6,12 +6,13 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:07:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:09:49 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/22 13:45:28 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
-#include <string.h> // memset
+#include <string.h>
+#include <fcntl.h>
 
 int	main(int argc, char **argv)
 {
@@ -20,12 +21,25 @@ int	main(int argc, char **argv)
     if (argc != 2)
         return (printf("Error\nUso: %s <mapa.cub>\n", argv[0]), 1);
 
+    // Validar extensión del archivo
+    if (!validate_extension(argv[1]))
+        return (printf("Error\nEl archivo debe tener extensión .cub\n"), 1);
+
+    // Inicializar estructura a cero
     memset(&game, 0, sizeof(t_game));
 
+    // Parsear archivo completo (texturas, colores y mapa)
+    printf("DEBUG: Iniciando parsing...\n");
     if (!parse_file(argv[1], &game))
-        return (cleanup_game(&game),1);
+    {
+        printf("DEBUG: parse_file falló\n");
+        cleanup_game(&game);
+        return 1;
+    }
 
-            // Debug: imprimir información parseada
+    printf("DEBUG: Parsing exitoso\n");
+
+    // Debug: imprimir información parseada
     printf("✅ Parsing completado:\n");
     printf("  Texturas: N=%s S=%s W=%s E=%s\n",
            game.textures.north, game.textures.south,
@@ -36,10 +50,10 @@ int	main(int argc, char **argv)
     printf("  Jugador: (%d,%d) orientación=%c\n",
            game.maps.player_x, game.maps.player_y, game.maps.player_dir);
 
-    // Aquí seguirías con la inicialización de MLX y el loop
+    // Aquí continuará la inicialización de MLX
     // init_mlx(&game);
     // game_loop(&game);
 
-    // cleanup_game(&game);
+    cleanup_game(&game);
     return 0;
 }

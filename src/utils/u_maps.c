@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:15:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:05:26 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/22 13:39:35 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@ int is_allow_chars(char c)
  */
 int sanitize_row(const char *row)
 {
-	int i; 
+	int i;
+
 	i = 0;
+	if (!row)
+		return(0);
+	
 	while (row[i])
 	{
 		if (row[i] == '\n' || row[i] == '\r')
@@ -56,8 +60,11 @@ int push_row(t_map *map, char *row_dup)
 	new_row = (char **)malloc(sizeof(char *) * (map->height + 2));
 	if (!new_row)
 		return(printf("Error: Not enought memory.\n"));
-	while (i++ <= map->height)
+	while (i < map->height)
+	{
 		new_row[i] = map->rows[i];
+			i++;
+	}
 	new_row[i++] = row_dup;
 	new_row[i] = NULL;
 	free(map->rows);
