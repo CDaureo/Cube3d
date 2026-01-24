@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 13:36:49 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/24 20:33:53 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:53:07 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ int parse_file(const char *path, t_game *game)
         return (printf("Error:\nfinalize_map failed\n"), 0);
     if (!validate_map_basic(&game->maps))
         return (printf("Error:\nvalidate_map_basic failed\n"), 0);
+    if (!validate_map_closed(&game->maps))
+        return (printf("Error:\nMap is not closed by walls\n"), 0);
     if (!game->textures.north || !game->textures.south ||
         !game->textures.west || !game->textures.east)
         return (printf("Error:\nMissing textures\n"), 0);

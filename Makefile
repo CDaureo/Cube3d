@@ -37,7 +37,9 @@ SRC = $(SRC_DIR)/main.c \
 	$(FREE_DIR)/f_textures.c \
 	$(FREE_DIR)/f_map.c \
 	$(FREE_DIR)/f_game.c \
-	$(VALIDATE_DIR)/validator.c
+	$(VALIDATE_DIR)/validator.c \
+	$(VALIDATE_DIR)/v_map.c
+
 
 OBJ = $(SRC:.c=.o)
 

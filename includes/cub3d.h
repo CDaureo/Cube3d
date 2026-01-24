@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/24 20:34:09 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:53:31 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ typedef struct s_game
 int validate_extension(const char *file);
 int	validate_texture_file(const char *path);
 int  validate_map_basic(t_map *map);
+int	validate_map_basic(t_map *map);
+int validate_map_closed(t_map *map);
 /* Parsing */
 int	parse_texture_line(char *line, t_game *game);
 int	parse_textures(int fd, t_game *game);

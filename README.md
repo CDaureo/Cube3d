@@ -29,25 +29,25 @@ Este documento describe **el plan completo de desarrollo** del proyecto **cub3D*
 * ✅ Leer y almacenar rutas de texturas:
 
   * `NO`, `SO`, `WE`, `EA`
-* ❌ Parsear colores:
+* ✅ Parsear colores:
 
   * Suelo `F` (RGB)
   * Techo `C` (RGB)
-* ❌ Extraer y almacenar el mapa
+* ✅ Extraer y almacenar el mapa
 
 ---
 
 ### 🧩 Validación del mapa
 
-* ❌ Verificar caracteres válidos:
+* ✅ Verificar caracteres válidos:
 
   * `0`, `1`, `N`, `S`, `E`, `W`
-* ❌ Encontrar posición inicial del jugador
+* ✅ Encontrar posición inicial del jugador
 
   * Solo **una** posición válida
-* ❌ Determinar orientación inicial del jugador
-* ❌ Validar que el mapa esté **cerrado por paredes**
-* ❌ Manejar espacios correctamente dentro del mapa
+* ✅ Determinar orientación inicial del jugador
+* ✅ Validar que el mapa esté **cerrado por paredes**
+* ✅ Manejar espacios correctamente dentro del mapa
 
 ---
 
