@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 13:36:49 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:49:44 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:33:53 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ static int is_map_line_start(const char *s)
 
 static int parse_line(char *line, t_game *game)
 {
+    trim_line(line);
+
     // Ignorar líneas vacías o solo espacios
     if (is_blank(line))
         return (1);
@@ -86,13 +88,13 @@ int parse_file(const char *path, t_game *game)
     close(fd);
 
     if (!ret)
-        return (printf("arreglar esto"),0);
+        return (printf("Error:\nInvalid .cub file (parse_line)\n"),0);
     if (game->maps.height == 0)
         return (printf("Error:\nNo map block found\n"), 0);
     if (!finalize_map(&game->maps))
-        return (0);
+        return (printf("Error:\nfinalize_map failed\n"), 0);
     if (!validate_map_basic(&game->maps))
-        return (0);
+        return (printf("Error:\nvalidate_map_basic failed\n"), 0);
     if (!game->textures.north || !game->textures.south ||
         !game->textures.west || !game->textures.east)
         return (printf("Error:\nMissing textures\n"), 0);

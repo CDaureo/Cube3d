@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:08:09 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:41:29 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:46:23 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int parse_map_line(char *line, t_map *map)
 {
 	char	*row;
 	size_t	len;
-
 	if (!line)
 		return (0);
 	row = ft_strdup(line);
@@ -26,9 +25,10 @@ int parse_map_line(char *line, t_map *map)
 	len = ft_strlen(row);
 	if (len > 0 && (row[len - 1] == '\n' || row[len - 1] == '\r'))
 		row[len - 1] = '\0';
+
 	if (!sanitize_row(row))
-		return(free(row), printf("No valid character on map\n"), 0); //TODO:Decir que letra es
-	
+		return (free(row), printf("No valid character on map (sanitize): \"%s\"\n", row), 0);
+
 	return (push_row(map, row));	
 }
 

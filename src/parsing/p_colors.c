@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:29:25 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/21 14:05:08 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:35:47 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ int parse_floor_color(char *line, t_color *data)
 	color = parse_rgb(rgb_str,data);
 	free(rgb_str);
 	if (color == -1)
-		return (-1);
+		return (0);
 	data->floor_color = color;
 	data->floor_set = 1;
-	return (0);
+	return (1);
 }
 /**
  * Parsea la línea de color del techo (C)
@@ -73,8 +73,8 @@ int parse_ceiling_color(char *line, t_color *data)
 	color = parse_rgb(rgb_str,data);
 	free(rgb_str);
 	if (color == -1)
-		return (-1);
+		return (0);
 	data->ceiling_color = color;
 	data->ceiling_set = 1;
-	return (0);
+	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:07:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:45:28 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:48:46 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ int	main(int argc, char **argv)
     t_game	game;
 
     if (argc != 2)
-        return (printf("Error\nUso: %s <mapa.cub>\n", argv[0]), 1);
+        return (printf("Error\nUsage: %s <maps/map.cub>\n", argv[0]), 1);
 
     // Validar extensión del archivo
     if (!validate_extension(argv[1]))
-        return (printf("Error\nEl archivo debe tener extensión .cub\n"), 1);
+        return (printf("Error\nExtension must be .cub\n"), 1);
 
     // Inicializar estructura a cero
     memset(&game, 0, sizeof(t_game));

@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:09:14 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:34:09 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ int	finalize_map(t_map *map);
 
 /* Utils */
 char	*trim_whitespace(char *str);
+void trim_line(char *s);
 int		is_blank(const char *s);
 int is_allow_chars(char c);
 int sanitize_row(const char *row);

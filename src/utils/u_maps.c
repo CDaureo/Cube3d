@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:15:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 13:39:35 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:41:43 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int sanitize_row(const char *row)
 			i++;
 			continue;
 		}
-		if (is_allow_chars(row[i]))
+		if (!is_allow_chars(row[i]))
 			return(0);
 		i++;
 	}
