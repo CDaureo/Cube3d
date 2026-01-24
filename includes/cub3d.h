@@ -6,16 +6,20 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/24 20:53:31 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 21:15:07 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <string.h>
 #include "libft.h"
+#include "../minilibx-linux/mlx.h"
 
 #ifndef CUB3D_H
 #define CUB3D_H
+
+#define WIN_WIDTH 1280
+#define WIN_HEIGHT 720
 
 typedef struct s_map
 {
@@ -45,9 +49,11 @@ typedef struct s_textures
 
 typedef struct s_game
 {
-	t_textures textures;
-	t_color colors;
-	t_map	maps;
+	void		*mlx_ptr;
+	void		*win_ptr;
+	t_textures	textures;
+	t_color		colors;
+	t_map		maps;
 }	t_game;
 
 
@@ -80,5 +86,10 @@ int push_row(t_map *map, char *row_dup);
 void cleanup_game(t_game *game);
 void	free_textures(t_game *game);
 void	free_map(t_map *map);
+void free_mlx(t_game *game);
 
+/* mlx */
+int     init_mlx(t_game *game);
+int     close_window(t_game *game);
+int     key_press(int keycode, t_game *game);
 #endif 

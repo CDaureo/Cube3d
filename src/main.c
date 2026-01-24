@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:07:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/24 20:48:46 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 21:05:36 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,9 @@ int	main(int argc, char **argv)
            game.maps.player_x, game.maps.player_y, game.maps.player_dir);
 
     // Aquí continuará la inicialización de MLX
-    // init_mlx(&game);
-    // game_loop(&game);
+    if (!init_mlx(&game))        
+        return (cleanup_game(&game), 1);
+    mlx_loop(game.mlx_ptr);
 
     cleanup_game(&game);
     return 0;
