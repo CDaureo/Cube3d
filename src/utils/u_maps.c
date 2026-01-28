@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:15:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/21 14:20:52 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/01/24 20:41:43 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@ int is_allow_chars(char c)
  */
 int sanitize_row(const char *row)
 {
-	int i; 
+	int i;
+
 	i = 0;
+	if (!row)
+		return(0);
+	
 	while (row[i])
 	{
 		if (row[i] == '\n' || row[i] == '\r')
@@ -37,7 +41,7 @@ int sanitize_row(const char *row)
 			i++;
 			continue;
 		}
-		if (is_allow_chars(row[i]))
+		if (!is_allow_chars(row[i]))
 			return(0);
 		i++;
 	}
@@ -49,5 +53,24 @@ int sanitize_row(const char *row)
  */
 int push_row(t_map *map, char *row_dup)
 {
-	// TODO:  Añade una nueva fila al mapa y expande el array, ACTUALIZAR ANCHO Y ALTO DE MAPA
+	char	**new_row;
+	int		i;
+	
+	i = 0;
+	new_row = (char **)malloc(sizeof(char *) * (map->height + 2));
+	if (!new_row)
+		return(printf("Error: Not enought memory.\n"));
+	while (i < map->height)
+	{
+		new_row[i] = map->rows[i];
+			i++;
+	}
+	new_row[i++] = row_dup;
+	new_row[i] = NULL;
+	free(map->rows);
+	map->rows = new_row;
+	map->height += 1;
+	if ((int)ft_strlen(row_dup) > map->width)
+		map->width = (int)ft_strlen(row_dup);
+	return (1);
 }

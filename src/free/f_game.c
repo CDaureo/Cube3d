@@ -1,36 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   f_map.c                                            :+:      :+:    :+:   */
+/*   f_game.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/21 14:14:04 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 12:47:25 by cdaureo-         ###   ########.fr       */
+/*   Created: 2026/01/22 13:06:55 by cdaureo-          #+#    #+#             */
+/*   Updated: 2026/01/24 21:14:52 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void free_map(t_map *map)
+void cleanup_game(t_game *game)
 {
-	int i;
+	free_mlx(game);
 
-	i = 0;
-
-	if (!map || map->rows)
-		return ;
-	while (i < map->height)
-	{
-		free(map->rows[i]);
-		i++;
-	}
-	free(map->rows);
-	map->rows = NULL;
-    map->width = 0;
-    map->height = 0;
-    map->player_x = 0;
-    map->player_y = 0;
-    map->player_dir = 0;
-	
+	free_map(&game->maps);
+	free_textures(game);
 }

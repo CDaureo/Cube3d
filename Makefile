@@ -25,15 +25,24 @@ PARSING_DIR = $(SRC_DIR)/parsing
 UTILS_DIR = $(SRC_DIR)/utils
 FREE_DIR = $(SRC_DIR)/free
 VALIDATE_DIR = $(SRC_DIR)/validate
+MLXS_DIR = $(SRC_DIR)/mlx
 
 SRC = $(SRC_DIR)/main.c \
 	$(PARSING_DIR)/parser.c \
 	$(PARSING_DIR)/p_colors.c \
+	$(PARSING_DIR)/p_map.c \
 	$(PARSING_DIR)/p_textures.c \
 	$(UTILS_DIR)/u_trim.c \
+	$(UTILS_DIR)/u_maps.c \
 	$(UTILS_DIR)/u_blank.c \
 	$(FREE_DIR)/f_textures.c \
-	$(VALIDATE_DIR)/validator.c
+	$(FREE_DIR)/f_map.c \
+	$(FREE_DIR)/f_mlx.c \
+	$(FREE_DIR)/f_game.c \
+	$(VALIDATE_DIR)/validator.c \
+	$(VALIDATE_DIR)/v_map.c \
+	$(MLXS_DIR)/m_init.c
+
 
 OBJ = $(SRC:.c=.o)
 

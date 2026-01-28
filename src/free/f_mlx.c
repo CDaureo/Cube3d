@@ -1,36 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   f_map.c                                            :+:      :+:    :+:   */
+/*   f_mlx.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/21 14:14:04 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/22 12:47:25 by cdaureo-         ###   ########.fr       */
+/*   Created: 2026/01/24 21:06:45 by cdaureo-          #+#    #+#             */
+/*   Updated: 2026/01/24 21:14:46 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void free_map(t_map *map)
+void free_mlx(t_game *game)
 {
-	int i;
-
-	i = 0;
-
-	if (!map || map->rows)
-		return ;
-	while (i < map->height)
-	{
-		free(map->rows[i]);
-		i++;
-	}
-	free(map->rows);
-	map->rows = NULL;
-    map->width = 0;
-    map->height = 0;
-    map->player_x = 0;
-    map->player_y = 0;
-    map->player_dir = 0;
+    if (game->win_ptr)
+        mlx_destroy_window(game->mlx_ptr, game->win_ptr);
+    if (game->mlx_ptr)
+    {
+        mlx_destroy_display(game->mlx_ptr);
+        free(game->mlx_ptr);
+    }
 	
 }
