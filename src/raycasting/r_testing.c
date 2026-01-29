@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 13:03:24 by simgarci          #+#    #+#             */
-/*   Updated: 2026/01/28 16:26:39 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/01/29 16:47:34 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "../../minilibx-linux/mlx.h"
+#include "sys/time.h"
 
-#define screenWidth 1920
-#define screenHeight 1080
-#define mapWidth 24
-#define mapHeight 24
-#define MOVE_SPEED 0.02
+#define TARGET_FPS 60
+#define FRAME_TIME_MS (1000 / TARGET_FPS)
+#define screenWidth 1280
+#define screenHeight 720
+#define mapWidth 48
+#define mapHeight 48
+#define MOVE_SPEED 0.00005
 #define ROT_SPEED 0.015
 #define KEY_LEFT 65361
 #define KEY_RIGHT 65363
@@ -31,39 +34,76 @@
 #define KEY_A 97
 #define KEY_S 115
 #define KEY_D 100
-#define MOUSE_SENS_X 0.002
-#define MOUSE_SENS_Y 2.0  
+#define MOUSE_SENS_X 0.001
+#define MOUSE_SENS_Y 1.0  
 #define MINIMAP_SIZE 200
 #define MINIMAP_SCALE 8
 #define MINIMAP_OFFSET 20
+#define KEY_SHIFT 65505
 
 
+// Replace your worldMap with this corrected version:
 int worldMap[mapWidth][mapHeight]=
 {
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,1},
-  {1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,1,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,1,0,1,1},
-  {1,0,1,0,1,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,1},
-  {1,0,0,1,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,1,0,1,1},
-  {1,0,1,0,1,0,0,0,0,1,1,0,1,1,0,0,1,0,0,1,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1,0,0,0,1},
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+  // Outer walls (rows 0-9: top border and open area)
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  
+  // First maze section (rows 10-23)
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  
+  // Large horizontal corridor (rows 24-27)
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  
+  // Complex maze section (rows 28-38)
+  {1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1},
+  {1,0,0,1,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1},
+  {1,0,0,1,0,0,1,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1},
+  
+  // Open area with scattered pillars (rows 39-46)
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,1},
+  {1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1},
+  {1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,1},
+  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+  
+  // Final outer wall (row 47)
+  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
 
@@ -96,8 +136,7 @@ typedef struct s_mlx {
     int bits_per_pixel;
     int line_length;
     int endian;
-    int key_state[10]; // Array to track key states
-    // Player position and direction
+    int key_state[10];
     double posX;
     double posY;
     double dirX;
@@ -108,7 +147,17 @@ typedef struct s_mlx {
 	int last_mouse_x;
     int last_mouse_y;
     int mouse_locked;
+    int needs_render;
+    long last_render_time;
 } t_mlx;
+
+long get_time_ms(void)
+{
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
 
 void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color)
 {
@@ -126,7 +175,7 @@ void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color)
 		*(unsigned int *)dst = color;
 	}
 }
-
+//Esto hay que arreglarlo
 void draw_minimap(t_mlx *mlx)
 {
     // Calculate minimap position (bottom-right corner)
@@ -346,27 +395,30 @@ t_color get_wall_color(int side, int stepX, int stepY)
 
 void draw_vertical_line(t_mlx *mlx, int x, int start, int end, t_color color)
 {
-    int rgb_color = (color.r << 16) | (color.g << 8) | color.b;
-    
-    // Clamp start and end to screen bounds
-    int draw_start = start < 0 ? 0 : start;
-    int draw_end = end >= screenHeight ? screenHeight - 1 : end;
-    
-    for(int y = draw_start; y <= draw_end; y++)
+    int rgb_color;
+    int	draw_start;
+	int draw_end;
+	int y;
+
+    rgb_color = (color.r << 16) | (color.g << 8) | color.b;
+    draw_start = start < 0 ? 0 : start;
+    draw_end = end >= screenHeight ? screenHeight - 1 : end;
+	y = draw_start;
+    while(y <= draw_end)
     {
         if(y >= 0 && y < screenHeight)
             ft_mlx_pixel_put(mlx, x, y, rgb_color);
+		y++;
     }
 }
 
 int key_hook(int keycode, t_mlx *mlx)
 {
-    if(keycode == 65307) // ESC key
+    if(keycode == 65307)
         exit(0);
     return (0);
 }
 
-// Close window handler
 int close_hook(t_mlx *mlx)
 {
     exit(0);
@@ -374,10 +426,12 @@ int close_hook(t_mlx *mlx)
 
 static void clear_image(t_mlx *data)
 {
-    int x = 0;
-    int y = 0;
+    int x;
+    int y;
     char *dst;
 
+	x = 0;
+	y = 0;
     while (y < screenHeight)
     {
         x = 0;
@@ -393,23 +447,29 @@ static void clear_image(t_mlx *data)
 
 void draw_dot(t_mlx *mlx, int dot_size, int center_x, int center_y)
 {
-	// Draw white center dot on top (smaller circle)
-	for(int y = -dot_size; y <= dot_size; y++)
+	int y;
+	int x;
+	int pixel_x;
+	int pixel_y;
+
+	x = -dot_size;
+	y = -dot_size;
+	while(y <= dot_size)
 	{
-		for(int x = -dot_size; x <= dot_size; x++)
+		while(x <= dot_size)
 		{
-			// Make it a circle instead of square
 			if(x*x + y*y <= dot_size*dot_size)
 			{
-				int pixel_x = center_x + x;
-				int pixel_y = center_y + y;
-				
+				pixel_x = center_x + x;
+				pixel_y = center_y + y;
 				if(pixel_x >= 0 && pixel_y >= 0 && pixel_x < screenWidth && pixel_y < screenHeight)
 				{
-					ft_mlx_pixel_put(mlx, pixel_x, pixel_y, 0xFFFFFF); // White crosshair
+					ft_mlx_pixel_put(mlx, pixel_x, pixel_y, 0xFFFFFF);
 				}
 			}
+			x++;
 		}
+		y++;
 	}
 }
 
@@ -582,6 +642,8 @@ int handle_keys(int keycode, t_mlx *mlx)
         mlx->key_state[2] = 1;
     if (keycode == KEY_D)
         mlx->key_state[3] = 1;
+    if (keycode == KEY_SHIFT) 
+        mlx->key_state[4] = 1;
     return (0);
 }
 
@@ -595,93 +657,92 @@ int handle_key_release(int keycode, t_mlx *mlx)
         mlx->key_state[2] = 0;
     if (keycode == KEY_D)
         mlx->key_state[3] = 0;
+    if (keycode == KEY_SHIFT)  // Add shift key release
+        mlx->key_state[4] = 0;
     return (0);
+}
+
+double get_movement_speed(t_mlx *mlx)
+{
+    if (mlx->key_state[4])
+        return MOVE_SPEED * 2.0;
+    else
+        return MOVE_SPEED;
 }
 
 int handle_vertical_movement(t_mlx *mlx)
 {
-	if (mlx->key_state[0])
-	{
-		if(worldMap[(int)(mlx->posX + mlx->dirX * MOVE_SPEED)][(int)(mlx->posY)] != 1) 
-			mlx->posX += mlx->dirX * MOVE_SPEED;
-		if(worldMap[(int)(mlx->posX)][(int)(mlx->posY + mlx->dirY * MOVE_SPEED)] != 1) 
-			mlx->posY += mlx->dirY * MOVE_SPEED;
-	}
-	if (mlx->key_state[2])
-	{
-		if(worldMap[(int)(mlx->posX - mlx->dirX * MOVE_SPEED)][(int)(mlx->posY)] != 1) 
-			mlx->posX -= mlx->dirX * MOVE_SPEED;
-		if(worldMap[(int)(mlx->posX)][(int)(mlx->posY - mlx->dirY * MOVE_SPEED)] != 1) 
-			mlx->posY -= mlx->dirY * MOVE_SPEED;
-	}
-	return (0);
+    double current_speed = get_movement_speed(mlx);
+    
+    if (mlx->key_state[0])
+    {
+        if(worldMap[(int)(mlx->posX + mlx->dirX * current_speed)][(int)(mlx->posY)] != 1) 
+            mlx->posX += mlx->dirX * current_speed;
+        if(worldMap[(int)(mlx->posX)][(int)(mlx->posY + mlx->dirY * current_speed)] != 1) 
+            mlx->posY += mlx->dirY * current_speed;
+        return (1);
+    }
+    if (mlx->key_state[2])
+    {
+        if(worldMap[(int)(mlx->posX - mlx->dirX * current_speed)][(int)(mlx->posY)] != 1) 
+            mlx->posX -= mlx->dirX * current_speed;
+        if(worldMap[(int)(mlx->posX)][(int)(mlx->posY - mlx->dirY * current_speed)] != 1) 
+            mlx->posY -= mlx->dirY * current_speed;
+        return (1);
+    }
+    return (0);
 }
 
 int handle_horizontal_movement(t_mlx *mlx)
 {
-    int moved;
-    
-	moved = 0;
-	handle_vertical_movement(mlx);
+	double current_speed = get_movement_speed(mlx);
+
     if (mlx->key_state[1])
     {
-        if(worldMap[(int)(mlx->posX - mlx->planeX * MOVE_SPEED)][(int)(mlx->posY)] != 1) 
-            mlx->posX -= mlx->planeX * MOVE_SPEED;
-        if(worldMap[(int)(mlx->posX)][(int)(mlx->posY - mlx->planeY * MOVE_SPEED)] != 1) 
-            mlx->posY -= mlx->planeY * MOVE_SPEED;
-        moved = 1;
+        if(worldMap[(int)(mlx->posX - mlx->planeX * current_speed)][(int)(mlx->posY)] != 1) 
+            mlx->posX -= mlx->planeX * current_speed;
+        if(worldMap[(int)(mlx->posX)][(int)(mlx->posY - mlx->planeY * current_speed)] != 1) 
+            mlx->posY -= mlx->planeY * current_speed;
     }
     if (mlx->key_state[3])
     {
-        if(worldMap[(int)(mlx->posX + mlx->planeX * MOVE_SPEED)][(int)(mlx->posY)] != 1) 
-            mlx->posX += mlx->planeX * MOVE_SPEED;
-        if(worldMap[(int)(mlx->posX)][(int)(mlx->posY + mlx->planeY * MOVE_SPEED)] != 1) 
-            mlx->posY += mlx->planeY * MOVE_SPEED;
-        moved = 1;
+        if(worldMap[(int)(mlx->posX + mlx->planeX * current_speed)][(int)(mlx->posY)] != 1) 
+            mlx->posX += mlx->planeX * current_speed;
+        if(worldMap[(int)(mlx->posX)][(int)(mlx->posY + mlx->planeY * current_speed)] != 1) 
+            mlx->posY += mlx->planeY * current_speed;
     }
-    
-    if (moved)
-        render_scene(mlx);
     return (0);
 }
 
 int handle_mouse_move(int x, int y, t_mlx *mlx)
 {
-	int center_x;
-	int center_y;
-	int delta_x;
-	int delta_y;
-	double rotation;
-	double oldDirX;
-	double oldPlaneX;
-	
-	center_x = screenWidth / 2;
-	center_y = screenHeight / 2;
-	delta_x = x - center_x;
-	delta_y = y - center_y;
+    int center_x = screenWidth / 2;
+    int center_y = screenHeight / 2;
+
     if (!mlx->mouse_locked)
         return (0);
-    if (delta_x == 0 && delta_y == 0)
-        return (0);
-    mlx->last_mouse_x = center_x;
-    mlx->last_mouse_y = center_y;
-    if (delta_x != 0)
+    int delta_x = x - center_x;
+    int delta_y = y - center_y;
+    if (abs(delta_x) > 1 || abs(delta_y) > 1)
     {
-        rotation = -delta_x * MOUSE_SENS_X;
-        oldDirX = mlx->dirX;
-        mlx->dirX = mlx->dirX * cos(rotation) - mlx->dirY * sin(rotation);
-        mlx->dirY = oldDirX * sin(rotation) + mlx->dirY * cos(rotation);
-        oldPlaneX = mlx->planeX;
-        mlx->planeX = mlx->planeX * cos(rotation) - mlx->planeY * sin(rotation);
-        mlx->planeY = oldPlaneX * sin(rotation) + mlx->planeY * cos(rotation);
+        if (abs(delta_x) > 1)
+        {
+            double rotation = -delta_x * MOUSE_SENS_X * 0.5;  // Reduced sensitivity
+            double oldDirX = mlx->dirX;
+            mlx->dirX = mlx->dirX * cos(rotation) - mlx->dirY * sin(rotation);
+            mlx->dirY = oldDirX * sin(rotation) + mlx->dirY * cos(rotation);
+            double oldPlaneX = mlx->planeX;
+            mlx->planeX = mlx->planeX * cos(rotation) - mlx->planeY * sin(rotation);
+            mlx->planeY = oldPlaneX * sin(rotation) + mlx->planeY * cos(rotation);
+        }
+        if (abs(delta_y) > 1)
+        {
+            mlx->pitch += (-delta_y) * MOUSE_SENS_Y * 0.5;  // Reduced sensitivity
+            if (mlx->pitch < -320) mlx->pitch = -320;
+            if (mlx->pitch > 320) mlx->pitch = 320;
+        }
+        mlx_mouse_move(mlx->mlx, mlx->win, center_x, center_y);
     }
-    if (delta_y != 0)
-    {
-        mlx->pitch += (-delta_y) * MOUSE_SENS_Y;
-        if (mlx->pitch < -320) mlx->pitch = -320;
-        if (mlx->pitch > 320) mlx->pitch = 320;
-    }
-    mlx_mouse_move(mlx->mlx, mlx->win, center_x, center_y);
     return (0);
 }
 
@@ -701,8 +762,20 @@ int handle_mouse_press(int button, int x, int y, t_mlx *mlx)
             // Hide cursor and warp to center
             mlx_mouse_hide(mlx->mlx, mlx->win);
             mlx_mouse_move(mlx->mlx, mlx->win, mlx->last_mouse_x, mlx->last_mouse_y);
-            printf("Mouse locked - move mouse to look around\n");
         }
+    }
+    return (0);
+}
+
+int render_loop(t_mlx *mlx)
+{
+    handle_vertical_movement(mlx);
+	handle_horizontal_movement(mlx);
+    long current_time = get_time_ms();
+    if ((current_time - mlx->last_render_time) >= FRAME_TIME_MS)
+    {
+        render_scene(mlx);
+        mlx->last_render_time = current_time;
     }
     return (0);
 }
@@ -711,14 +784,14 @@ int main(void)
 {
     t_mlx mlx;
     int i = 0;
-	
+    
     while (i < 10)
     {
         mlx.key_state[i] = 0;
         i++;
     }
-    mlx.posX = 20;
-    mlx.posY = 12;
+    mlx.posX = 40;
+    mlx.posY = 24;
     mlx.dirX = -1;
     mlx.dirY = 0;
     mlx.planeX = 0;
@@ -727,17 +800,25 @@ int main(void)
     mlx.last_mouse_x = screenWidth / 2;
     mlx.last_mouse_y = screenHeight / 2;
     mlx.mouse_locked = 0;
+    
+    // Add these initializations:
+    mlx.needs_render = 1;        // Start with needing a render
+    mlx.last_render_time = 0;    // Initialize render timing
+    
     mlx.mlx = mlx_init();
     mlx.win = mlx_new_window(mlx.mlx, screenWidth, screenHeight, "Cub3D Raycasting");
     mlx.img = mlx_new_image(mlx.mlx, screenWidth, screenHeight);
     mlx.addr = mlx_get_data_addr(mlx.img, &mlx.bits_per_pixel, &mlx.line_length, &mlx.endian);
+    
+    // Set up hooks
     mlx_hook(mlx.win, 2, 1L << 0, handle_keys, &mlx);           // Key press
     mlx_hook(mlx.win, 3, 1L << 1, handle_key_release, &mlx);   // Key release
     mlx_hook(mlx.win, 4, 1L << 2, handle_mouse_press, &mlx);   // Mouse button press
     mlx_hook(mlx.win, 6, 1L << 6, handle_mouse_move, &mlx);    // Mouse movement
-	mlx_loop_hook(mlx.mlx, handle_horizontal_movement, &mlx);             // Continuous movement
+    mlx_loop_hook(mlx.mlx, render_loop, &mlx);                 // SEPARATE RENDER LOOP
     mlx_hook(mlx.win, 17, 0, close_hook, &mlx);               // Close button
-    render_scene(&mlx);
+    
+    render_scene(&mlx);  // Initial render
     mlx_loop(mlx.mlx);
     
     return 0;
