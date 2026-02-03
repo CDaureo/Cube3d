@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 13:03:24 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/03 17:48:24 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/03 18:37:18 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,76 @@ t_color darken_color(t_color color)
     return dark;
 }
 
+typedef struct s_minimap {
+    // Basic positioning
+    int map_start_x;
+    int map_start_y;
+    int center_x;
+    int center_y;
+    int radius;
+    int player_pixel_x;
+    int player_pixel_y;
+    double player_angle;
+    int arrow_length;
+    int arrow_width;
+    
+    // Map background variables
+    double rel_x;
+    double rel_y;
+    double rotated_x;
+    double rotated_y;
+    double world_x;
+    double world_y;
+    int map_x;
+    int map_y;
+    int color;
+    int pixel_x;
+    int pixel_y;
+    int dx;
+    int dy;
+    int distance_squared;
+    int screen_x;
+    int screen_y;
+    
+    // Arrow outline variables
+    int tip_x;
+    int tip_y;
+    int base_center_x;
+    int base_center_y;
+    int base_left_x;
+    int base_left_y;
+    int base_right_x;
+    int base_right_y;
+    int lx1;
+    int ly1;
+    int lx2;
+    int ly2;
+    int lx3;
+    int ly3;
+    int outline_dx;
+    int outline_dy;
+    int outline_dx1;
+    int outline_dy1;
+    int outline_dx2;
+    int outline_dy2;
+    
+    // Arrow body variables
+    int scan_y;
+    int width_at_y;
+    int current_x;
+    int current_y_adj;
+    int arrow_dx;
+    int arrow_dy;
+    
+    // Circle variables
+    int angle;
+    double radian;
+    int border_x;
+    int border_y;
+    int inner_border_x;
+    int inner_border_y;
+} t_minimap;
+
 typedef struct s_mlx {
     void *mlx;
     void *win;
@@ -210,135 +280,178 @@ void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color)
 	}
 }
 //Esto hay que arreglarlo
-void draw_minimap(t_mlx *mlx)
+void init_minimap(t_minimap *minimap, t_mlx *mlx)
 {
-    int map_start_x = screenWidth - MINIMAP_SIZE - MINIMAP_OFFSET;
-    int map_start_y = screenHeight - MINIMAP_SIZE - MINIMAP_OFFSET;
-    int center_x = map_start_x + MINIMAP_SIZE / 2;
-    int center_y = map_start_y + MINIMAP_SIZE / 2;
-    int radius = MINIMAP_SIZE / 2;
-    int player_pixel_x = center_x;
-    int player_pixel_y = center_y;
-    double player_angle = atan2(mlx->dirY, mlx->dirX) - M_PI/2;
-    for(int pixel_y = 0; pixel_y < MINIMAP_SIZE; pixel_y++)
-    {
-        for(int pixel_x = 0; pixel_x < MINIMAP_SIZE; pixel_x++)
-        {
-            int dx = pixel_x - MINIMAP_SIZE / 2;
-            int dy = pixel_y - MINIMAP_SIZE / 2;
-            int distance_squared = dx * dx + dy * dy;
+    minimap->map_start_x = screenWidth - MINIMAP_SIZE - MINIMAP_OFFSET;
+    minimap->map_start_y = screenHeight - MINIMAP_SIZE - MINIMAP_OFFSET;
+    minimap->center_x = minimap->map_start_x + MINIMAP_SIZE / 2;
+    minimap->center_y = minimap->map_start_y + MINIMAP_SIZE / 2;
+    minimap->radius = MINIMAP_SIZE / 2;
+    minimap->player_pixel_x = minimap->center_x;
+    minimap->player_pixel_y = minimap->center_y;
+    minimap->player_angle = atan2(mlx->dirY, mlx->dirX) - M_PI/2;
+    minimap->arrow_length = 6;
+    minimap->arrow_width = 4;
+}
 
-            if(distance_squared <= radius * radius)
+// Updated minimap functions with structure:
+void draw_map_background(t_mlx *mlx, t_minimap *minimap)
+{
+    minimap->pixel_y = 0;
+    
+    while(minimap->pixel_y < MINIMAP_SIZE)
+    {
+        minimap->pixel_x = 0;
+        while(minimap->pixel_x < MINIMAP_SIZE)
+        {
+            minimap->dx = minimap->pixel_x - MINIMAP_SIZE / 2;
+            minimap->dy = minimap->pixel_y - MINIMAP_SIZE / 2;
+            minimap->distance_squared = minimap->dx * minimap->dx + minimap->dy * minimap->dy;
+            
+            if(minimap->distance_squared <= minimap->radius * minimap->radius)
             {
-                double rel_x = dx / (double)(MINIMAP_SIZE / 2);
-                double rel_y = -dy / (double)(MINIMAP_SIZE / 2);
-                double rotated_x = rel_x * cos(player_angle) - rel_y * sin(player_angle);
-                double rotated_y = rel_x * sin(player_angle) + rel_y * cos(player_angle);
-                double world_x = mlx->posX + rotated_x * (mapWidth * 0.3);   
-                double world_y = mlx->posY + rotated_y * (mapHeight * 0.3);  
+                minimap->rel_x = minimap->dx / (double)(MINIMAP_SIZE / 2);
+                minimap->rel_y = -minimap->dy / (double)(MINIMAP_SIZE / 2);
+                minimap->rotated_x = minimap->rel_x * cos(minimap->player_angle) - minimap->rel_y * sin(minimap->player_angle);
+                minimap->rotated_y = minimap->rel_x * sin(minimap->player_angle) + minimap->rel_y * cos(minimap->player_angle);
+                minimap->world_x = mlx->posX + minimap->rotated_x * (mapWidth * 0.3);   
+                minimap->world_y = mlx->posY + minimap->rotated_y * (mapHeight * 0.3);  
+                minimap->map_x = (int)minimap->world_x;
+                minimap->map_y = (int)minimap->world_y;
                 
-                int map_x = (int)world_x;
-                int map_y = (int)world_y;
-                int color;
-                if(map_x >= 0 && map_x < mapWidth && map_y >= 0 && map_y < mapHeight)
+                if(minimap->map_x >= 0 && minimap->map_x < mapWidth && minimap->map_y >= 0 && minimap->map_y < mapHeight)
                 {
-                    if(worldMap[map_x][map_y] == 1)
-                        color = 0xFFFFFF;
+                    if(worldMap[minimap->map_x][minimap->map_y] == 1)
+                        minimap->color = 0xFFFFFF;
                     else
-                        color = 0x333333;
+                        minimap->color = 0x333333;
                 }
                 else
-                    color = 0xFFFFFF;
-                int screen_x = map_start_x + pixel_x;
-                int screen_y = map_start_y + pixel_y;
-                if(screen_x < screenWidth && screen_y < screenHeight)
-                    ft_mlx_pixel_put(mlx, screen_x, screen_y, color);
+                    minimap->color = 0xFFFFFF;
+                    
+                minimap->screen_x = minimap->map_start_x + minimap->pixel_x;
+                minimap->screen_y = minimap->map_start_y + minimap->pixel_y;
+                if(minimap->screen_x < screenWidth && minimap->screen_y < screenHeight)
+                    ft_mlx_pixel_put(mlx, minimap->screen_x, minimap->screen_y, minimap->color);
             }
+            minimap->pixel_x++;
         }
-    }
-    int arrow_length = 6;
-    int arrow_width = 4;
-    double arrow_dirX = 0;
-    double arrow_dirY = -1;
-    int tip_x = player_pixel_x + (int)(arrow_dirX * arrow_length);
-    int tip_y = player_pixel_y + (int)(arrow_dirY * arrow_length);
-    int base_center_x = player_pixel_x - (int)(arrow_dirX * arrow_length);
-    int base_center_y = player_pixel_y - (int)(arrow_dirY * arrow_length);
-    double perpX = 1;
-    double perpY = 0;
-    int base_left_x = base_center_x - (int)(perpX * arrow_width);
-    int base_left_y = base_center_y + (int)(perpY * arrow_width);
-    int base_right_x = base_center_x + (int)(perpX * arrow_width);
-    int base_right_y = base_center_y - (int)(perpY * arrow_width);
-    for(int scan_y = -arrow_length; scan_y <= arrow_length; scan_y++)
-    {
-        int width_at_y;
-        if(scan_y < 0)
-            width_at_y = (arrow_width * (arrow_length + scan_y)) / arrow_length;
-        else
-            width_at_y = arrow_width;
-        for(int dx = -width_at_y; dx <= width_at_y; dx++)
-        {
-            int current_x = player_pixel_x + dx;
-            int current_y_adj = player_pixel_y + scan_y;
-            int arrow_dx = current_x - center_x;
-            int arrow_dy = current_y_adj - center_y;
-            if(arrow_dx * arrow_dx + arrow_dy * arrow_dy <= radius * radius)
-            {
-                if(current_x >= 0 && current_y_adj >= 0 && current_x < screenWidth && current_y_adj < screenHeight)
-                    ft_mlx_pixel_put(mlx, current_x, current_y_adj, 0xFF0000);
-            }
-        }
-    }
-    for(int i = 0; i <= 20; i++)
-    {
-        int lx1 = base_left_x + (int)((tip_x - base_left_x) * i / 20.0);
-        int ly1 = base_left_y + (int)((tip_y - base_left_y) * i / 20.0);
-        int lx2 = base_right_x + (int)((tip_x - base_right_x) * i / 20.0);
-        int ly2 = base_right_y + (int)((tip_y - base_right_y) * i / 20.0);
-        if(i <= 10)
-        {
-            int lx3 = base_left_x + (int)((base_right_x - base_left_x) * i / 10.0);
-            int ly3 = base_left_y + (int)((base_right_y - base_left_y) * i / 10.0);
-            int outline_dx = lx3 - center_x;
-            int outline_dy = ly3 - center_y;
-            if(outline_dx * outline_dx + outline_dy * outline_dy <= radius * radius)
-            {
-                if(lx3 >= 0 && ly3 >= 0 && lx3 < screenWidth && ly3 < screenHeight)
-                    ft_mlx_pixel_put(mlx, lx3, ly3, 0xFFFFFF);
-            }
-        }
-        int outline_dx1 = lx1 - center_x;
-        int outline_dy1 = ly1 - center_y;
-        int outline_dx2 = lx2 - center_x;
-        int outline_dy2 = ly2 - center_y;
-        if(outline_dx1 * outline_dx1 + outline_dy1 * outline_dy1 <= radius * radius)
-        {
-            if(lx1 >= 0 && ly1 >= 0 && lx1 < screenWidth && ly1 < screenHeight)
-                ft_mlx_pixel_put(mlx, lx1, ly1, 0xFFFFFF);
-        }
-        
-        if(outline_dx2 * outline_dx2 + outline_dy2 * outline_dy2 <= radius * radius)
-        {
-            if(lx2 >= 0 && ly2 >= 0 && lx2 < screenWidth && ly2 < screenHeight)
-                ft_mlx_pixel_put(mlx, lx2, ly2, 0xFFFFFF);
-        }
-    }
-    ft_mlx_pixel_put(mlx, player_pixel_x, player_pixel_y, 0xFFFF00);
-    for(int angle = 0; angle < 360; angle++)
-    {
-        double radian = angle * M_PI / 180.0;
-        int border_x = center_x + (int)(cos(radian) * radius);
-        int border_y = center_y + (int)(sin(radian) * radius);
-        
-        if(border_x >= 0 && border_y >= 0 && border_x < screenWidth && border_y < screenHeight)
-            ft_mlx_pixel_put(mlx, border_x, border_y, 0xFFFFFF);
-        int inner_border_x = center_x + (int)(cos(radian) * (radius - 1));
-        int inner_border_y = center_y + (int)(sin(radian) * (radius - 1));
-        if(inner_border_x >= 0 && inner_border_y >= 0 && inner_border_x < screenWidth && inner_border_y < screenHeight)
-            ft_mlx_pixel_put(mlx, inner_border_x, inner_border_y, 0xFFFFFF);
+        minimap->pixel_y++;
     }
 }
+
+void draw_arrow_body(t_mlx *mlx, t_minimap *minimap)
+{
+    for(minimap->scan_y = -minimap->arrow_length; minimap->scan_y <= minimap->arrow_length; minimap->scan_y++)
+    {
+        if(minimap->scan_y < 0)
+            minimap->width_at_y = (minimap->arrow_width * (minimap->arrow_length + minimap->scan_y)) / minimap->arrow_length;
+        else
+            minimap->width_at_y = minimap->arrow_width;
+            
+        for(minimap->dx = -minimap->width_at_y; minimap->dx <= minimap->width_at_y; minimap->dx++)
+        {
+            minimap->current_x = minimap->player_pixel_x + minimap->dx;
+            minimap->current_y_adj = minimap->player_pixel_y + minimap->scan_y;
+            minimap->arrow_dx = minimap->current_x - minimap->center_x;
+            minimap->arrow_dy = minimap->current_y_adj - minimap->center_y;
+            
+            if(minimap->arrow_dx * minimap->arrow_dx + minimap->arrow_dy * minimap->arrow_dy <= minimap->radius * minimap->radius)
+            {
+                if(minimap->current_x >= 0 && minimap->current_y_adj >= 0 && minimap->current_x < screenWidth && minimap->current_y_adj < screenHeight)
+                    ft_mlx_pixel_put(mlx, minimap->current_x, minimap->current_y_adj, 0xFF0000);
+            }
+        }
+    }
+}
+
+void draw_arrow_outline(t_mlx *mlx, t_minimap *minimap)
+{
+    minimap->tip_x = minimap->player_pixel_x;
+    minimap->tip_y = minimap->player_pixel_y - minimap->arrow_length;
+    minimap->base_center_x = minimap->player_pixel_x;
+    minimap->base_center_y = minimap->player_pixel_y + minimap->arrow_length;
+    minimap->base_left_x = minimap->base_center_x - minimap->arrow_width;
+    minimap->base_left_y = minimap->base_center_y;
+    minimap->base_right_x = minimap->base_center_x + minimap->arrow_width;
+    minimap->base_right_y = minimap->base_center_y;
+    
+    for(int i = 0; i <= 20; i++)
+    {
+        minimap->lx1 = minimap->base_left_x + (int)((minimap->tip_x - minimap->base_left_x) * i / 20.0);
+        minimap->ly1 = minimap->base_left_y + (int)((minimap->tip_y - minimap->base_left_y) * i / 20.0);
+        minimap->lx2 = minimap->base_right_x + (int)((minimap->tip_x - minimap->base_right_x) * i / 20.0);
+        minimap->ly2 = minimap->base_right_y + (int)((minimap->tip_y - minimap->base_right_y) * i / 20.0);
+        
+        if(i <= 10)
+        {
+            minimap->lx3 = minimap->base_left_x + (int)((minimap->base_right_x - minimap->base_left_x) * i / 10.0);
+            minimap->ly3 = minimap->base_left_y + (int)((minimap->base_right_y - minimap->base_left_y) * i / 10.0);
+            minimap->outline_dx = minimap->lx3 - minimap->center_x;
+            minimap->outline_dy = minimap->ly3 - minimap->center_y;
+            if(minimap->outline_dx * minimap->outline_dx + minimap->outline_dy * minimap->outline_dy <= minimap->radius * minimap->radius)
+            {
+                if(minimap->lx3 >= 0 && minimap->ly3 >= 0 && minimap->lx3 < screenWidth && minimap->ly3 < screenHeight)
+                    ft_mlx_pixel_put(mlx, minimap->lx3, minimap->ly3, 0xFFFFFF);
+            }
+        }
+        
+        minimap->outline_dx1 = minimap->lx1 - minimap->center_x;
+        minimap->outline_dy1 = minimap->ly1 - minimap->center_y;
+        minimap->outline_dx2 = minimap->lx2 - minimap->center_x;
+        minimap->outline_dy2 = minimap->ly2 - minimap->center_y;
+        
+        if(minimap->outline_dx1 * minimap->outline_dx1 + minimap->outline_dy1 * minimap->outline_dy1 <= minimap->radius * minimap->radius)
+        {
+            if(minimap->lx1 >= 0 && minimap->ly1 >= 0 && minimap->lx1 < screenWidth && minimap->ly1 < screenHeight)
+                ft_mlx_pixel_put(mlx, minimap->lx1, minimap->ly1, 0xFFFFFF);
+        }
+        
+        if(minimap->outline_dx2 * minimap->outline_dx2 + minimap->outline_dy2 * minimap->outline_dy2 <= minimap->radius * minimap->radius)
+        {
+            if(minimap->lx2 >= 0 && minimap->ly2 >= 0 && minimap->lx2 < screenWidth && minimap->ly2 < screenHeight)
+                ft_mlx_pixel_put(mlx, minimap->lx2, minimap->ly2, 0xFFFFFF);
+        }
+    }
+}
+
+void draw_minimap_circle(t_mlx *mlx, t_minimap *minimap)
+{
+    for(minimap->angle = 0; minimap->angle < 360; minimap->angle++)
+    {
+        minimap->radian = minimap->angle * M_PI / 180.0;
+        minimap->border_x = minimap->center_x + (int)(cos(minimap->radian) * minimap->radius);
+        minimap->border_y = minimap->center_y + (int)(sin(minimap->radian) * minimap->radius);
+        
+        if(minimap->border_x >= 0 && minimap->border_y >= 0 && minimap->border_x < screenWidth && minimap->border_y < screenHeight)
+            ft_mlx_pixel_put(mlx, minimap->border_x, minimap->border_y, 0xFFFFFF);
+            
+        minimap->inner_border_x = minimap->center_x + (int)(cos(minimap->radian) * (minimap->radius - 1));
+        minimap->inner_border_y = minimap->center_y + (int)(sin(minimap->radian) * (minimap->radius - 1));
+        
+        if(minimap->inner_border_x >= 0 && minimap->inner_border_y >= 0 && minimap->inner_border_x < screenWidth && minimap->inner_border_y < screenHeight)
+            ft_mlx_pixel_put(mlx, minimap->inner_border_x, minimap->inner_border_y, 0xFFFFFF);
+    }
+}
+
+void draw_player_dot(t_mlx *mlx, t_minimap *minimap)
+{
+    ft_mlx_pixel_put(mlx, minimap->player_pixel_x, minimap->player_pixel_y, 0xFFFF00);
+}
+
+// Updated main minimap function:
+void draw_minimap(t_mlx *mlx)
+{
+    t_minimap minimap;
+    
+    init_minimap(&minimap, mlx);
+    draw_map_background(mlx, &minimap);
+    draw_arrow_body(mlx, &minimap);
+    draw_arrow_outline(mlx, &minimap);
+    draw_player_dot(mlx, &minimap);
+    draw_minimap_circle(mlx, &minimap);
+}
+
 t_color get_wall_color(int side, int stepX, int stepY)
 {
     if (side == 0)
@@ -469,8 +582,15 @@ void render_start(t_mlx *mlx, t_render *r)
 	r->rayDirY = mlx->dirY + mlx->planeY * r->cameraX;
 	r->mapX = (int)mlx->posX;
 	r->mapY = (int)mlx->posY;
-	r->deltaDistY = (r->rayDirY == 0) ? 1e30 : fabs(1 / r->rayDirY);
-	r->deltaDistX = (r->rayDirX == 0) ? 1e30 : fabs(1 / r->rayDirX);
+	if (r->rayDirY == 0)
+		r->deltaDistY = 1e30;
+	else
+		r->deltaDistY = fabs(1 / r->rayDirY);
+
+	if (r->rayDirX == 0)
+		r->deltaDistX = 1e30;
+	else
+		r->deltaDistX = fabs(1 / r->rayDirX);
 }
 
 void apply_dda(t_mlx *mlx, t_render *r)
