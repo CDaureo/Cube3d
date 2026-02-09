@@ -24,8 +24,6 @@ int	parse_texture_line(char *line, t_game *game)
 	{
 		path = trim_whitespace(trim + 3);
 		game->textures.north = ft_strdup(path);
-		        printf("DEBUG: Parsed north texture: '%s' (length: %zu)\n", 
-               game->textures.north, strlen(game->textures.north));
 	}
 	else if (ft_strncmp(trim,"SO ", 3) == 0)
 	{
