@@ -40,33 +40,41 @@ int	parse_texture_line(char *line, t_game *game)
 		path = trim_whitespace(trim + 3);
 		game->textures.east = ft_strdup(path);
 	}
+	else if (ft_strncmp(trim,"DO ", 3) == 0)
+	{
+		path = trim_whitespace(trim + 3);
+		game->textures.door = ft_strdup(path);
+	}
+	return(1);
 	return(1);
 }
 
 /* Lee el archivo .cub y extrae las rutas de texturas */
 int parse_textures(int fd, t_game *game)
 {
-	char *line;
-	int counter;
+    char *line;
+    int counter;
 
-	counter = 0;
-	while (counter < 4 && (line = get_next_line(fd)))
-	{
-		if (ft_strncmp(line, "NO ", 3) == 0 || ft_strncmp(line, "SO ", 3) == 0
-			|| ft_strncmp(line, "WE ", 3) == 0 || ft_strncmp(line, "EA ", 3) == 0)
-		{
-			parse_texture_line(line, game);
-			counter++;
-		}
-		free(line);
-	}
-	if (counter != 4)
-		return(printf("Error:\nMissing texture definitions\n"), 0);
-	if (!validate_texture_file(game->textures.north)
-	|| !validate_texture_file(game->textures.south)
-	|| !validate_texture_file(game->textures.west)
-	|| !validate_texture_file(game->textures.east))
-		return(0);
-	return(1);
+    counter = 0;
+    while (counter < 5 && (line = get_next_line(fd)))  // Changed from 4 to 5
+    {
+        if (ft_strncmp(line, "NO ", 3) == 0 || ft_strncmp(line, "SO ", 3) == 0
+            || ft_strncmp(line, "WE ", 3) == 0 || ft_strncmp(line, "EA ", 3) == 0
+            || ft_strncmp(line, "DO ", 3) == 0)  // Add DO check
+        {
+            parse_texture_line(line, game);
+            counter++;
+        }
+        free(line);
+    }
+    if (counter != 5)  // Changed from 4 to 5
+        return(printf("Error:\nMissing texture definitions\n"), 0);
+    if (!validate_texture_file(game->textures.north)
+    || !validate_texture_file(game->textures.south)
+    || !validate_texture_file(game->textures.west)
+    || !validate_texture_file(game->textures.east)
+    || !validate_texture_file(game->textures.door))  // Add door validation
+        return(0);
+    return(1);
 }
 

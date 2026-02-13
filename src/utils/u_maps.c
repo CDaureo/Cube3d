@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_maps.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:15:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/24 20:41:43 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/10 19:45:20 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 /**
  * Valida si un carácter es permitido en el mapa
- * Caracteres válidos: '0', '1', ' ', '\t', 'N', 'S', 'E', 'W'
+ * Caracteres válidos: '0', '1', ' ', '\t', 'N', 'S', 'E', 'W',, D
  */
 int is_allow_chars(char c)
 {
 	return (c == '0' || c == '1' || c == ' ' || c == '\t' ||
-			c == 'N' || c == 'S' || c == 'E' || c == 'W');
+			c == 'N' || c == 'S' || c == 'E' || c == 'W' || c == 'D');
 }
 /**
  * Valida que todos los caracteres de una línea de mapa sean permitidos

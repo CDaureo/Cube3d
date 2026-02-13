@@ -1,0 +1,118 @@
+python3 << 'EOF'
+import random
+
+# Configuración
+width = 5000
+height = 5000
+output_file = "map_big.cub"
+
+# Configuración del archivo .cub
+header = """SO textures/BRICK_1A.xpm
+EA textures/BRICK_2B.xpm
+WE textures/BRICK_3D.xpm
+NO textures/BRICK_3B.xpm
+
+F 0,100,0
+C 135,206,235
+
+"""
+
+def generate_maze_line(y, width, height):
+	"""Genera una línea del laberinto con patrones complejos"""
+	if y == 0 or y == height - 1:
+		# Bordes superior e inferior
+		return '1' * width
+	
+	line = ['1']  # Borde izquierdo
+	
+	for x in range(1, width - 1):
+		# Crear patrón de laberinto con pasillos y paredes
+		# Pasillos principales cada 10 columnas
+		if x % 10 == 0 and y % 5 != 0:
+			line.append('0')
+		# Pasillos horizontales cada 5 filas
+		elif y % 5 == 0 and x % 3 != 0:
+			line.append('0')
+		# Pasillos verticales cada 8 columnas
+		elif x % 8 == 0 and y % 7 != 0:
+			line.append('0')
+		# Habitaciones (áreas abiertas)
+		elif (x % 30 < 15 and y % 30 < 15):
+			if random.random() < 0.7:
+				line.append('0')
+			else:
+				line.append('1')  # Pared
+		# Paredes con puertas ocasionales
+		elif random.random() < 0.4:
+			line.append('0')
+		else:
+			line.append('1')  # Pared por defecto
+	
+	line.append('1')  # Borde derecho
+	return ''.join(line)
+
+print("Generando laberinto masivo de 500x500...")
+print("Este proceso puede tomar varios minutos...")
+
+# Añadir jugador en una posición válida
+player_placed = False
+
+with open(output_file, 'w') as f:
+	# Escribir cabecera
+	f.write(header)
+	
+	# Generar el laberinto línea por línea
+	for y in range(height):
+		if y % 50 == 0:  # Mostrar progreso más frecuentemente
+			print(f"Progreso: {y}/{height} líneas ({(y/height)*100:.1f}%)")
+		
+		line = generate_maze_line(y, width, height)
+		
+		# Colocar jugador en una posición válida (cerca del centro)
+		if not player_placed and y == height // 2:
+			line_list = list(line)
+			# Buscar un espacio abierto cerca del centro para poner al jugador
+			center_x = width // 2
+			for offset in range(0, width // 4):
+				for direction in [-1, 1]:
+					check_x = center_x + (offset * direction)
+					if 0 < check_x < width - 1 and line_list[check_x] == '0':
+						line_list[check_x] = 'N'
+						player_placed = True
+						print(f"Jugador colocado en posición ({check_x}, {y})")
+						break
+				if player_placed:
+					break
+			line = ''.join(line_list)
+		
+		f.write(line + '\n')
+
+# Si no se pudo colocar el jugador, forzar su colocación
+if not player_placed:
+	print("¡Advertencia! No se pudo colocar el jugador automáticamente.")
+	print("Editando el archivo para añadir jugador...")
+	
+	# Leer el archivo y modificarlo
+	with open(output_file, 'r') as f:
+		lines = f.readlines()
+	
+	# Colocar jugador en el centro forzadamente
+	center_y = len(lines) // 2
+	center_x = len(lines[center_y]) // 2
+	
+	line_chars = list(lines[center_y].strip())
+	line_chars[center_x] = 'N'
+	lines[center_y] = ''.join(line_chars) + '\n'
+	
+	# Reescribir el archivo
+	with open(output_file, 'w') as f:
+		f.writelines(lines)
+	
+	print(f"Jugador colocado forzadamente en posición ({center_x}, {center_y})")
+
+print(f"\n¡Laberinto generado exitosamente!")
+print(f"Archivo: {output_file}")
+print(f"Dimensiones: {width}x{height} = {width*height:,} caracteres")
+print(f"Tamaño aproximado: {(width*height)/1024/1024:.2f} MB")
+
+EOF

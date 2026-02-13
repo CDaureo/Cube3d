@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 13:03:24 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/09 15:59:38 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:13:05 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,12 @@
 #define RENDER_FPS 60
 #define TARGET_FPS 60
 #define FRAME_TIME_MS (1000 / TARGET_FPS)
-//#define screenWidth 1920
-//#define screenHeight 1080
-#define screenWidth 1280
-#define screenHeight 720
+//#define screenWidth 2560
+//#define screenHeight 1440
+#define screenWidth 1920
+#define screenHeight 1080
+//#define screenWidth 1280
+//#define screenHeight 720
 #define MOVE_SPEED 0.03
 #define ROT_SPEED 0.015
 #define KEY_LEFT 65361
@@ -43,6 +45,7 @@
 #define MINIMAP_SCALE 8
 #define MINIMAP_OFFSET 20
 #define KEY_SHIFT 65505
+#define KEY_INTERACT 101
 
 typedef struct s_mouse {
 	int center_x ;
@@ -79,21 +82,6 @@ void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color)
 	}
 }
 
-int get_map_value(t_map *map, int x, int y)
-{
-    if (x < 0 || y < 0 || x >= map->width || y >= map->height)
-        return (1);
-    
-    char cell = map->rows[y][x];
-    
-    if (cell == '1')
-        return (1);
-    else if (cell == '0' || cell == 'N' || cell == 'S' || cell == 'E' || cell == 'W')
-        return (0);
-    else
-        return (1);
-}
-
 void init_minimap(t_minimap *minimap, t_mlx *mlx)
 {
     minimap->map_start_x = screenWidth - MINIMAP_SIZE - MINIMAP_OFFSET;
@@ -108,7 +96,40 @@ void init_minimap(t_minimap *minimap, t_mlx *mlx)
     minimap->arrow_width = 4;
 }
 
-void draw_map_background(t_mlx *mlx, t_minimap *minimap, t_map *map)
+t_door *find_door(t_game *game, int x, int y)
+{
+    for (int i = 0; i < game->door_count; i++)
+    {
+        if (game->doors[i].x == x && game->doors[i].y == y)
+            return (&game->doors[i]);
+    }
+    return (NULL);
+}
+
+int get_map_value(t_map *map, int x, int y, t_game *game)
+{
+    if (x < 0 || y < 0 || x >= map->width || y >= map->height)
+        return (1);
+    
+    char cell = map->rows[y][x];
+    
+    if (cell == '1')
+        return (1);  // Wall
+    else if (cell == 'D')  // Door
+    {
+        t_door *door = find_door(game, x, y);
+        if (door && door->is_open)
+            return (0);  // Open door = passable
+        else
+            return (1);  // Closed door = wall
+    }
+    else if (cell == '0' || cell == 'N' || cell == 'S' || cell == 'E' || cell == 'W')
+        return (0);  // Empty space
+    else
+        return (1);  // Unknown = wall
+}
+
+void draw_map_background(t_mlx *mlx, t_minimap *minimap, t_map *map, t_game *game)
 { 
     minimap->pixel_y = 0;
 
@@ -134,7 +155,7 @@ void draw_map_background(t_mlx *mlx, t_minimap *minimap, t_map *map)
                 minimap->map_x = (int)minimap->world_x;
                 minimap->map_y = (int)minimap->world_y;
                 
-                if(get_map_value(map, minimap->map_x, minimap->map_y) == 1)
+                if(get_map_value(map, minimap->map_x, minimap->map_y, game) == 1)
                     minimap->color = 0xFFFFFF;
                 else
                     minimap->color = 0x333333;
@@ -267,16 +288,17 @@ void draw_player_dot(t_mlx *mlx, t_minimap *minimap)
     ft_mlx_pixel_put(mlx, minimap->player_pixel_x, minimap->player_pixel_y, 0xFFFF00);
 }
 
-void draw_minimap(t_mlx *mlx, t_map *map)
+void draw_minimap(t_mlx *mlx, t_map *map, t_game *game)
 {
     t_minimap minimap;
     init_minimap(&minimap, mlx);
-    draw_map_background(mlx, &minimap, map);
+    draw_map_background(mlx, &minimap, map, game);
     draw_arrow_body(mlx, &minimap);
     draw_arrow_outline(mlx, &minimap);   
     draw_player_dot(mlx, &minimap);
     draw_minimap_circle(mlx, &minimap);
 }
+
 
 int load_texture(t_mlx *mlx, char *path, void **img, char **data, t_textures *tex)
 {
@@ -297,38 +319,48 @@ int load_texture(t_mlx *mlx, char *path, void **img, char **data, t_textures *te
 
 int load_all_textures(t_game *game)
 {
-    t_mlx *mlx = &game->mlx;
-    t_textures *tex = &game->textures;
-    
-    if (!load_texture(mlx, tex->north, &tex->north_img, &tex->north_data, tex))
-        return (0);
-    if (!load_texture(mlx, tex->south, &tex->south_img, &tex->south_data, tex))
-        return (0);
-    if (!load_texture(mlx, tex->west, &tex->west_img, &tex->west_data, tex))
-        return (0);
-    if (!load_texture(mlx, tex->east, &tex->east_img, &tex->east_data, tex))
-        return (0);
-    
-    printf("All textures loaded successfully\n");
-    return (1);
+    // Load textures using existing paths (no parsing changes needed!)
+    game->textures.img[0] = mlx_xpm_file_to_image(game->mlx.mlx, game->textures.north, 
+                                                   &game->textures.tex_width, &game->textures.tex_height);
+    game->textures.img[1] = mlx_xpm_file_to_image(game->mlx.mlx, game->textures.south, 
+                                                   &game->textures.tex_width, &game->textures.tex_height);
+    game->textures.img[2] = mlx_xpm_file_to_image(game->mlx.mlx, game->textures.west, 
+                                                   &game->textures.tex_width, &game->textures.tex_height);
+    game->textures.img[3] = mlx_xpm_file_to_image(game->mlx.mlx, game->textures.east, 
+                                                   &game->textures.tex_width, &game->textures.tex_height);
+    // Add door texture loading
+    game->textures.img[4] = mlx_xpm_file_to_image(game->mlx.mlx, game->textures.door, 
+                                                   &game->textures.tex_width, &game->textures.tex_height);
+
+    // Get data pointers for fast access
+    game->textures.data[0] = mlx_get_data_addr(game->textures.img[0], &game->textures.bits_per_pixel,
+                                                &game->textures.line_length, &game->textures.endian);
+    game->textures.data[1] = mlx_get_data_addr(game->textures.img[1], &game->textures.bits_per_pixel,
+                                                &game->textures.line_length, &game->textures.endian);
+    game->textures.data[2] = mlx_get_data_addr(game->textures.img[2], &game->textures.bits_per_pixel,
+                                                &game->textures.line_length, &game->textures.endian);
+    game->textures.data[3] = mlx_get_data_addr(game->textures.img[3], &game->textures.bits_per_pixel,
+                                                &game->textures.line_length, &game->textures.endian);
+    // Add door texture data
+    game->textures.data[4] = mlx_get_data_addr(game->textures.img[4], &game->textures.bits_per_pixel,
+                                                &game->textures.line_length, &game->textures.endian);
+
+    // Calculate bit shift for fast operations
+    int width = game->textures.tex_width;
+    int shift = 0;
+    while ((1 << shift) < width) shift++;
+    game->textures.tex_width_shift = shift;
+
+    return 1;
 }
 
-char *get_wall_texture(t_render *r, t_textures *textures)
+static inline char *get_wall_texture_fast(t_render *r, t_textures *textures)
 {
-    if (r->side == 0)
-    {
-        if (r->stepX > 0)
-            return textures->west_data;
-        else
-            return textures->east_data;
-    }
-    else
-    {
-        if (r->stepY > 0)
-            return textures->north_data;
-        else
-            return textures->south_data;
-    }
+    // Calculate texture index using bit operations (super fast!)
+    int tex_index = (r->side << 1) | (r->side == 0 ? (r->stepX > 0) : (r->stepY > 0));
+    
+    // Direct array access - no conditionals!
+    return textures->data[tex_index];
 }
 
 int get_texture_pixel(char *texture_data, int tex_x, int tex_y, t_textures *tex)
@@ -339,6 +371,202 @@ int get_texture_pixel(char *texture_data, int tex_x, int tex_y, t_textures *tex)
         return (0x000000);
     pixel_index = (tex_y * tex->tex_width + tex_x) * 4;
     return (*(int *)(texture_data + pixel_index));
+}
+
+int get_sprite_pixel(char *sprite_data, int tex_x, int tex_y, t_sprite_system *sprites)
+{
+    if (tex_x < 0 || tex_x >= sprites->grass_width || tex_y < 0 || tex_y >= sprites->grass_height)
+        return 0xFF00FF; // Return transparent color
+    
+    int pixel_index = (tex_y * sprites->grass_width + tex_x) * 4;
+    return (*(int *)(sprite_data + pixel_index));
+}
+
+void generate_grass_sprites(t_game *game)
+{
+    int max_sprites = 2000;  // Reduced from 200
+    game->sprites.sprite_count = 0;
+    game->sprites.sprites = malloc(sizeof(t_sprite) * max_sprites);
+    
+    // Place grass randomly on empty floor tiles
+    for (int map_y = 0; map_y < game->maps.height; map_y++)
+    {
+        for (int map_x = 0; map_x < game->maps.width; map_x++)
+        {
+            if (get_map_value(&game->maps, map_x, map_y, game) == 0)  // Empty floor
+            {
+                // REDUCED: Only 1-2 grass sprites per tile (was 2-4)
+                int grass_per_tile = 1 + (rand() % 2);  // 1 or 2 sprites per tile
+                
+                for (int i = 0; i < grass_per_tile && game->sprites.sprite_count < max_sprites; i++)
+                {
+                    // BETTER DISTRIBUTION: More spread out within tile
+                    double rand_x = map_x + 0.1 + (rand() % 80) / 100.0;  // 0.1 to 0.9
+                    double rand_y = map_y + 0.1 + (rand() % 80) / 100.0;  // 0.1 to 0.9
+                    
+                    // Skip if too close to walls (avoid clipping)
+                    if (rand_x < map_x + 0.2 || rand_x > map_x + 0.8) continue;
+                    if (rand_y < map_y + 0.2 || rand_y > map_y + 0.8) continue;
+                    
+                    // Random grass type for variety
+                    int grass_type = rand() % 2;  // 0 or 1
+                    
+                    game->sprites.sprites[game->sprites.sprite_count].x = rand_x;
+                    game->sprites.sprites[game->sprites.sprite_count].y = rand_y;
+                    game->sprites.sprites[game->sprites.sprite_count].texture_index = grass_type;
+                    game->sprites.sprite_count++;
+                }
+            }
+        }
+    }
+    
+    printf("Generated %d grass sprites\n", game->sprites.sprite_count);
+}
+
+int load_grass_texture(t_game *game)
+{
+    // Load first grass texture
+    game->sprites.grass_img[0] = mlx_xpm_file_to_image(game->mlx.mlx, "textures/grass.xpm", 
+                                                       &game->sprites.grass_width, &game->sprites.grass_height);
+    if (!game->sprites.grass_img[0])
+    {
+        printf("Failed to load grass texture 1\n");
+        return 0;
+    }
+    
+    // Load second grass texture (optional)
+    game->sprites.grass_img[1] = mlx_xpm_file_to_image(game->mlx.mlx, "textures/grass2.xpm", 
+                                                       &game->sprites.grass_width, &game->sprites.grass_height);
+    if (!game->sprites.grass_img[1])
+    {
+        // If grass2.xpm doesn't exist, use the same texture for both
+        game->sprites.grass_img[1] = game->sprites.grass_img[0];
+        printf("Using same grass texture for variety\n");
+    }
+    
+    // Get data pointers
+    int temp_vars[3];
+    game->sprites.grass_data[0] = mlx_get_data_addr(game->sprites.grass_img[0], 
+                                                    &temp_vars[0], &temp_vars[1], &temp_vars[2]);
+    game->sprites.grass_data[1] = mlx_get_data_addr(game->sprites.grass_img[1], 
+                                                    &temp_vars[0], &temp_vars[1], &temp_vars[2]);
+    
+    return 1;
+}
+
+void render_single_sprite(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites)
+{
+    // Transform sprite position relative to camera
+    double spriteX = sprite->x - mlx->posX;
+    double spriteY = sprite->y - mlx->posY;
+    
+    // Required for correct matrix transformation
+    double invDet = 1.0 / (mlx->planeX * mlx->dirY - mlx->dirX * mlx->planeY);
+    
+    double transformX = invDet * (mlx->dirY * spriteX - mlx->dirX * spriteY);
+    double transformY = invDet * (-mlx->planeY * spriteX + mlx->planeX * spriteY);
+    
+    // Skip sprites behind player
+    if (transformY <= 0) return;
+    
+    int spriteScreenX = (int)((screenWidth / 2) * (1 + transformX / transformY));
+    
+    // Calculate sprite dimensions
+    int spriteHeight = abs((int)(screenHeight / transformY)) / 8;  // Smaller grass
+    int spriteWidth = abs((int)(screenHeight / transformY)) / 6;   // Thinner grass
+    
+    // FIXED: Calculate the actual ground level based on perspective
+    // The ground appears at different Y positions depending on distance
+    int horizonY = screenHeight / 2 + (int)mlx->pitch;  // Account for pitch
+    int groundY = horizonY + (int)(screenHeight / (2.0 * transformY));  // Ground level at this distance
+    
+    // Position grass to sit ON the ground, not float
+    int drawStartY = groundY - spriteHeight;  // Grass bottom touches ground
+    int drawEndY = groundY;                   // Grass top ends at ground level
+    
+    // Clamp to screen bounds
+    if (drawStartY < 0) drawStartY = 0;
+    if (drawEndY >= screenHeight) drawEndY = screenHeight - 1;
+    if (drawStartY >= drawEndY) return;  // Skip if no pixels to draw
+    
+    int drawStartX = -spriteWidth / 2 + spriteScreenX;
+    if (drawStartX < 0) drawStartX = 0;
+    int drawEndX = spriteWidth / 2 + spriteScreenX;
+    if (drawEndX >= screenWidth) drawEndX = screenWidth - 1;
+    if (drawStartX >= drawEndX) return;  // Skip if no pixels to draw
+    
+    char *current_grass_data = sprites->grass_data[sprite->texture_index];
+    
+    // Render sprite column by column
+    for (int stripe = drawStartX; stripe < drawEndX; stripe++)
+    {
+        // Skip if behind a wall
+        if (stripe >= 0 && stripe < screenWidth && transformY > mlx->zbuffer[stripe]) 
+            continue;
+            
+        int texX = (int)((stripe - drawStartX) * sprites->grass_width / (drawEndX - drawStartX));
+        if (texX < 0) texX = 0;
+        if (texX >= sprites->grass_width) texX = sprites->grass_width - 1;
+        
+        for (int y = drawStartY; y < drawEndY; y++)
+        {
+            // Calculate texture Y coordinate properly
+            int texY = (int)((y - drawStartY) * sprites->grass_height / (drawEndY - drawStartY));
+            if (texY < 0) texY = 0;
+            if (texY >= sprites->grass_height) texY = sprites->grass_height - 1;
+            
+            // Get pixel color
+            int color = get_sprite_pixel(current_grass_data, texX, texY, sprites);
+            
+            // Skip transparent pixels (magenta)
+            if (color == 0xFF00FF || (color & 0xFF00FF) == 0xFF00FF) continue;
+            
+            // Draw the pixel
+            if (stripe >= 0 && stripe < screenWidth && y >= 0 && y < screenHeight)
+                ft_mlx_pixel_put(mlx, stripe, y, color);
+        }
+    }
+}
+
+void render_sprites(t_mlx *mlx, t_sprite_system *sprites)
+{
+    int rendered_count = 0;
+    
+    // Calculate distances and cull very distant sprites
+    for (int i = 0; i < sprites->sprite_count; i++)
+    {
+        double dx = sprites->sprites[i].x - mlx->posX;
+        double dy = sprites->sprites[i].y - mlx->posY;
+        sprites->sprites[i].distance = dx * dx + dy * dy;  // Distance squared
+        
+        // Skip sprites that are too far away (performance optimization)
+        if (sprites->sprites[i].distance > 64.0)  // Beyond 8 units away
+            sprites->sprites[i].distance = -1;  // Mark as skip
+        else
+            rendered_count++;
+    }
+    
+    // Simple bubble sort (only sort sprites we'll actually render)
+    for (int i = 0; i < sprites->sprite_count - 1; i++)
+    {
+        for (int j = 0; j < sprites->sprite_count - 1 - i; j++)
+        {
+            if (sprites->sprites[j].distance >= 0 && sprites->sprites[j + 1].distance >= 0 &&
+                sprites->sprites[j].distance < sprites->sprites[j + 1].distance)
+            {
+                t_sprite temp = sprites->sprites[j];
+                sprites->sprites[j] = sprites->sprites[j + 1];
+                sprites->sprites[j + 1] = temp;
+            }
+        }
+    }
+    
+    // Render each sprite (skip distant ones)
+    for (int i = 0; i < sprites->sprite_count; i++)
+    {
+        if (sprites->sprites[i].distance >= 0)  // Only render non-culled sprites
+            render_single_sprite(mlx, &sprites->sprites[i], sprites);
+    }
 }
 
 int key_hook(int keycode, t_mlx *mlx)
@@ -364,30 +592,30 @@ static void clear_image(t_mlx *data)
 
 void draw_dot(t_mlx *mlx, int dot_size, int center_x, int center_y)
 {
-	int y;
-	int x;
-	int pixel_x;
-	int pixel_y;
+    int y;
+    int x;
+    int pixel_x;
+    int pixel_y;
 
-	y = -dot_size;
-	while(y <= dot_size)
-	{
-		while(x <= dot_size)
-		{
-			x = -dot_size;
-			if(x*x + y*y <= dot_size*dot_size)
-			{
-				pixel_x = center_x + x;
-				pixel_y = center_y + y;
-				if(pixel_x >= 0 && pixel_y >= 0 && pixel_x < screenWidth && pixel_y < screenHeight)
-				{
-					ft_mlx_pixel_put(mlx, pixel_x, pixel_y, 0xFFFFFF);
-				}
-			}
-			x++;
-		}
-		y++;
-	}
+    y = -dot_size;
+    while(y <= dot_size)
+    {
+        x = -dot_size;
+        while(x <= dot_size)
+        {
+            if(x*x + y*y <= dot_size*dot_size)
+            {
+                pixel_x = center_x + x;
+                pixel_y = center_y + y;
+                if(pixel_x >= 0 && pixel_y >= 0 && pixel_x < screenWidth && pixel_y < screenHeight)
+                {
+                    ft_mlx_pixel_put(mlx, pixel_x, pixel_y, 0xFFFFFF);
+                }
+            }
+            x++;
+        }
+        y++;
+    }
 }
 
 void draw_crosshair(t_mlx *mlx)
@@ -487,23 +715,6 @@ void render_start(t_mlx *mlx, t_render *r)
 		r->deltaDistX = fabs(1 / r->rayDirX);
 }
 
-int blend_colors(int original_color, int fog_color, double fog_factor)
-{
-    int r1 = (original_color >> 16) & 0xFF;
-    int g1 = (original_color >> 8) & 0xFF;
-    int b1 = original_color & 0xFF;
-    
-    int r2 = (fog_color >> 16) & 0xFF;
-    int g2 = (fog_color >> 8) & 0xFF;
-    int b2 = fog_color & 0xFF;
-    
-    int r = (int)(r1 * (1.0 - fog_factor) + r2 * fog_factor);
-    int g = (int)(g1 * (1.0 - fog_factor) + g2 * fog_factor);
-    int b = (int)(b1 * (1.0 - fog_factor) + b2 * fog_factor);
-    
-    return ((r << 16) | (g << 8) | b);
-}
-
 void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int draw_end)
 {
     int y;
@@ -522,7 +733,7 @@ void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int 
     }
 }
 
-void apply_dda(t_mlx *mlx, t_render *r, t_map *map)
+void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game)
 {
     if (r->rayDirX < 0)
     {
@@ -546,6 +757,7 @@ void apply_dda(t_mlx *mlx, t_render *r, t_map *map)
     }
     
     r->hit = 0;
+    r->hit_type = 0;  // Add this field to t_render
     int step_count = 0;
     
     while (r->hit == 0)
@@ -564,9 +776,25 @@ void apply_dda(t_mlx *mlx, t_render *r, t_map *map)
             r->side = 1;
         }
         
+        // Check what we hit
+        char cell = map->rows[r->mapY][r->mapX];
         
-        if (get_map_value(map, r->mapX, r->mapY) == 1)
+        if (cell == '1')  // Regular wall
+        {
             r->hit = 1;
+            r->hit_type = 1;  // Wall hit
+        }
+        else if (cell == 'D')  // Door
+        {
+            // Find the door in our door array
+            t_door *door = find_door(game, r->mapX, r->mapY);
+            if (door && !door->is_open)  // Door is closed
+            {
+                r->hit = 1;
+                r->hit_type = 2;  // Door hit
+            }
+            // If door is open, continue ray (treat as empty space)
+        }
     }
 }
 
@@ -632,21 +860,16 @@ void vertical_update(t_mlx *mlx, t_render *r, t_game *game)
     int tex_y;
     int color;
     int y;
-	int fog_color = 0x202020;
-    double fog_distance = r->perpWallDist;
-    double fog_start = 2.0;
-    double fog_end = 8.0;
-    double fog_factor = 0.0;
     
-    texture_data = get_wall_texture(r, &game->textures);
+    // Select texture based on hit type
+    if (r->hit_type == 2)  // Door hit
+        texture_data = game->textures.data[4];  // Door texture data
+    else
+        texture_data = get_wall_texture_fast(r, &game->textures);
+    
     y = r->drawStart;
     r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
-    if (fog_distance > fog_start) 
-    {
-        fog_factor = (fog_distance - fog_start) / (fog_end - fog_start);
-        if (fog_factor > 1.0) fog_factor = 1.0;
-        fog_factor = fog_factor * fog_factor;
-    }
+
     while (y <= r->drawEnd)
     {
         tex_y = (int)r->texPos % game->textures.tex_height;
@@ -654,15 +877,52 @@ void vertical_update(t_mlx *mlx, t_render *r, t_game *game)
         if (tex_y >= game->textures.tex_height) tex_y = game->textures.tex_height - 1;
         r->texPos += r->step;
         color = get_texture_pixel(texture_data, r->texX, tex_y, &game->textures);
-        if (fog_distance > 1.0)
-        {
-            color = blend_colors(color, fog_color, fog_factor);
-        }
-        //color = apply_vignette(color, r->x, y);
+
+        if (r->side == 1)
+            color = ((((color >> 16) & 0xFF) * 9 / 10) << 16) | 
+                    ((((color >> 8) & 0xFF) * 9 / 10) << 8) | 
+                    (((color & 0xFF) * 9 / 10));
+        
         if (y >= 0 && y < screenHeight)
             ft_mlx_pixel_put(mlx, r->x, y, color);
         y++;
     }
+}
+
+void interact_with_door(t_game *game)
+{
+    // Check multiple distances to catch doors at any range
+    float distances[] = {0.3, 0.6, 0.9, 1.2, 1.5};  // Start closer!
+    int num_distances = 5;
+    
+    for (int i = 0; i < num_distances; i++)
+    {
+        float check_x = game->mlx.posX + game->mlx.dirX * distances[i];
+        float check_y = game->mlx.posY + game->mlx.dirY * distances[i];
+        
+        int map_x = (int)check_x;
+        int map_y = (int)check_y;
+        
+        // Check bounds
+        if (map_x < 0 || map_x >= game->maps.width || 
+            map_y < 0 || map_y >= game->maps.height)
+            continue;
+            
+        // Check if there's a door at this position
+        if (game->maps.rows[map_y][map_x] == 'D')
+        {
+            t_door *door = find_door(game, map_x, map_y);
+            if (door)
+            {
+                door->is_open = !door->is_open;
+                printf("Door %s at (%d, %d)\n", 
+                       door->is_open ? "opened" : "closed", map_x, map_y);
+                return; // Exit after first door found
+            }
+        }
+    }
+    
+    printf("No door found to interact with\n");  // Debug message
 }
 
 void render_scene(t_game *game)
@@ -670,26 +930,31 @@ void render_scene(t_game *game)
     t_render r;
     t_mlx *mlx = &game->mlx;
     t_map *map = &game->maps;
+
     r.x = 0;
     clear_image(mlx);
-    
     while(r.x < screenWidth)
     {
         render_start(mlx, &r);     
-        apply_dda(mlx, &r, map);
+        apply_dda(mlx, &r, map, game);
         data_update(mlx, &r, game);
         draw_ceiling_floor(mlx, &game->colors, r.x, r.drawStart, r.drawEnd);
         vertical_update(mlx, &r, game);
+        mlx->zbuffer[r.x] = r.perpWallDist;
+        
         r.x++;
     }
+    render_sprites(mlx, &game->sprites);
     
-    draw_minimap(mlx, map);
+    draw_minimap(mlx, map, game);
     draw_crosshair(mlx);
     mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
 }
 
-int handle_keys(int keycode, t_mlx *mlx)
+int handle_keys(int keycode, t_game *game)  // Change parameter type
 {
+    t_mlx *mlx = &game->mlx;  // Get mlx from game
+    
     if (keycode == 65307)
     {
         if (mlx->mouse_locked)
@@ -705,17 +970,21 @@ int handle_keys(int keycode, t_mlx *mlx)
         mlx->key_state[0] = 1;
     if (keycode == KEY_A)
         mlx->key_state[1] = 1;
-    if (keycode == KEY_S)  // Fix indentation here
+    if (keycode == KEY_S)
         mlx->key_state[2] = 1;
-    if (keycode == KEY_D)  // Fix indentation here
+    if (keycode == KEY_D)
         mlx->key_state[3] = 1;
-    if (keycode == KEY_SHIFT) 
+    if (keycode == KEY_SHIFT)
         mlx->key_state[4] = 1;
+    if (keycode == KEY_INTERACT)
+        interact_with_door(game);  // Now pass the correct game pointer
     return (0);
 }
 
-int handle_key_release(int keycode, t_mlx *mlx)
+int handle_key_release(int keycode, t_game *game)  // Change parameter type
 {
+    t_mlx *mlx = &game->mlx;  // Get mlx from game
+    
     if (keycode == KEY_W)
         mlx->key_state[0] = 0;
     if (keycode == KEY_A)
@@ -737,43 +1006,44 @@ double get_movement_speed(t_mlx *mlx)
         return MOVE_SPEED;
 }
 
-int handle_vertical_movement(t_mlx *mlx, t_map *map)
+// Update your movement functions
+int handle_vertical_movement(t_mlx *mlx, t_map *map, t_game *game)  // Add game parameter
 {
-	double current_speed = get_movement_speed(mlx);
-	
+    double current_speed = get_movement_speed(mlx);
+    
     if (mlx->key_state[0])
     {
-		if(get_map_value(map, (int)(mlx->posX + mlx->dirX * current_speed), (int)(mlx->posY)) == 0) 
-		mlx->posX += mlx->dirX * current_speed;
-        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY + mlx->dirY * current_speed)) == 0) 
-		mlx->posY += mlx->dirY * current_speed;
+        if(get_map_value(map, (int)(mlx->posX + mlx->dirX * current_speed), (int)(mlx->posY), game) == 0) 
+            mlx->posX += mlx->dirX * current_speed;
+        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY + mlx->dirY * current_speed), game) == 0) 
+            mlx->posY += mlx->dirY * current_speed;
     }
     if (mlx->key_state[2])
     {
-		if(get_map_value(map, (int)(mlx->posX - mlx->dirX * current_speed), (int)(mlx->posY)) == 0) 
+        if(get_map_value(map, (int)(mlx->posX - mlx->dirX * current_speed), (int)(mlx->posY), game) == 0) 
             mlx->posX -= mlx->dirX * current_speed;
-        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY - mlx->dirY * current_speed)) == 0) 
+        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY - mlx->dirY * current_speed), game) == 0) 
             mlx->posY -= mlx->dirY * current_speed;
     }
     return (0);
 }
 
-int handle_horizontal_movement(t_mlx *mlx, t_map *map)
+int handle_horizontal_movement(t_mlx *mlx, t_map *map, t_game *game)
 {
 	double current_speed = get_movement_speed(mlx);
 	
     if (mlx->key_state[1])
     {
-		if(get_map_value(map, (int)(mlx->posX - mlx->planeX * current_speed), (int)(mlx->posY)) == 0) 
+		if(get_map_value(map, (int)(mlx->posX - mlx->planeX * current_speed), (int)(mlx->posY), game) == 0) 
 		mlx->posX -= mlx->planeX * current_speed;
-        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY - mlx->planeY * current_speed)) == 0) 
+        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY - mlx->planeY * current_speed), game) == 0) 
 		mlx->posY -= mlx->planeY * current_speed;
     }
     if (mlx->key_state[3])
     {
-        if(get_map_value(map, (int)(mlx->posX + mlx->planeX * current_speed), (int)(mlx->posY)) == 0) 
+        if(get_map_value(map, (int)(mlx->posX + mlx->planeX * current_speed), (int)(mlx->posY), game) == 0) 
             mlx->posX += mlx->planeX * current_speed;
-        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY + mlx->planeY * current_speed)) == 0) 
+        if(get_map_value(map, (int)(mlx->posX), (int)(mlx->posY + mlx->planeY * current_speed), game) == 0) 
             mlx->posY += mlx->planeY * current_speed;
 		}
     return (0);
@@ -844,8 +1114,8 @@ int render_loop(t_game *game)
 
     frame_count++;
 
-    handle_vertical_movement(mlx, map);
-    handle_horizontal_movement(mlx, map);
+    handle_vertical_movement(mlx, map, game);    // Add game parameter
+    handle_horizontal_movement(mlx, map, game);  // Add game parameter
     render_scene(game);
     
     return (0);
@@ -866,6 +1136,7 @@ void initialize_mlx(t_mlx *mlx)
     mlx->mouse_locked = 0;
     mlx->needs_render = 1;
     mlx->last_render_time = 0;
+	mlx->zbuffer = malloc(sizeof(double) * screenWidth);
     mlx->mlx = mlx_init();
     mlx->win = mlx_new_window(mlx->mlx, screenWidth, screenHeight, "Cub3D Raycasting");
     mlx->img = mlx_new_image(mlx->mlx, screenWidth, screenHeight);
@@ -899,8 +1170,10 @@ int main(int argc, char **argv)
         return (1);
     }
     initialize_player_from_map(&game.mlx, &game.maps);
-    mlx_hook(game.mlx.win, 2, 1L << 0, handle_keys, &game.mlx);
-    mlx_hook(game.mlx.win, 3, 1L << 1, handle_key_release, &game.mlx);
+    load_grass_texture(&game);
+    generate_grass_sprites(&game);
+    mlx_hook(game.mlx.win, 2, 1L << 0, handle_keys, &game);
+    mlx_hook(game.mlx.win, 3, 1L << 1, handle_key_release, &game);
     mlx_hook(game.mlx.win, 4, 1L << 2, handle_mouse_press, &game.mlx);
     mlx_hook(game.mlx.win, 6, 1L << 6, handle_mouse_move, &game.mlx);
     mlx_hook(game.mlx.win, 17, 0, close_hook, &game.mlx);

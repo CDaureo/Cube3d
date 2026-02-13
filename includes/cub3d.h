@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/08 18:45:14 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/10 19:21:53 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,24 @@
 
 #define WIN_WIDTH 1280
 #define WIN_HEIGHT 720
+
+typedef struct s_sprite
+{
+	double x;
+	double y;
+	int texture_index;
+	double distance;
+} t_sprite;
+
+typedef struct s_sprite_system
+{
+	t_sprite *sprites;     // Array of sprites
+	int sprite_count;      // Number of sprites
+	void *grass_img[2];    // Multiple grass textures (0 = grass1, 1 = grass2)
+	char *grass_data[2];   // Multiple grass texture data
+	int grass_width;       // Grass texture dimensions
+	int grass_height;
+} t_sprite_system;
 
 typedef struct s_minimap {
     // Basic positioning
@@ -107,6 +125,7 @@ typedef struct s_mlx {
     double planeX;
     double planeY;
 	double pitch;
+	double *zbuffer;
 	int last_mouse_x;
     int last_mouse_y;
     int mouse_locked;
@@ -138,6 +157,7 @@ typedef struct s_render {
 	int texX;
     double step;
     double texPos;
+	int hit_type;
 } t_render;
 
 
@@ -151,8 +171,7 @@ typedef struct s_map
 	char	player_dir;
 } t_map;
 
-typedef struct s_color
-{
+typedef struct s_color {
     int     floor_color;
     int     ceiling_color;
     int     floor_set;
@@ -161,31 +180,33 @@ typedef struct s_color
 
 typedef struct s_textures
 {
-    char *north;    // Texture file paths (from parsing)
-    char *south;
+    // Keep existing fields for parsing compatibility
+    char *north;
+    char *south; 
     char *west;
     char *east;
+    char *door;
     
-    // MLX image data for loaded textures
-    void *north_img;
-    void *south_img;
-    void *west_img;
-    void *east_img;
-    
-    // Texture data pointers
-    char *north_data;
-    char *south_data;
-    char *west_data;
-    char *east_data;
+    // Add optimized arrays for fast rendering
+    void *img[5];        // [0]=north, [1]=south, [2]=west, [3]=east, [4]=door
+    char *data[5];       // Texture data pointers [4] = door data
     
     // Texture dimensions
     int tex_width;
     int tex_height;
-	int tex_width_shift;
+    int tex_width_shift;
     int bits_per_pixel;
     int line_length;
     int endian;
 } t_textures;
+
+typedef struct s_door
+{
+    int x;
+    int y;
+    int is_open;
+    float open_progress; // 0.0 = closed, 1.0 = fully open
+} t_door;
 
 typedef struct s_game
 {
@@ -195,6 +216,9 @@ typedef struct s_game
 	t_color		colors;
 	t_map		maps;
 	t_mlx       mlx;
+	t_door *doors;
+    int door_count;
+	t_sprite_system sprites;
 }	t_game;
 
 
