@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/10 19:21:53 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/16 18:23:22 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,32 @@ typedef struct s_sprite
 
 typedef struct s_sprite_system
 {
-	t_sprite *sprites;     // Array of sprites
-	int sprite_count;      // Number of sprites
-	void *grass_img[2];    // Multiple grass textures (0 = grass1, 1 = grass2)
-	char *grass_data[2];   // Multiple grass texture data
-	int grass_width;       // Grass texture dimensions
+	t_sprite *sprites;
+	int sprite_count;
+	double invDet;
+	double spriteX;
+	double spriteY;
+	double transformX;
+	double transformY;
+	int texX;
+	int texY;
+	int color;
+	int spriteScreenX;
+	int spriteHeight;
+	int spriteWidth;
+	int horizonY;
+	int groundY;
+	int drawStartY;
+	int drawStartX;
+	int drawEndY;
+	int drawEndX;
+	void *grass_img[2];
+	char *grass_data[2];
+	int grass_width;
 	int grass_height;
 } t_sprite_system;
 
 typedef struct s_minimap {
-    // Basic positioning
     int map_start_x;
     int map_start_y;
     int center_x;
@@ -51,8 +67,6 @@ typedef struct s_minimap {
     double player_angle;
     int arrow_length;
     int arrow_width;
-    
-    // Map background variables
     double rel_x;
     double rel_y;
     double rotated_x;
@@ -69,8 +83,6 @@ typedef struct s_minimap {
     int distance_squared;
     int screen_x;
     int screen_y;
-    
-    // Arrow outline variables
     int tip_x;
     int tip_y;
     int base_center_x;
@@ -91,22 +103,24 @@ typedef struct s_minimap {
     int outline_dy1;
     int outline_dx2;
     int outline_dy2;
-    
-    // Arrow body variables
     int scan_y;
     int width_at_y;
     int current_x;
     int current_y_adj;
     int arrow_dx;
     int arrow_dy;
-    
-    // Circle variables
     int angle;
     double radian;
     int border_x;
     int border_y;
     int inner_border_x;
     int inner_border_y;
+	double rand_x;
+	double rand_y;
+	int dot_size;
+	int outline_size;
+	int y;
+	int x;
 } t_minimap;
 
 typedef struct s_mlx {

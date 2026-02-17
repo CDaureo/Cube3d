@@ -2,6 +2,7 @@ SO textures/BRICK_1A.xpm
 EA textures/BRICK_2B.xpm
 WE textures/BRICK_3D.xpm
 NO textures/BRICK_3B.xpm
+DO textures/DOOR_4A.xpm
 
 F 0,100,0
 C 135,206,235
