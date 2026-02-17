@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/17 16:57:51 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/17 17:47:07 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,42 @@
 #include <string.h>
 #include "libft.h"
 #include "../minilibx-linux/mlx.h"
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "sys/time.h"
 
 #ifndef CUB3D_H
 #define CUB3D_H
 
 #define WIN_WIDTH 1280
 #define WIN_HEIGHT 720
+#define MAX_SPRITES 2000
+#define MOVEMENT_FPS 60
+#define RENDER_FPS 60
+#define TARGET_FPS 60
+#define FRAME_TIME_MS (1000 / TARGET_FPS)
+#define screenWidth 1920
+#define screenHeight 1080
+#define MOVE_SPEED 0.03
+#define ROT_SPEED 0.015
+#define KEY_LEFT 65361
+#define KEY_RIGHT 65363
+#define KEY_UP_ARROW 65364
+#define KEY_DOWN_ARROW 65362
+#define KEY_W 119
+#define KEY_A 97
+#define KEY_S 115
+#define KEY_D 100
+#define MOUSE_SENS_X 0.001
+#define MOUSE_SENS_Y 1.0  
+#define MINIMAP_SIZE 200
+#define MINIMAP_SCALE 8
+#define MINIMAP_OFFSET 20
+#define KEY_SHIFT 65505
+#define KEY_INTERACT 101
 
 typedef struct s_sprite
 {
@@ -254,6 +284,14 @@ int parse_ceiling_color(char *line, t_color *data);
 int parse_file(const char *path, t_game *game);
 int	parse_map_line(char *line, t_map *map);
 int	finalize_map(t_map *map);
+
+/* Minimap */
+
+/* Raycasting */
+
+/* Rendering */
+
+/* Sprites */
 
 /* Utils */
 char	*trim_whitespace(char *str);
