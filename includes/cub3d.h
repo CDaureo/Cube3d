@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/16 18:23:22 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/17 16:57:51 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ typedef struct s_sprite_system
 	char *grass_data[2];
 	int grass_width;
 	int grass_height;
+	int max_sprites;
+	int grass_type;
+	int grass_per_tile;
 } t_sprite_system;
 
 typedef struct s_minimap {

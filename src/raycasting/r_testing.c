@@ -150,7 +150,7 @@ void background_check(t_minimap *minimap, t_mlx *mlx, t_game *game, t_map *map)
 	}
 }
 
-void draw_map_background(t_mlx *mlx, t_minimap *minimap, t_map *map, t_game *game)
+void draw_map_background(t_minimap *minimap, t_mlx *mlx, t_map *map, t_game *game)
 { 
 	minimap->pixel_y = 0;
 
@@ -162,7 +162,7 @@ void draw_map_background(t_mlx *mlx, t_minimap *minimap, t_map *map, t_game *gam
 			minimap->dx = minimap->pixel_x - MINIMAP_SIZE / 2;
 			minimap->dy = minimap->pixel_y - MINIMAP_SIZE / 2;
 			minimap->distance_squared = minimap->dx * minimap->dx + minimap->dy * minimap->dy;
-			
+			background_check(minimap, mlx, game, map);
 			minimap->pixel_x++;
 		}
 		minimap->pixel_y++;
@@ -198,10 +198,8 @@ void draw_arrow_body(t_mlx *mlx, t_minimap *minimap)
 	}
 }
 
-void draw_arrow_outline(t_mlx *mlx, t_minimap *minimap)
+void calculate_arrow_points(t_minimap *minimap)
 {
-	int i = 0;
-
 	minimap->tip_x = minimap->player_pixel_x;
 	minimap->tip_y = minimap->player_pixel_y - minimap->arrow_length;
 	minimap->base_center_x = minimap->player_pixel_x;
@@ -210,40 +208,65 @@ void draw_arrow_outline(t_mlx *mlx, t_minimap *minimap)
 	minimap->base_left_y = minimap->base_center_y;
 	minimap->base_right_x = minimap->base_center_x + minimap->arrow_width;
 	minimap->base_right_y = minimap->base_center_y;
+}
+
+void draw_arrow_base_line(t_mlx *mlx, t_minimap *minimap, int i)
+{
+	minimap->lx3 = minimap->base_left_x + (int)((minimap->base_right_x - minimap->base_left_x) * i / 10.0);
+	minimap->ly3 = minimap->base_left_y + (int)((minimap->base_right_y - minimap->base_left_y) * i / 10.0);
+	minimap->outline_dx = minimap->lx3 - minimap->center_x;
+	minimap->outline_dy = minimap->ly3 - minimap->center_y;
+	
+	if(minimap->outline_dx * minimap->outline_dx + minimap->outline_dy * minimap->outline_dy <= minimap->radius * minimap->radius)
+	{
+		if(minimap->lx3 >= 0 && minimap->ly3 >= 0 && minimap->lx3 < screenWidth && minimap->ly3 < screenHeight)
+			ft_mlx_pixel_put(mlx, minimap->lx3, minimap->ly3, 0xFFFFFF);
+	}
+}
+
+void draw_arrow_side_lines(t_minimap *minimap, int i)
+{
+	minimap->lx1 = minimap->base_left_x + (int)((minimap->tip_x - minimap->base_left_x) * i / 20.0);
+	minimap->ly1 = minimap->base_left_y + (int)((minimap->tip_y - minimap->base_left_y) * i / 20.0);
+	minimap->lx2 = minimap->base_right_x + (int)((minimap->tip_x - minimap->base_right_x) * i / 20.0);
+	minimap->ly2 = minimap->base_right_y + (int)((minimap->tip_y - minimap->base_right_y) * i / 20.0);
+	minimap->outline_dx1 = minimap->lx1 - minimap->center_x;
+	minimap->outline_dy1 = minimap->ly1 - minimap->center_y;
+	minimap->outline_dx2 = minimap->lx2 - minimap->center_x;
+	minimap->outline_dy2 = minimap->ly2 - minimap->center_y;
+}
+
+void draw_left_arrow_side(t_mlx *mlx, t_minimap *minimap)
+{
+	if(minimap->outline_dx1 * minimap->outline_dx1 + minimap->outline_dy1 * minimap->outline_dy1 <= minimap->radius * minimap->radius)
+	{
+		if(minimap->lx1 >= 0 && minimap->ly1 >= 0 && minimap->lx1 < screenWidth && minimap->ly1 < screenHeight)
+			ft_mlx_pixel_put(mlx, minimap->lx1, minimap->ly1, 0xFFFFFF);
+	}
+}
+
+void draw_right_arrow_side(t_mlx *mlx, t_minimap *minimap)
+{
+	if(minimap->outline_dx2 * minimap->outline_dx2 + minimap->outline_dy2 * minimap->outline_dy2 <= minimap->radius * minimap->radius)
+	{
+		if(minimap->lx2 >= 0 && minimap->ly2 >= 0 && minimap->lx2 < screenWidth && minimap->ly2 < screenHeight)
+			ft_mlx_pixel_put(mlx, minimap->lx2, minimap->ly2, 0xFFFFFF);
+	}
+}
+
+void draw_arrow_outline(t_mlx *mlx, t_minimap *minimap)
+{
+	int i;
+
+	i = 0;
+	calculate_arrow_points(minimap);
 	while(i <= 20)
 	{
-		minimap->lx1 = minimap->base_left_x + (int)((minimap->tip_x - minimap->base_left_x) * i / 20.0);
-		minimap->ly1 = minimap->base_left_y + (int)((minimap->tip_y - minimap->base_left_y) * i / 20.0);
-		minimap->lx2 = minimap->base_right_x + (int)((minimap->tip_x - minimap->base_right_x) * i / 20.0);
-		minimap->ly2 = minimap->base_right_y + (int)((minimap->tip_y - minimap->base_right_y) * i / 20.0);
-		
+		draw_arrow_side_lines(minimap, i);
 		if(i <= 10)
-		{
-			minimap->lx3 = minimap->base_left_x + (int)((minimap->base_right_x - minimap->base_left_x) * i / 10.0);
-			minimap->ly3 = minimap->base_left_y + (int)((minimap->base_right_y - minimap->base_left_y) * i / 10.0);
-			minimap->outline_dx = minimap->lx3 - minimap->center_x;
-			minimap->outline_dy = minimap->ly3 - minimap->center_y;
-			
-			if(minimap->outline_dx * minimap->outline_dx + minimap->outline_dy * minimap->outline_dy <= minimap->radius * minimap->radius)
-			{
-				if(minimap->lx3 >= 0 && minimap->ly3 >= 0 && minimap->lx3 < screenWidth && minimap->ly3 < screenHeight)
-					ft_mlx_pixel_put(mlx, minimap->lx3, minimap->ly3, 0xFFFFFF);
-			}
-		}
-		minimap->outline_dx1 = minimap->lx1 - minimap->center_x;
-		minimap->outline_dy1 = minimap->ly1 - minimap->center_y;
-		minimap->outline_dx2 = minimap->lx2 - minimap->center_x;
-		minimap->outline_dy2 = minimap->ly2 - minimap->center_y;
-		if(minimap->outline_dx1 * minimap->outline_dx1 + minimap->outline_dy1 * minimap->outline_dy1 <= minimap->radius * minimap->radius)
-		{
-			if(minimap->lx1 >= 0 && minimap->ly1 >= 0 && minimap->lx1 < screenWidth && minimap->ly1 < screenHeight)
-				ft_mlx_pixel_put(mlx, minimap->lx1, minimap->ly1, 0xFFFFFF);
-		}
-		if(minimap->outline_dx2 * minimap->outline_dx2 + minimap->outline_dy2 * minimap->outline_dy2 <= minimap->radius * minimap->radius)
-		{
-			if(minimap->lx2 >= 0 && minimap->ly2 >= 0 && minimap->lx2 < screenWidth && minimap->ly2 < screenHeight)
-				ft_mlx_pixel_put(mlx, minimap->lx2, minimap->ly2, 0xFFFFFF);
-		}
+			draw_arrow_base_line(mlx, minimap, i);
+		draw_left_arrow_side(mlx, minimap);
+		draw_right_arrow_side(mlx, minimap);
 		i++;
 	}
 }
@@ -277,7 +300,7 @@ void draw_minimap(t_mlx *mlx, t_map *map, t_game *game)
 {
 	t_minimap minimap;
 	init_minimap(&minimap, mlx);
-	draw_map_background(mlx, &minimap, map, game);
+	draw_map_background(&minimap, mlx, map, game);
 	draw_arrow_body(mlx, &minimap);
 	draw_arrow_outline(mlx, &minimap);   
 	draw_player_dot(mlx, &minimap);
@@ -357,50 +380,55 @@ int get_sprite_pixel(char *sprite_data, int tex_x, int tex_y, t_sprite_system *s
 	return (*(int *)(sprite_data + pixel_index));
 }
 
+void grass_loop_generating(t_game *game, t_minimap *minimap, t_sprite_system *sprites, int i)
+{
+	if (get_map_value(&game->maps, minimap->map_x, minimap->map_y, game) == 0)
+	{
+		sprites->grass_per_tile = 1 + (rand() % 2);
+		while(i < sprites->grass_per_tile && game->sprites.sprite_count < sprites->max_sprites)
+		{
+			minimap->rand_x = minimap->map_x + 0.1 + (rand() % 80) / 100.0;
+			minimap->rand_y = minimap->map_y + 0.1 + (rand() % 80) / 100.0;
+			if (minimap->rand_x < minimap->map_x + 0.2 || minimap->rand_x > minimap->map_x + 0.8)
+			{
+				i++;
+				continue;
+			}
+			if (minimap->rand_y < minimap->map_y + 0.2 || minimap->rand_y > minimap->map_y + 0.8)
+			{
+				i++;
+				continue;
+			}
+			sprites->grass_type = rand() % 2;
+			game->sprites.sprites[game->sprites.sprite_count].x = minimap->rand_x;
+			game->sprites.sprites[game->sprites.sprite_count].y = minimap->rand_y;
+			game->sprites.sprites[game->sprites.sprite_count].texture_index = sprites->grass_type;
+			game->sprites.sprite_count++;
+			i++;
+		}
+	}
+}
+
 void generate_grass_sprites(t_game *game, t_minimap *minimap)
 {
-    int max_sprites;
-    int grass_type;
-    int grass_per_tile;
-    int i;
+	t_sprite_system sprites;
+	int i;
 
-    max_sprites = MAX_SPRITES;
-    game->sprites.sprite_count = 0;
-    game->sprites.sprites = malloc(sizeof(t_sprite) * max_sprites);
-    minimap->map_y = 0;
-    while(minimap->map_y < game->maps.height)
-    {
-        minimap->map_x = 0;
-        while(minimap->map_x < game->maps.width)
-        {
-            if (get_map_value(&game->maps, minimap->map_x, minimap->map_y, game) == 0)
-            {
-                grass_per_tile = 1 + (rand() % 2);
-                i = 0;
-                while(i < grass_per_tile && game->sprites.sprite_count < max_sprites)
-                {
-                    minimap->rand_x = minimap->map_x + 0.1 + (rand() % 80) / 100.0;
-                    minimap->rand_y = minimap->map_y + 0.1 + (rand() % 80) / 100.0;
-                    if (minimap->rand_x < minimap->map_x + 0.2 || minimap->rand_x > minimap->map_x + 0.8) {
-                        i++;
-                        continue;
-                    }
-                    if (minimap->rand_y < minimap->map_y + 0.2 || minimap->rand_y > minimap->map_y + 0.8) {
-                        i++;
-                        continue;
-                    }
-                    grass_type = rand() % 2;
-                    game->sprites.sprites[game->sprites.sprite_count].x = minimap->rand_x;
-                    game->sprites.sprites[game->sprites.sprite_count].y = minimap->rand_y;
-                    game->sprites.sprites[game->sprites.sprite_count].texture_index = grass_type;
-                    game->sprites.sprite_count++;
-                    i++;
-                }
-            }
-            minimap->map_x++;
-        }
-        minimap->map_y++; 
-    printf("Generated %d grass sprites\n", game->sprites.sprite_count);
+	sprites.max_sprites = MAX_SPRITES;
+	game->sprites.sprite_count = 0;
+	game->sprites.sprites = malloc(sizeof(t_sprite) * sprites.max_sprites);
+	minimap->map_y = 0;
+	while(minimap->map_y < game->maps.height)
+	{
+		minimap->map_x = 0;
+		while(minimap->map_x < game->maps.width)
+		{
+			i = 0;
+			grass_loop_generating(game, minimap, &sprites, i);
+			minimap->map_x++;
+		}
+		minimap->map_y++; 
+	printf("Generated %d grass sprites\n", game->sprites.sprite_count);
 	}
 }
 
@@ -428,82 +456,101 @@ int load_grass_texture(t_game *game)
 	return (1);
 }
 
-void render_single_sprite(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites)
+void calculate_sprite_transform(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites)
 {
-    int stripe;
-    int y;
-    sprites->spriteX = sprite->x - mlx->posX;
-    sprites->spriteY = sprite->y - mlx->posY;
-    sprites->invDet = 1.0 / (mlx->planeX * mlx->dirY - mlx->dirX * mlx->planeY);
-    sprites->transformX = sprites->invDet * (mlx->dirY * sprites->spriteX - mlx->dirX * sprites->spriteY);
-    sprites->transformY = sprites->invDet * (-mlx->planeY * sprites->spriteX + mlx->planeX * sprites->spriteY);
-    if (sprites->transformY <= 0)
-        return;
-    sprites->spriteScreenX = (int)((screenWidth / 2) * (1 + sprites->transformX / sprites->transformY));
-    sprites->spriteHeight = abs((int)(screenHeight / sprites->transformY)) / 8;
-    sprites->spriteWidth = abs((int)(screenHeight / sprites->transformY)) / 6;
-    sprites->horizonY = screenHeight / 2 + (int)mlx->pitch;
-    sprites->groundY = sprites->horizonY + (int)(screenHeight / (2.0 * sprites->transformY));
-    sprites->drawStartY = sprites->groundY - sprites->spriteHeight;
-    sprites->drawEndY = sprites->groundY;
-    if (sprites->drawStartY < 0)
-        sprites->drawStartY = 0;
-    if (sprites->drawEndY >= screenHeight)
-        sprites->drawEndY = screenHeight - 1;
-    if (sprites->drawStartY >= sprites->drawEndY) 
-        return;
-    sprites->drawStartX = -sprites->spriteWidth / 2 + sprites->spriteScreenX;
-    if (sprites->drawStartX < 0)
-        sprites->drawStartX = 0;
-    sprites->drawEndX = sprites->spriteWidth / 2 + sprites->spriteScreenX;
-    if (sprites->drawEndX >= screenWidth)
-        sprites->drawEndX = screenWidth - 1;
-    if (sprites->drawStartX >= sprites->drawEndX)
-        return;
-    char *current_grass_data = sprites->grass_data[sprite->texture_index];
-    stripe = sprites->drawStartX;
-    while(stripe < sprites->drawEndX)
-    {
-        // Fixed z-buffer check: only skip if sprite is BEHIND the wall
-        if (stripe >= 0 && stripe < screenWidth && sprites->transformY > mlx->zbuffer[stripe]) 
-        {
-            stripe++;
-            continue;
-        }
-            
-        int texX = (int)((stripe - sprites->drawStartX) * sprites->grass_width / (sprites->drawEndX - sprites->drawStartX));
-        if (texX < 0) texX = 0;
-        if (texX >= sprites->grass_width) texX = sprites->grass_width - 1;
-        y = sprites->drawStartY;
-        while(y < sprites->drawEndY)
-        {
-            int texY = (int)((y - sprites->drawStartY) * sprites->grass_height / (sprites->drawEndY - sprites->drawStartY));
-            if (texY < 0) texY = 0;
-            if (texY >= sprites->grass_height) texY = sprites->grass_height - 1;
-            int color = get_sprite_pixel(current_grass_data, texX, texY, sprites);
-            if (color == 0xFF00FF || (color & 0xFF00FF) == 0xFF00FF) 
-            {
-                y++;
-                continue;
-            }
-            if (stripe >= 0 && stripe < screenWidth && y >= 0 && y < screenHeight)
-                ft_mlx_pixel_put(mlx, stripe, y, color);
-            y++;
-        }
-        stripe++;
-    }
+	sprites->spriteX = sprite->x - mlx->posX;
+	sprites->spriteY = sprite->y - mlx->posY;
+	sprites->invDet = 1.0 / (mlx->planeX * mlx->dirY - mlx->dirX * mlx->planeY);
+	sprites->transformX = sprites->invDet * (mlx->dirY * sprites->spriteX - mlx->dirX * sprites->spriteY);
+	sprites->transformY = sprites->invDet * (-mlx->planeY * sprites->spriteX + mlx->planeX * sprites->spriteY);
 }
 
-void render_sprites(t_mlx *mlx, t_sprite_system *sprites)
+void calculate_sprite_screen_coords(t_mlx *mlx, t_sprite_system *sprites)
 {
-	int rendered_count;
+	sprites->spriteScreenX = (int)((screenWidth / 2) * (1 + sprites->transformX / sprites->transformY));
+	sprites->spriteHeight = abs((int)(screenHeight / sprites->transformY)) / 8;
+	sprites->spriteWidth = abs((int)(screenHeight / sprites->transformY)) / 6;
+	sprites->horizonY = screenHeight / 2 + (int)mlx->pitch;
+	sprites->groundY = sprites->horizonY + (int)(screenHeight / (2.0 * sprites->transformY));
+}
+
+void calculate_sprite_draw_bounds(t_sprite_system *sprites)
+{
+	sprites->drawStartY = sprites->groundY - sprites->spriteHeight;
+	sprites->drawEndY = sprites->groundY;
+	if (sprites->drawStartY < 0)
+		sprites->drawStartY = 0;
+	if (sprites->drawEndY >= screenHeight)
+		sprites->drawEndY = screenHeight - 1;
+	sprites->drawStartX = -sprites->spriteWidth / 2 + sprites->spriteScreenX;
+	if (sprites->drawStartX < 0)
+		sprites->drawStartX = 0;
+	sprites->drawEndX = sprites->spriteWidth / 2 + sprites->spriteScreenX;
+	if (sprites->drawEndX >= screenWidth)
+		sprites->drawEndX = screenWidth - 1;
+}
+
+void render_sprite_column(t_mlx *mlx, t_sprite_system *sprites, char *grass_data, int stripe)
+{
+	int y;
+
+	sprites->texX = (int)((stripe - sprites->drawStartX) * sprites->grass_width / (sprites->drawEndX - sprites->drawStartX));
+	if (sprites->texX < 0)
+		sprites->texX = 0;
+	if (sprites->texX >= sprites->grass_width)
+		sprites->texX = sprites->grass_width - 1;
+	y = sprites->drawStartY;
+	while(y < sprites->drawEndY)
+	{
+		sprites->texY = (int)((y - sprites->drawStartY) * sprites->grass_height / (sprites->drawEndY - sprites->drawStartY));
+		if (sprites->texY < 0) sprites->texY = 0;
+		if (sprites->texY >= sprites->grass_height) sprites->texY = sprites->grass_height - 1;
+		sprites->color = get_sprite_pixel(grass_data, sprites->texX, sprites->texY, sprites);
+		if (sprites->color == 0xFF00FF || (sprites->color & 0xFF00FF) == 0xFF00FF) 
+		{
+			y++;
+			continue;
+		}
+		if (stripe >= 0 && stripe < screenWidth && y >= 0 && y < screenHeight)
+			ft_mlx_pixel_put(mlx, stripe, y, sprites->color);
+		y++;
+	}
+}
+
+void render_single_sprite(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites)
+{
+	int stripe;
+	char *current_grass_data;
+
+	calculate_sprite_transform(mlx, sprite, sprites);
+	if (sprites->transformY <= 0)
+		return;
+	calculate_sprite_screen_coords(mlx, sprites);
+	calculate_sprite_draw_bounds(sprites);
+	if (sprites->drawStartY >= sprites->drawEndY || sprites->drawStartX >= sprites->drawEndX)
+		return;
+	current_grass_data = sprites->grass_data[sprite->texture_index];
+	stripe = sprites->drawStartX;
+	while(stripe < sprites->drawEndX)
+	{
+		if (stripe >= 0 && stripe < screenWidth && sprites->transformY > mlx->zbuffer[stripe]) 
+		{
+			stripe++;
+			continue;
+		}
+		render_sprite_column(mlx, sprites, current_grass_data, stripe);
+		stripe++;
+	}
+}
+
+void calculate_sprite_distances(t_mlx *mlx, t_sprite_system *sprites, int *rendered_count)
+{
 	int i;
-	int j;
 	double dx;
 	double dy;
 
 	i = 0;
-	rendered_count = 0;
+	*rendered_count = 0;
 	while(i < sprites->sprite_count)
 	{
 		dx = sprites->sprites[i].x - mlx->posX;
@@ -512,9 +559,25 @@ void render_sprites(t_mlx *mlx, t_sprite_system *sprites)
 		if (sprites->sprites[i].distance > 64.0)
 			sprites->sprites[i].distance = -1;
 		else
-			rendered_count++;
+			(*rendered_count)++;
 		i++;
 	}
+}
+
+void swap_sprites(t_sprite *sprite1, t_sprite *sprite2)
+{
+	t_sprite temp;
+
+	temp = *sprite1;
+	*sprite1 = *sprite2;
+	*sprite2 = temp;
+}
+
+void sort_sprites_by_distance(t_sprite_system *sprites)
+{
+	int i;
+	int j;
+
 	i = 0;
 	while(i < sprites->sprite_count - 1)
 	{
@@ -524,21 +587,34 @@ void render_sprites(t_mlx *mlx, t_sprite_system *sprites)
 			if (sprites->sprites[j].distance >= 0 && sprites->sprites[j + 1].distance >= 0 &&
 				sprites->sprites[j].distance < sprites->sprites[j + 1].distance)
 			{
-				t_sprite temp = sprites->sprites[j];
-				sprites->sprites[j] = sprites->sprites[j + 1];
-				sprites->sprites[j + 1] = temp;
+				swap_sprites(&sprites->sprites[j], &sprites->sprites[j + 1]);
 			}
 			j++;
 		}
 		i++;
 	}
-	i  = 0;
+}
+
+void render_visible_sprites(t_mlx *mlx, t_sprite_system *sprites)
+{
+	int i;
+
+	i = 0;
 	while(i < sprites->sprite_count)
 	{
 		if (sprites->sprites[i].distance >= 0)
 			render_single_sprite(mlx, &sprites->sprites[i], sprites);
 		i++;
 	}
+}
+
+void render_sprites(t_mlx *mlx, t_sprite_system *sprites)
+{
+	int rendered_count;
+
+	calculate_sprite_distances(mlx, sprites, &rendered_count);
+	sort_sprites_by_distance(sprites);
+	render_visible_sprites(mlx, sprites);
 }
 
 int key_hook(int keycode, t_mlx *mlx)
@@ -620,56 +696,56 @@ void draw_crosshair(t_mlx *mlx)
 
 void set_north_direction(t_mlx *mlx, double plane_length)
 {
-    mlx->dirX = 0;
-    mlx->dirY = -1;
-    mlx->planeX = plane_length;
-    mlx->planeY = 0;
+	mlx->dirX = 0;
+	mlx->dirY = -1;
+	mlx->planeX = plane_length;
+	mlx->planeY = 0;
 }
 
 void set_south_direction(t_mlx *mlx, double plane_length)
 {
-    mlx->dirX = 0;
-    mlx->dirY = 1;
-    mlx->planeX = -plane_length;
-    mlx->planeY = 0;
+	mlx->dirX = 0;
+	mlx->dirY = 1;
+	mlx->planeX = -plane_length;
+	mlx->planeY = 0;
 }
 
 void set_east_direction(t_mlx *mlx, double plane_length)
 {
-    mlx->dirX = 1;
-    mlx->dirY = 0;
-    mlx->planeX = 0;
-    mlx->planeY = plane_length;
+	mlx->dirX = 1;
+	mlx->dirY = 0;
+	mlx->planeX = 0;
+	mlx->planeY = plane_length;
 }
 
 void set_west_direction(t_mlx *mlx, double plane_length)
 {
-    mlx->dirX = -1;
-    mlx->dirY = 0;
-    mlx->planeX = 0;
-    mlx->planeY = -plane_length;
+	mlx->dirX = -1;
+	mlx->dirY = 0;
+	mlx->planeX = 0;
+	mlx->planeY = -plane_length;
 }
 
 void set_player_direction(t_mlx *mlx, char player_dir, double plane_length)
 {
-    if (player_dir == 'N')
-        set_north_direction(mlx, plane_length);
-    else if (player_dir == 'S')
-        set_south_direction(mlx, plane_length);
-    else if (player_dir == 'E')
-        set_east_direction(mlx, plane_length);
-    else if (player_dir == 'W')
-        set_west_direction(mlx, plane_length);
-    else
-        set_west_direction(mlx, plane_length);
+	if (player_dir == 'N')
+		set_north_direction(mlx, plane_length);
+	else if (player_dir == 'S')
+		set_south_direction(mlx, plane_length);
+	else if (player_dir == 'E')
+		set_east_direction(mlx, plane_length);
+	else if (player_dir == 'W')
+		set_west_direction(mlx, plane_length);
+	else
+		set_west_direction(mlx, plane_length);
 }
 
 void initialize_player_from_map(t_mlx *mlx, t_map *map)
 {
-    mlx->posX = map->player_x + 0.5;
-    mlx->posY = map->player_y + 0.5;
-    mlx->pitch = 0;
-    set_player_direction(mlx, map->player_dir, 0.80);
+	mlx->posX = map->player_x + 0.5;
+	mlx->posY = map->player_y + 0.5;
+	mlx->pitch = 0;
+	set_player_direction(mlx, map->player_dir, 0.80);
 }
 
 void render_start(t_mlx *mlx, t_render *r)
@@ -708,7 +784,7 @@ void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int 
 	}
 }
 
-void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game)
+void initialize_dda_step_x(t_mlx *mlx, t_render *r)
 {
 	if (r->rayDirX < 0)
 	{
@@ -720,6 +796,10 @@ void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game)
 		r->stepX = 1;
 		r->sideDistX = (r->mapX + 1.0 - mlx->posX) * r->deltaDistX;
 	}
+}
+
+void initialize_dda_step_y(t_mlx *mlx, t_render *r)
+{
 	if (r->rayDirY < 0)
 	{
 		r->stepY = -1;
@@ -730,41 +810,60 @@ void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game)
 		r->stepY = 1;
 		r->sideDistY = (r->mapY + 1.0 - mlx->posY) * r->deltaDistY;
 	}
+}
+
+void perform_dda_step(t_render *r)
+{
+	if (r->sideDistX < r->sideDistY)
+	{
+		r->sideDistX += r->deltaDistX;
+		r->mapX += r->stepX;
+		r->side = 0;
+	}
+	else
+	{
+		r->sideDistY += r->deltaDistY;
+		r->mapY += r->stepY;
+		r->side = 1;
+	}
+}
+
+void check_wall_hit(t_render *r, t_map *map, t_game *game)
+{
+	char cell;
+	t_door *door;
+
+	cell = map->rows[r->mapY][r->mapX];
+	if (cell == '1')
+	{
+		r->hit = 1;
+		r->hit_type = 1;
+	}
+	else if (cell == 'D')
+	{
+		door = find_door(game, r->mapX, r->mapY);
+		if (door && !door->is_open)
+		{
+			r->hit = 1;
+			r->hit_type = 2;
+		}
+	}
+}
+
+void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game)
+{
+	int step_count;
+
+	step_count = 0;
+	initialize_dda_step_x(mlx, r);
+	initialize_dda_step_y(mlx, r);
 	r->hit = 0;
 	r->hit_type = 0;
-	int step_count = 0;
-	
 	while (r->hit == 0)
 	{
 		step_count++;
-		if (r->sideDistX < r->sideDistY)
-		{
-			r->sideDistX += r->deltaDistX;
-			r->mapX += r->stepX;
-			r->side = 0;
-		}
-		else
-		{
-			r->sideDistY += r->deltaDistY;
-			r->mapY += r->stepY;
-			r->side = 1;
-		}
-		char cell = map->rows[r->mapY][r->mapX];
-		
-		if (cell == '1')
-		{
-			r->hit = 1;
-			r->hit_type = 1;
-		}
-		else if (cell == 'D')
-		{
-			t_door *door = find_door(game, r->mapX, r->mapY);
-			if (door && !door->is_open)
-			{
-				r->hit = 1;
-				r->hit_type = 2;
-			}
-		}
+		perform_dda_step(r);
+		check_wall_hit(r, map, game);
 	}
 }
 
@@ -787,8 +886,15 @@ int apply_vignette(int color, int x, int y)
 	r = (int)(r * (1.0 - vignette_factor));
 	g = (int)(g * (1.0 - vignette_factor));
 	b = (int)(b * (1.0 - vignette_factor));
-	
 	return ((r << 16) | (g << 8) | b);
+}
+
+void update_vars(t_render *r, t_mlx *mlx, double fov_scale)
+{
+	r->lineHeight = (int)(screenHeight / r->perpWallDist * fov_scale);
+	r->horizon = screenHeight / 2 + mlx->pitch;
+	r->drawStart = -r->lineHeight / 2 + r->horizon;
+	r->drawEnd = r->lineHeight / 2 + r->horizon;
 }
 
 void data_update(t_mlx *mlx, t_render *r, t_game *game)
@@ -802,10 +908,7 @@ void data_update(t_mlx *mlx, t_render *r, t_game *game)
 		r->perpWallDist = (r->sideDistY - r->deltaDistY);
 	if(r->perpWallDist <= 0.001)
 		r->perpWallDist = 0.001;
-	r->lineHeight = (int)(screenHeight / r->perpWallDist * fov_scale);
-	r->horizon = screenHeight / 2 + mlx->pitch;
-	r->drawStart = -r->lineHeight / 2 + r->horizon;
-	r->drawEnd = r->lineHeight / 2 + r->horizon;
+	update_vars(r, mlx, fov_scale);
 	if(r->drawStart < 0) r->drawStart = 0;
 	if(r->drawEnd >= screenHeight) r->drawEnd = screenHeight - 1;
 	if (r->side == 0)
@@ -820,65 +923,62 @@ void data_update(t_mlx *mlx, t_render *r, t_game *game)
 		r->texX = game->textures.tex_width - r->texX - 1;
 	r->step = 1.0 * game->textures.tex_height / r->lineHeight;
 	r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
-	
 	r->y = 0;
 }
 
-void vertical_update(t_mlx *mlx, t_render *r, t_game *game)
+void vertical_loop(t_mlx *mlx, t_render *r, t_game *game, char *texture_data)
 {
-	char *texture_data;
+	int y;
 	int tex_y;
 	int color;
-	int y;
-	
-	// Select texture based on hit type
-	if (r->hit_type == 2)  // Door hit
-		texture_data = game->textures.data[4];  // Door texture data
-	else
-		texture_data = get_wall_texture_fast(r, &game->textures);
-	
+
 	y = r->drawStart;
 	r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
-
 	while (y <= r->drawEnd)
 	{
 		tex_y = (int)r->texPos % game->textures.tex_height;
-		if (tex_y < 0) tex_y = 0;
-		if (tex_y >= game->textures.tex_height) tex_y = game->textures.tex_height - 1;
+		if (tex_y < 0)
+			tex_y = 0;
+		if (tex_y >= game->textures.tex_height)
+			tex_y = game->textures.tex_height - 1;
 		r->texPos += r->step;
 		color = get_texture_pixel(texture_data, r->texX, tex_y, &game->textures);
-
 		if (r->side == 1)
 			color = ((((color >> 16) & 0xFF) * 9 / 10) << 16) | 
 					((((color >> 8) & 0xFF) * 9 / 10) << 8) | 
 					(((color & 0xFF) * 9 / 10));
-		
 		if (y >= 0 && y < screenHeight)
 			ft_mlx_pixel_put(mlx, r->x, y, color);
 		y++;
 	}
 }
 
+void vertical_update(t_mlx *mlx, t_render *r, t_game *game)
+{
+	char *texture_data;
+
+	if (r->hit_type == 2)
+		texture_data = game->textures.data[4];
+	else
+		texture_data = get_wall_texture_fast(r, &game->textures);
+	vertical_loop(mlx, r, game, texture_data);
+}
+
 void interact_with_door(t_game *game)
 {
-	// Check multiple distances to catch doors at any range
-	float distances[] = {0.3, 0.6, 0.9, 1.2, 1.5};  // Start closer!
+	float distances[] = {0.3, 0.6, 0.9, 1.2, 1.5};
 	int num_distances = 5;
-	
+
 	for (int i = 0; i < num_distances; i++)
 	{
 		float check_x = game->mlx.posX + game->mlx.dirX * distances[i];
 		float check_y = game->mlx.posY + game->mlx.dirY * distances[i];
-		
 		int map_x = (int)check_x;
 		int map_y = (int)check_y;
-		
-		// Check bounds
+
 		if (map_x < 0 || map_x >= game->maps.width || 
 			map_y < 0 || map_y >= game->maps.height)
 			continue;
-			
-		// Check if there's a door at this position
 		if (game->maps.rows[map_y][map_x] == 'D')
 		{
 			t_door *door = find_door(game, map_x, map_y);
@@ -887,12 +987,10 @@ void interact_with_door(t_game *game)
 				door->is_open = !door->is_open;
 				printf("Door %s at (%d, %d)\n", 
 					   door->is_open ? "opened" : "closed", map_x, map_y);
-				return; // Exit after first door found
+				return;
 			}
 		}
 	}
-	
-	printf("No door found to interact with\n");  // Debug message
 }
 
 void render_scene(t_game *game)
