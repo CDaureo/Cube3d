@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/17 17:47:07 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:25:27 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@
 #define MINIMAP_OFFSET 20
 #define KEY_SHIFT 65505
 #define KEY_INTERACT 101
+#define M_PI 3.1415926535897932384626433
 
 typedef struct s_sprite
 {
@@ -207,6 +208,15 @@ typedef struct s_render {
 	int hit_type;
 } t_render;
 
+typedef struct s_mouse {
+	int center_x ;
+	int center_y;
+	int delta_x;
+	int delta_y ;
+	double rotation;
+	double oldDirX;
+	double oldPlaneX;
+}	t_mouse;
 
 typedef struct s_map
 {
@@ -275,6 +285,7 @@ int	validate_texture_file(const char *path);
 int  validate_map_basic(t_map *map);
 int	validate_map_basic(t_map *map);
 int validate_map_closed(t_map *map);
+
 /* Parsing */
 int	parse_texture_line(char *line, t_game *game);
 int	parse_textures(int fd, t_game *game);
@@ -286,12 +297,49 @@ int	parse_map_line(char *line, t_map *map);
 int	finalize_map(t_map *map);
 
 /* Minimap */
+void init_minimap(t_minimap *minimap, t_mlx *mlx);
+void draw_arrow_outline(t_mlx *mlx, t_minimap *minimap);
+void draw_arrow_body(t_mlx *mlx, t_minimap *minimap);
+void calculate_arrow_points(t_minimap *minimap);
 
 /* Raycasting */
+void initialize_dda_step_x(t_mlx *mlx, t_render *r);
+void initialize_dda_step_y(t_mlx *mlx, t_render *r);
+void perform_dda_step(t_render *r);
 
 /* Rendering */
+void render_scene(t_game *game);
+int render_loop(t_game *game);
+void initialize_mlx(t_mlx *mlx);
+int render_loop_wrapper(void *param);
+void render_start(t_mlx *mlx, t_render *r);
+void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int draw_end);
 
 /* Sprites */
+void calculate_sprite_transform(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites);
+void calculate_sprite_screen_coords(t_mlx *mlx, t_sprite_system *sprites);
+void calculate_sprite_draw_bounds(t_sprite_system *sprites);
+void render_sprite_column(t_mlx *mlx, t_sprite_system *sprites, char *grass_data, int stripe);
+void render_single_sprite(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites);
+int get_texture_pixel(char *texture_data, int tex_x, int tex_y, t_textures *tex);
+int get_sprite_pixel(char *sprite_data, int tex_x, int tex_y, t_sprite_system *sprites);
+void grass_loop_generating(t_game *game, t_minimap *minimap, t_sprite_system *sprites, int i);
+void generate_grass_sprites(t_game *game, t_minimap *minimap);
+int load_grass_texture(t_game *game);
+void calculate_sprite_distances(t_mlx *mlx, t_sprite_system *sprites, int *rendered_count);
+void swap_sprites(t_sprite *sprite1, t_sprite *sprite2);
+void sort_sprites_by_distance(t_sprite_system *sprites);
+void render_visible_sprites(t_mlx *mlx, t_sprite_system *sprites);
+void render_sprites(t_mlx *mlx, t_sprite_system *sprites);
+
+/* Controls */
+void mouse_rotation(t_mouse *mouse, t_mlx *mlx);
+int handle_mouse_move(int x, int y, t_mlx *mlx);
+int handle_mouse_press(int button, int x, int y, t_mlx *mlx);
+int handle_keys(int keycode, t_game *game);
+int handle_key_release(int keycode, t_game *game);
+int handle_vertical_movement(t_mlx *mlx, t_map *map, t_game *game);
+int handle_horizontal_movement(t_mlx *mlx, t_map *map, t_game *game);
 
 /* Utils */
 char	*trim_whitespace(char *str);
