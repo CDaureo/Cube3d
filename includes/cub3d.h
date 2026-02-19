@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/18 17:25:27 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/19 17:18:38 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@
 #define MINIMAP_OFFSET 20
 #define KEY_SHIFT 65505
 #define KEY_INTERACT 101
-#define M_PI 3.1415926535897932384626433
 
 typedef struct s_sprite
 {
@@ -301,11 +300,15 @@ void init_minimap(t_minimap *minimap, t_mlx *mlx);
 void draw_arrow_outline(t_mlx *mlx, t_minimap *minimap);
 void draw_arrow_body(t_mlx *mlx, t_minimap *minimap);
 void calculate_arrow_points(t_minimap *minimap);
-
+void draw_arrow_body(t_mlx *mlx, t_minimap *minimap);
+void draw_minimap(t_mlx *mlx, t_map *map, t_game *game);
+ 
 /* Raycasting */
 void initialize_dda_step_x(t_mlx *mlx, t_render *r);
 void initialize_dda_step_y(t_mlx *mlx, t_render *r);
 void perform_dda_step(t_render *r);
+void data_update(t_mlx *mlx, t_render *r, t_game *game);
+void vertical_update(t_mlx *mlx, t_render *r, t_game *game);
 
 /* Rendering */
 void render_scene(t_game *game);
@@ -314,6 +317,12 @@ void initialize_mlx(t_mlx *mlx);
 int render_loop_wrapper(void *param);
 void render_start(t_mlx *mlx, t_render *r);
 void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int draw_end);
+void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game);
+
+/* Textures */
+int load_all_textures(t_game *game);
+int load_texture(t_mlx *mlx, char *path, void **img, char **data, t_textures *tex);
+char *get_wall_texture_fast(t_render *r, t_textures *textures);
 
 /* Sprites */
 void calculate_sprite_transform(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites);
@@ -340,6 +349,15 @@ int handle_keys(int keycode, t_game *game);
 int handle_key_release(int keycode, t_game *game);
 int handle_vertical_movement(t_mlx *mlx, t_map *map, t_game *game);
 int handle_horizontal_movement(t_mlx *mlx, t_map *map, t_game *game);
+int close_hook(t_mlx *mlx);
+int key_hook(int keycode, t_mlx *mlx);
+
+/*Player*/
+void set_player_direction(t_mlx *mlx, char player_dir, double plane_length);
+void check_wall_hit(t_render *r, t_map *map, t_game *game);
+t_door *find_door(t_game *game, int x, int y);
+void interact_with_door(t_game *game);
+void initialize_player_from_map(t_mlx *mlx, t_map *map);
 
 /* Utils */
 char	*trim_whitespace(char *str);
@@ -348,7 +366,13 @@ int		is_blank(const char *s);
 int is_allow_chars(char c);
 int sanitize_row(const char *row);
 int push_row(t_map *map, char *row_dup);
-
+int get_map_value(t_map *map, int x, int y, t_game *game);
+void draw_crosshair(t_mlx *mlx);
+long get_time_ms(void);
+int	error_checker(t_game *game, int argc, char **argv);
+void clear_image(t_mlx *data);
+void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color);
+int apply_vignette(int color, int x, int y);
 
 /* Free */
 void cleanup_game(t_game *game);

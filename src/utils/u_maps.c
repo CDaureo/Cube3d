@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:15:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/10 19:45:20 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/19 14:05:17 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,27 @@ int push_row(t_map *map, char *row_dup)
 	if ((int)ft_strlen(row_dup) > map->width)
 		map->width = (int)ft_strlen(row_dup);
 	return (1);
+}
+
+int get_map_value(t_map *map, int x, int y, t_game *game)
+{
+	if (x < 0 || y < 0 || x >= map->width || y >= map->height)
+		return (1);
+	
+	char cell = map->rows[y][x];
+	
+	if (cell == '1')
+		return (1);
+	else if (cell == 'D')
+	{
+		t_door *door = find_door(game, x, y);
+		if (door && door->is_open)
+			return (0);
+		else
+			return (1);
+	}
+	else if (cell == '0' || cell == 'N' || cell == 'S' || cell == 'E' || cell == 'W')
+		return (0);
+	else
+		return (1);
 }
