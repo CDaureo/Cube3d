@@ -3,31 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   r_textures.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 13:59:08 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/19 14:00:37 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:55:26 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int load_texture(t_mlx *mlx, char *path, void **img, char **data, t_textures *tex)
-{
-	if (!path)
-		return (0);
-	FILE *test_file = fopen(path, "r");
-	if (!test_file)
-		return (0);
-	fclose(test_file);
-	*img = mlx_xpm_file_to_image(mlx->mlx, path, &tex->tex_width, &tex->tex_height);
-	if (!*img)
-		return (0);
-	*data = mlx_get_data_addr(*img, &tex->bits_per_pixel, &tex->line_length, &tex->endian);
-	if (!*data)
-		return (0);
-	return (1);
-}
 
 int load_all_textures(t_game *game)
 {
@@ -60,7 +44,7 @@ int load_all_textures(t_game *game)
 
 char *get_wall_texture_fast(t_render *r, t_textures *textures)
 {
-	int tex_index = (r->side << 1) | (r->side == 0 ? (r->stepX > 0) : (r->stepY > 0));
+	int tex_index = (r->side << 1) | (r->side == 0 ? (r->step_x > 0) : (r->step_y > 0));
 
 	return textures->data[tex_index];
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   s_rendering_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:08:56 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/18 17:09:16 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:38:52 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void calculate_sprite_distances(t_mlx *mlx, t_sprite_system *sprites, int *rende
 	*rendered_count = 0;
 	while(i < sprites->sprite_count)
 	{
-		dx = sprites->sprites[i].x - mlx->posX;
-		dy = sprites->sprites[i].y - mlx->posY;
+		dx = sprites->sprites[i].x - mlx->pos_x;
+		dy = sprites->sprites[i].y - mlx->pos_y;
 		sprites->sprites[i].distance = dx * dx + dy * dy;
 		if (sprites->sprites[i].distance > 64.0)
 			sprites->sprites[i].distance = -1;

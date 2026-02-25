@@ -21,7 +21,7 @@ void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color)
 		printf("Error: data->addr is NULL\n");
 		return ;
 	}
-	if (x >= 0 && y >= 0 && x < screenWidth && y < screenHeight)
+	if (x >= 0 && y >= 0 && x < SCREENWIDTH && y < SCREENHEIGHT)
 	{
 		dst = data->addr + (y * data->line_length + x * \
 			(data->bits_per_pixel / 8));
@@ -58,8 +58,8 @@ void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game)
 
 int apply_vignette(int color, int x, int y)
 {
-	double center_x = screenWidth / 2.0;
-	double center_y = screenHeight / 2.0;
+	double center_x = SCREENWIDTH / 2.0;
+	double center_y = SCREENHEIGHT / 2.0;
 	double dx = x - center_x;
 	double dy = y - center_y;
 	double max_distance = sqrt(center_x * center_x + center_y * center_y);

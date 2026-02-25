@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   c_movement.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:03:00 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/22 19:37:10 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:39:27 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,21 +27,21 @@ int	handle_vertical_movement(t_mlx *mlx, t_map *map, t_game *game)
 	current_speed = get_movement_speed(mlx);
 	if (mlx->key_state[0])
 	{
-		if (get_map_value(map, (int)(mlx->posX + mlx->dirX * current_speed), \
-			(int)(mlx->posY), game) == 0)
-			mlx->posX += mlx->dirX * current_speed;
-		if (get_map_value(map, (int)(mlx->posX), \
-			(int)(mlx->posY + mlx->dirY * current_speed), game) == 0)
-			mlx->posY += mlx->dirY * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x + mlx->dir_x * current_speed), \
+			(int)(mlx->pos_y), game) == 0)
+			mlx->pos_x += mlx->dir_x * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x), \
+			(int)(mlx->pos_y + mlx->dir_y * current_speed), game) == 0)
+			mlx->pos_y += mlx->dir_y * current_speed;
 	}
 	if (mlx->key_state[2])
 	{
-		if (get_map_value(map, (int)(mlx->posX - mlx->dirX * current_speed), \
-			(int)(mlx->posY), game) == 0)
-			mlx->posX -= mlx->dirX * current_speed;
-		if (get_map_value(map, (int)(mlx->posX), \
-			(int)(mlx->posY - mlx->dirY * current_speed), game) == 0)
-			mlx->posY -= mlx->dirY * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x - mlx->dir_x * current_speed), \
+			(int)(mlx->pos_y), game) == 0)
+			mlx->pos_x -= mlx->dir_x * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x), \
+			(int)(mlx->pos_y - mlx->dir_y * current_speed), game) == 0)
+			mlx->pos_y -= mlx->dir_y * current_speed;
 	}
 	return (0);
 }
@@ -53,21 +53,21 @@ int	handle_horizontal_movement(t_mlx *mlx, t_map *map, t_game *game)
 	current_speed = get_movement_speed(mlx);
 	if (mlx->key_state[1])
 	{
-		if (get_map_value(map, (int)(mlx->posX - mlx->planeX * current_speed), \
-			(int)(mlx->posY), game) == 0)
-			mlx->posX -= mlx->planeX * current_speed;
-		if (get_map_value(map, (int)(mlx->posX), \
-			(int)(mlx->posY - mlx->planeY * current_speed), game) == 0)
-			mlx->posY -= mlx->planeY * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x - mlx->plane_x * current_speed), \
+			(int)(mlx->pos_y), game) == 0)
+			mlx->pos_x -= mlx->plane_x * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x), \
+			(int)(mlx->pos_y - mlx->plane_y * current_speed), game) == 0)
+			mlx->pos_y -= mlx->plane_y * current_speed;
 	}
 	if (mlx->key_state[3])
 	{
-		if (get_map_value(map, (int)(mlx->posX + mlx->planeX * current_speed), \
-			(int)(mlx->posY), game) == 0)
-			mlx->posX += mlx->planeX * current_speed;
-		if (get_map_value(map, (int)(mlx->posX), \
-			(int)(mlx->posY + mlx->planeY * current_speed), game) == 0)
-			mlx->posY += mlx->planeY * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x + mlx->plane_x * current_speed), \
+			(int)(mlx->pos_y), game) == 0)
+			mlx->pos_x += mlx->plane_x * current_speed;
+		if (get_map_value(map, (int)(mlx->pos_x), \
+			(int)(mlx->pos_y + mlx->plane_y * current_speed), game) == 0)
+			mlx->pos_y += mlx->plane_y * current_speed;
 	}
 	return (0);
 }

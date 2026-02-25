@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   p_interactions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 13:52:33 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:11:24 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:42:24 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	initialize_player_from_map(t_mlx *mlx, t_map *map)
 {
-	mlx->posX = map->player_x + 0.5;
-	mlx->posY = map->player_y + 0.5;
+	mlx->pos_x = map->player_x + 0.5;
+	mlx->pos_y = map->player_y + 0.5;
 	mlx->pitch = 0;
 	set_player_direction(mlx, map->player_dir, 0.80);
 }
@@ -30,8 +30,8 @@ void	interact_with_door(t_game *game)
 	i = -1;
 	while (++i < 5)
 	{
-		map_x = (int)(game->mlx.posX + game->mlx.dirX * (0.3f + i * 0.3f));
-		map_y = (int)(game->mlx.posY + game->mlx.dirY * (0.3f + i * 0.3f));
+		map_x = (int)(game->mlx.pos_x + game->mlx.dir_x * (0.3f + i * 0.3f));
+		map_y = (int)(game->mlx.pos_y + game->mlx.dir_y * (0.3f + i * 0.3f));
 		door = find_door(game, map_x, map_y);
 		if (map_x >= 0 && map_x < game->maps.width && \
 			map_y >= 0 && map_y < game->maps.height && \
@@ -49,7 +49,7 @@ void	check_wall_hit(t_render *r, t_map *map, t_game *game)
 	char	cell;
 	t_door	*door;
 
-	cell = map->rows[r->mapY][r->mapX];
+	cell = map->rows[r->map_y][r->map_x];
 	if (cell == '1')
 	{
 		r->hit = 1;
@@ -57,7 +57,7 @@ void	check_wall_hit(t_render *r, t_map *map, t_game *game)
 	}
 	else if (cell == 'D')
 	{
-		door = find_door(game, r->mapX, r->mapY);
+		door = find_door(game, r->map_x, r->map_y);
 		if (door && !door->is_open)
 		{
 			r->hit = 1;

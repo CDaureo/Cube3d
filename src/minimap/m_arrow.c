@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   m_arrow.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 14:17:22 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/23 13:56:17 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:28:09 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	draw_arrow_base_line(t_mlx *mlx, t_minimap *minimap, int i)
 			* minimap->outline_dy <= minimap->radius * minimap->radius)
 	{
 		if (minimap->lx3 >= 0 && minimap->ly3 >= 0 && \
-				minimap->lx3 < screenWidth && minimap->ly3 < screenHeight)
+				minimap->lx3 < SCREENWIDTH && minimap->ly3 < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->lx3, minimap->ly3, 0xFFFFFF);
 	}
 }
@@ -51,7 +51,7 @@ static void	draw_left_arrow_side(t_mlx *mlx, t_minimap *minimap)
 			* minimap->outline_dy1 <= minimap->radius * minimap->radius)
 	{
 		if (minimap->lx1 >= 0 && minimap->ly1 >= 0 && \
-				minimap->lx1 < screenWidth && minimap->ly1 < screenHeight)
+				minimap->lx1 < SCREENWIDTH && minimap->ly1 < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->lx1, minimap->ly1, 0xFFFFFF);
 	}
 }
@@ -62,7 +62,7 @@ static void	draw_right_arrow_side(t_mlx *mlx, t_minimap *minimap)
 			* minimap->outline_dy2 <= minimap->radius * minimap->radius)
 	{
 		if (minimap->lx2 >= 0 && minimap->ly2 >= 0 && \
-				minimap->lx2 < screenWidth && minimap->ly2 < screenHeight)
+				minimap->lx2 < SCREENWIDTH && minimap->ly2 < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->lx2, minimap->ly2, 0xFFFFFF);
 	}
 }

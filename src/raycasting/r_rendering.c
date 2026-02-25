@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   r_rendering.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:21:49 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/18 17:22:07 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:41:44 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ void render_scene(t_game *game)
 	mlx = &game->mlx;
 	r.x = 0;
 	clear_image(mlx);
-	while(r.x < screenWidth)
+	while(r.x < SCREENWIDTH)
 	{
 		render_start(mlx, &r);	 
 		apply_dda(mlx, &r, map, game);
 		data_update(mlx, &r, game);
-		draw_ceiling_floor(mlx, &game->colors, r.x, r.drawStart, r.drawEnd);
+		draw_ceiling_floor(mlx, &game->colors, r.x, r.draw_start, r.draw_end);
 		vertical_update(mlx, &r, game);
-		mlx->zbuffer[r.x] = r.perpWallDist;
+		mlx->zbuffer[r.x] = r.perp_wall_dist;
 		
 		r.x++;
 	}
@@ -67,15 +67,15 @@ void initialize_mlx(t_mlx *mlx)
 		i++;
 	}
 	mlx->pitch = 0;
-	mlx->last_mouse_x = screenWidth / 2;
-	mlx->last_mouse_y = screenHeight / 2;
+	mlx->last_mouse_x = SCREENWIDTH / 2;
+	mlx->last_mouse_y = SCREENHEIGHT / 2;
 	mlx->mouse_locked = 0;
 	mlx->needs_render = 1;
 	mlx->last_render_time = 0;
-	mlx->zbuffer = malloc(sizeof(double) * screenWidth);
+	mlx->zbuffer = malloc(sizeof(double) * SCREENWIDTH);
 	mlx->mlx = mlx_init();
-	mlx->win = mlx_new_window(mlx->mlx, screenWidth, screenHeight, "Cub3D Raycasting");
-	mlx->img = mlx_new_image(mlx->mlx, screenWidth, screenHeight);
+	mlx->win = mlx_new_window(mlx->mlx, SCREENWIDTH, SCREENHEIGHT, "Cub3D Raycasting");
+	mlx->img = mlx_new_image(mlx->mlx, SCREENWIDTH, SCREENHEIGHT);
 	mlx->addr = mlx_get_data_addr(mlx->img, &mlx->bits_per_pixel, &mlx->line_length, &mlx->endian);
 }
 

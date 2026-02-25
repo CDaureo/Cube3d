@@ -22,8 +22,8 @@ static void	draw_arrow_pixel(t_mlx *mlx, t_minimap *minimap)
 		* minimap->arrow_dy <= minimap->radius * minimap->radius)
 	{
 		if (minimap->current_x >= 0 && minimap->current_y_adj >= 0
-			&& minimap->current_x < screenWidth
-			&& minimap->current_y_adj < screenHeight)
+			&& minimap->current_x < SCREENWIDTH
+			&& minimap->current_y_adj < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->current_x,
 				minimap->current_y_adj, 0xFF0000);
 	}
