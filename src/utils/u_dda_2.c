@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_dda_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:24:18 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 14:05:50 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:32:58 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	render_start(t_mlx *mlx, t_render *r)
 {
-	r->camera_x = 2 * r->x / (double)SCREENWIDTH - 1;
+	r->camera_x = 2 * r->x / (double)screen_width - 1;
 	r->raydir_x = mlx->dir_x + mlx->plane_x * r->camera_x;
 	r->raydir_y = mlx->dir_y + mlx->plane_y * r->camera_x;
 	r->map_x = (int)mlx->pos_x;
@@ -40,7 +40,7 @@ void	draw_ceiling_floor(t_mlx *mlx, t_color *colors, t_render *r)
 		y++;
 	}
 	y = r->draw_end + 1;
-	while (y < SCREENHEIGHT)
+	while (y < screen_height)
 	{
 		ft_mlx_pixel_put(mlx, r->x, y, colors->floor_color);
 		y++;

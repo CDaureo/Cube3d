@@ -54,27 +54,19 @@ char	*get_wall_texture_fast(t_render *r, t_textures *txt)
 {
 	int	tex_index;
 
-<<<<<<< HEAD
-char *get_wall_texture_fast(t_render *r, t_textures *textures)
-{
-	int tex_index = (r->side << 1) | (r->side == 0 ? (r->step_x > 0) : (r->step_y > 0));
-
-	return textures->data[tex_index];
-=======
 	if (r->side == 0)
 	{
-		if (r->stepX > 0)
+		if (r->step_x > 0)
 			tex_index = 1;
 		else
 			tex_index = 0;
 	}
 	else
 	{
-		if (r->stepY > 0)
+		if (r->step_y > 0)
 			tex_index = 3;
 		else
 			tex_index = 2;
 	}
 	return (txt->data[tex_index]);
->>>>>>> a740eb807fa05dd7436f4b4c22dbf0f6a1dc8672
 }

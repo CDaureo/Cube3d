@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   c_mouse.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 13:36:26 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 13:39:27 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:32:58 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ int	handle_mouse_move(int x, int y, t_mlx *mlx)
 {
 	t_mouse	mouse;
 
-	mouse.center_x = SCREENWIDTH / 2;
-	mouse.center_y = SCREENHEIGHT / 2;
+	mouse.center_x = screen_width / 2;
+	mouse.center_y = screen_height / 2;
 	mouse.delta_x = x - mouse.center_x;
 	mouse.delta_y = y - mouse.center_y;
 	if (!mlx->mouse_locked)
@@ -68,8 +68,8 @@ int	handle_mouse_press(int button, int x, int y, t_mlx *mlx)
 		if (!mlx->mouse_locked)
 		{
 			mlx->mouse_locked = 1;
-			mlx->last_mouse_x = SCREENWIDTH / 2;
-			mlx->last_mouse_y = SCREENHEIGHT / 2;
+			mlx->last_mouse_x = screen_width / 2;
+			mlx->last_mouse_y = screen_height / 2;
 			mlx_mouse_hide(mlx->mlx, mlx->win);
 			mlx_mouse_move(mlx->mlx, mlx->win, \
 				mlx->last_mouse_x, mlx->last_mouse_y);

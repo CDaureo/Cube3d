@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   v_map.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 12:28:03 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/25 12:33:30 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 14:17:36 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,6 @@ int	validate_map_basic(t_map *map)
 	return (1);
 }
 
-/**
- * Verifica si una celda es válida (dentro de límites y no es espacio)
- */
 static int	is_valid_cell(t_map *map, int y, int x)
 {
 	if (y < 0 || y >= map->height || x < 0 || x >= map->width)
@@ -62,9 +59,6 @@ static int	is_valid_cell(t_map *map, int y, int x)
 	return (1);
 }
 
-/**
- * Valida que una celda transitable (0 o jugador) esté rodeada de paredes
- */
 static int	check_cell_walls(t_map *map, int y, int x)
 {
 	if (!is_valid_cell(map, y - 1, x))
@@ -78,9 +72,6 @@ static int	check_cell_walls(t_map *map, int y, int x)
 	return (1);
 }
 
-/**
- * Valida que el mapa esté completamente cerrado por paredes
- */
 int	validate_map_closed(t_map *map)
 {
 	int		y;

@@ -1,15 +1,4 @@
 /* ************************************************************************** */
-<<<<<<< HEAD
-/*									  */
-/*							:::	 ::::::::   */
-/*   cub3d.h											:+:   :+:	:+:   */
-/*						  +:+ +:+	   +:+	*/
-/*   By: simgarci <simgarci@student.42.fr>	  +#+  +:+	   +#+	*/
-/*						+#+#+#+#+#+   +#+	 */
-/*   Created: 2026/01/19 14:00:55 by cdaureo-		#+#  #+#		  */
-/*   Updated: 2026/02/23 17:36:54 by simgarci	   ###   ########.fr	*/
-/*									  */
-=======
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
@@ -17,9 +6,8 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/25 13:54:50 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:44:20 by simgarci         ###   ########.fr       */
 /*                                                                            */
->>>>>>> a740eb807fa05dd7436f4b4c22dbf0f6a1dc8672
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
@@ -38,13 +26,13 @@
 
 # define WIN_WIDTH 1280
 # define WIN_HEIGHT 720
-# define MAX_SPRITES 2000
+# define MAX_sprS 2000
 # define MOVEMENT_FPS 60
 # define RENDER_FPS 60
 # define TARGET_FPS 60
 # define FRAME_TIME_MS (1000 / TARGET_FPS)
-# define SCREENWIDTH 1920
-# define SCREENHEIGHT 1080
+# define screen_width 1920
+# define screen_height 1080
 # define MOVE_SPEED 0.03
 # define ROT_SPEED 0.015
 # define KEY_LEFT 65361
@@ -69,12 +57,12 @@ typedef struct s_spr
 	double	y;
 	int		texture_index;
 	double	distance;
-}	t_sprite;
+}	t_spr;
 
 typedef struct s_spr_system
 {
-	t_sprite	*sprites;
-	int			sprite_count;
+	t_spr	*sprs;
+	int			spr_count;
 	double		inv_det;
 	double		spr_x;
 	double		spr_y;
@@ -96,10 +84,10 @@ typedef struct s_spr_system
 	char		*grass_data[2];
 	int			grass_width;
 	int			grass_height;
-	int			max_sprites;
+	int			max_sprs;
 	int			grass_type;
 	int			grass_per_tile;
-}	t_sprite_system;
+}	t_spr_system;
 
 typedef struct s_minimap
 {
@@ -127,7 +115,7 @@ typedef struct s_minimap
 	int		dx;
 	int		dy;
 	int		distance_squared;
-	int		screen_x;
+	int		spr_screen_x;
 	int		screen_y;
 	int		tip_x;
 	int		tip_y;
@@ -280,7 +268,7 @@ typedef struct s_game
 {
 	void			*mlx_ptr;
 	void			*win_ptr;
-	t_textures		textures;
+	t_textures		txt;
 	t_color			colors;
 	t_map			maps;
 	t_mlx			mlx;
@@ -288,7 +276,7 @@ typedef struct s_game
 	int				door_count;
 	int				x;
 	int				y;
-	t_sprite_system	sprites;
+	t_spr_system	spr;
 }	t_game;
 
 /* Validation */
@@ -324,41 +312,41 @@ void	data_update(t_mlx *mlx, t_render *r, t_game *game);
 void	vertical_update(t_mlx *mlx, t_render *r, t_game *game);
 
 /* Rendering */
-void render_scene(t_game *game);
-int render_loop(t_game *game);
-void initialize_mlx(t_mlx *mlx);
-int render_loop_wrapper(void *param);
-void render_start(t_mlx *mlx, t_render *r);
-void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int draw_end);
-void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game);
+int		render_loop(t_game *game);
+int		render_loop_wrapper(void *param);
+void	render_scene(t_game *game);
+void	initialize_mlx(t_mlx *mlx);
+void	render_start(t_mlx *mlx, t_render *r);
+void	draw_ceiling_floor(t_mlx *mlx, t_color *colors, t_render *r);
+void	apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game);
 
 /* Textures */
 int	load_all_textures(t_game *game);
 char	*get_wall_texture_fast(t_render *r, t_textures *textures);
 
-/* Sprites */
-int		get_sprite_pixel(char *sprite_data, int tex_x,
-		int tex_y, t_sprite_system *sprites);
+/* sprs */
+int		get_spr_pixel(char *spr_data, int tex_x,
+		int tex_y, t_spr_system *sprs);
 int		get_texture_pixel(char *texture_data, int tex_x,
 		int tex_y, t_textures *tex);
 int		load_grass_texture(t_game *game);
-void	calculate_sprite_transform(t_mlx *mlx, t_sprite *sprite,
-		t_sprite_system *sprites);
-void	calculate_sprite_screen_coords(t_mlx *mlx, t_sprite_system *sprites);
-void	calculate_sprite_draw_bounds(t_sprite_system *sprites);
-void	render_sprite_column(t_mlx *mlx, t_sprite_system *sprites,
+void	calculate_spr_transform(t_mlx *mlx, t_spr *spr,
+		t_spr_system *sprs);
+void	calculate_spr_screen_coords(t_mlx *mlx, t_spr_system *sprs);
+void	calculate_spr_draw_bounds(t_spr_system *sprs);
+void	render_sprite_column(t_mlx *mlx, t_spr_system *sprs,
 		char *grass_data, int stripe);
-void	render_single_sprite(t_mlx *mlx, t_sprite *sprite,
-		t_sprite_system *sprites);
+void	render_single_spr(t_mlx *mlx, t_spr *spr,
+		t_spr_system *sprs);
 void	grass_loop_generating(t_game *game, t_minimap *minimap,
-		t_sprite_system *sprites, int i);
-void	generate_grass_sprites(t_game *game, t_minimap *minimap);
-void	calculate_sprite_distances(t_mlx *mlx, t_sprite_system *sprites,
+		t_spr_system *sprs, int i);
+void	generate_grass_sprite(t_game *game, t_minimap *minimap);
+void	calculate_spr_distances(t_mlx *mlx, t_spr_system *sprs,
 		int *rendered_count);
-void	swap_sprites(t_sprite *sprite1, t_sprite *sprite2);
-void	sort_sprites_by_distance(t_sprite_system *sprites);
-void	render_visible_sprites(t_mlx *mlx, t_sprite_system *sprites);
-void	render_sprites(t_mlx *mlx, t_sprite_system *sprites);
+void	swap_sprs(t_spr *spr1, t_spr *spr2);
+void	sort_sprs_by_distance(t_spr_system *sprs);
+void	render_visible_sprs(t_mlx *mlx, t_spr_system *sprs);
+void	render_sprite(t_mlx *mlx, t_spr_system *sprs);
 
 /* Controls */
 void	mouse_rotation(t_mouse *mouse, t_mlx *mlx);

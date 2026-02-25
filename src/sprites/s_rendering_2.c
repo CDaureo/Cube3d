@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   s_rendering_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:08:56 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 14:05:01 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:44:28 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	calculate_spr_distances(t_mlx *mlx, t_spr_system *sprs, \
+void	calculate_spr_distances(t_mlx *mlx, t_spr_system *spr, \
 		int *rendered_count)
 {
 	int		i;
@@ -21,20 +21,20 @@ void	calculate_spr_distances(t_mlx *mlx, t_spr_system *sprs, \
 
 	i = 0;
 	*rendered_count = 0;
-	while (i < sprs->spr_count)
+	while (i < spr->spr_count)
 	{
-		dx = sprs->sprs[i].x - mlx->posX;
-		dy = sprs->sprs[i].y - mlx->posY;
-		sprs->sprs[i].distance = dx * dx + dy * dy;
-		if (sprs->sprs[i].distance > 64.0)
-			sprs->sprs[i].distance = -1;
+		dx = spr->sprs[i].x - mlx->pos_x;
+		dy = spr->sprs[i].y - mlx->pos_y;
+		spr->sprs[i].distance = dx * dx + dy * dy;
+		if (spr->sprs[i].distance > 64.0)
+			spr->sprs[i].distance = -1;
 		else
 			(*rendered_count)++;
 		i++;
 	}
 }
 
-void	swap_sprs(t_spr *spr1, t_spr *spr2)
+void	swap_spr(t_spr *spr1, t_spr *spr2)
 {
 	t_spr	temp;
 
@@ -43,22 +43,22 @@ void	swap_sprs(t_spr *spr1, t_spr *spr2)
 	*spr2 = temp;
 }
 
-void	sort_sprs_by_distance(t_spr_system *sprs)
+void	sort_spr_by_distance(t_spr_system *spr)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < sprs->spr_count - 1)
+	while (i < spr->spr_count - 1)
 	{
 		j = 0;
-		while (j < sprs->spr_count - 1)
+		while (j < spr->spr_count - 1)
 		{
-			if (sprs->sprs[j].distance >= 0 && \
-					sprs->sprs[j + 1].distance >= 0 && \
-					sprs->sprs[j].distance < sprs->sprs[j + 1].distance)
+			if (spr->sprs[j].distance >= 0 && \
+					spr->sprs[j + 1].distance >= 0 && \
+					spr->sprs[j].distance < spr->sprs[j + 1].distance)
 			{
-				swap_sprs(&sprs->sprs[j], &sprs->sprs[j + 1]);
+				swap_spr(&spr->sprs[j], &spr->sprs[j + 1]);
 			}
 			j++;
 		}
@@ -66,24 +66,24 @@ void	sort_sprs_by_distance(t_spr_system *sprs)
 	}
 }
 
-void	render_visible_sprs(t_mlx *mlx, t_spr_system *sprs)
+void	render_visible_spr(t_mlx *mlx, t_spr_system *spr)
 {
 	int	i;
 
 	i = 0;
-	while (i < sprs->spr_count)
+	while (i < spr->spr_count)
 	{
-		if (sprs->sprs[i].distance >= 0)
-			render_single_spr(mlx, &sprs->sprs[i], sprs);
+		if (spr->sprs[i].distance >= 0)
+			render_single_spr(mlx, &spr->sprs[i], spr);
 		i++;
 	}
 }
 
-void	render_sprs(t_mlx *mlx, t_spr_system *sprs)
+void	render_sprite(t_mlx *mlx, t_spr_system *spr)
 {
 	int	rendered_count;
 
-	calculate_spr_distances(mlx, sprs, &rendered_count);
-	sort_sprs_by_distance(sprs);
-	render_visible_sprs(mlx, sprs);
+	calculate_spr_distances(mlx, spr, &rendered_count);
+	sort_spr_by_distance(spr);
+	render_visible_spr(mlx, spr);
 }

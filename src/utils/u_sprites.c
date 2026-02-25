@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   u_sprs.c                                        :+:      :+:    :+:   */
+/*   u_spr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -23,24 +23,24 @@ int	get_texture_pixel(char *texture_data, int tex_x, int tex_y, t_textures *tex)
 	return (*(int *)(texture_data + pixel_index));
 }
 
-int	get_spr_pixel(char *spr_data, int tex_x, int tex_y, t_spr_system *sprs)
+int	get_spr_pixel(char *spr_data, int tex_x, int tex_y, t_spr_system *spr)
 {
 	int	pixel_index;
 
-	pixel_index = (tex_y * sprs->grass_width + tex_x) * 4;
-	if (tex_x < 0 || tex_x >= sprs->grass_width || tex_y < 0 \
-			|| tex_y >= sprs->grass_height)
+	pixel_index = (tex_y * spr->grass_width + tex_x) * 4;
+	if (tex_x < 0 || tex_x >= spr->grass_width || tex_y < 0 \
+			|| tex_y >= spr->grass_height)
 		return (0xFF00FF);
 	return (*(int *)(spr_data + pixel_index));
 }
 
 void	grass_loop_generating(t_game *game, \
-		t_minimap *mp, t_spr_system *sprs, int i)
+		t_minimap *mp, t_spr_system *spr, int i)
 {
 	if (get_map_value(&game->maps, mp->map_x, mp->map_y, game) == 0)
 	{
-		sprs->grass_per_tile = 1 + (rand() % 2);
-		while (i < sprs->grass_per_tile && game->sprs.spr_count < sprs->max_sprs)
+		spr->grass_per_tile = 1 + (rand() % 2);
+		while (i < spr->grass_per_tile && game->spr.spr_count < spr->max_sprs)
 		{
 			mp->rand_x = mp->map_x + 0.1 + (rand() % 80) / 100.0;
 			mp->rand_y = mp->map_y + 0.1 + (rand() % 80) / 100.0;
@@ -54,24 +54,24 @@ void	grass_loop_generating(t_game *game, \
 				i++;
 				continue ;
 			}
-			sprs->grass_type = rand() % 2;
-			game->sprs.sprs[game->sprs.spr_count].x = mp->rand_x;
-			game->sprs.sprs[game->sprs.spr_count].y = mp->rand_y;
-			game->sprs.sprs[game->sprs.spr_count].texture_index = sprs->grass_type;
-			game->sprs.spr_count++;
+			spr->grass_type = rand() % 2;
+			game->spr.sprs[game->spr.spr_count].x = mp->rand_x;
+			game->spr.sprs[game->spr.spr_count].y = mp->rand_y;
+			game->spr.sprs[game->spr.spr_count].texture_index = spr->grass_type;
+			game->spr.spr_count++;
 			i++;
 		}
 	}
 }
 
-void	generate_grass_sprs(t_game *game, t_minimap *minimap)
+void	generate_grass_sprite(t_game *game, t_minimap *minimap)
 {
-	t_spr_system	sprs;
+	t_spr_system	spr;
 	int				i;
 
-	sprs.max_sprs = MAX_SPRITES;
-	game->sprs.spr_count = 0;
-	game->sprs.sprs = malloc(sizeof(t_spr) * sprs.max_sprs);
+	spr.max_sprs = MAX_sprS;
+	game->spr.spr_count = 0;
+	game->spr.sprs = malloc(sizeof(t_spr) * spr.max_sprs);
 	minimap->map_y = 0;
 	while (minimap->map_y < game->maps.height)
 	{
@@ -79,7 +79,7 @@ void	generate_grass_sprs(t_game *game, t_minimap *minimap)
 		while (minimap->map_x < game->maps.width)
 		{
 			i = 0;
-			grass_loop_generating(game, minimap, &sprs, i);
+			grass_loop_generating(game, minimap, &spr, i);
 			minimap->map_x++;
 		}
 		minimap->map_y++;
@@ -90,25 +90,25 @@ int	load_grass_texture(t_game *game)
 {
 	int	temp_vars[3];
 
-	game->sprs.grass_img[0] = mlx_xpm_file_to_image(game->mlx.mlx, \
+	game->spr.grass_img[0] = mlx_xpm_file_to_image(game->mlx.mlx, \
 			"textures/grass.xpm", \
-			&game->sprs.grass_width, &game->sprs.grass_height);
-	if (!game->sprs.grass_img[0])
+			&game->spr.grass_width, &game->spr.grass_height);
+	if (!game->spr.grass_img[0])
 	{
 		printf("Failed to load grass texture 1\n");
 		return (0);
 	}
-	game->sprs.grass_img[1] = mlx_xpm_file_to_image(game->mlx.mlx, \
+	game->spr.grass_img[1] = mlx_xpm_file_to_image(game->mlx.mlx, \
 			"textures/grass2.xpm", \
-			&game->sprs.grass_width, &game->sprs.grass_height);
-	if (!game->sprs.grass_img[1])
+			&game->spr.grass_width, &game->spr.grass_height);
+	if (!game->spr.grass_img[1])
 	{
-		game->sprs.grass_img[1] = game->sprs.grass_img[0];
+		game->spr.grass_img[1] = game->spr.grass_img[0];
 		printf("Using same grass texture for variety\n");
 	}
-	game->sprs.grass_data[0] = mlx_get_data_addr(game->sprs.grass_img[0], \
+	game->spr.grass_data[0] = mlx_get_data_addr(game->spr.grass_img[0], \
 			&temp_vars[0], &temp_vars[1], &temp_vars[2]);
-	game->sprs.grass_data[1] = mlx_get_data_addr(game->sprs.grass_img[1], \
+	game->spr.grass_data[1] = mlx_get_data_addr(game->spr.grass_img[1], \
 			&temp_vars[0], &temp_vars[1], &temp_vars[2]);
 	return (1);
 }

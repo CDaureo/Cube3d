@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:21:49 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 14:09:21 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:44:25 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	render_scene(t_game *game)
 	mlx = &game->mlx;
 	r.x = 0;
 	clear_image(mlx);
-	while(r.x < SCREENWIDTH)
+	while(r.x < screen_width)
 	{
 		render_start(mlx, &r);
 		apply_dda(mlx, &r, map, game);
@@ -33,7 +33,7 @@ void	render_scene(t_game *game)
 		
 		r.x++;
 	}
-	render_sprs(mlx, &game->sprs);
+	render_sprite(mlx, &game->spr);
 	draw_minimap(mlx, map, game);
 	draw_crosshair(mlx);
 	mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img, 0, 0);
@@ -66,15 +66,15 @@ void	initialize_mlx(t_mlx *mlx)
 		i++;
 	}
 	mlx->pitch = 0;
-	mlx->last_mouse_x = SCREENWIDTH / 2;
-	mlx->last_mouse_y = SCREENHEIGHT / 2;
+	mlx->last_mouse_x = screen_width / 2;
+	mlx->last_mouse_y = screen_height / 2;
 	mlx->mouse_locked = 0;
 	mlx->needs_render = 1;
 	mlx->last_render_time = 0;
-	mlx->zbuffer = malloc(sizeof(double) * SCREENWIDTH);
+	mlx->zbuffer = malloc(sizeof(double) * screen_width);
 	mlx->mlx = mlx_init();
-	mlx->win = mlx_new_window(mlx->mlx, SCREENWIDTH, SCREENHEIGHT, "Cub3D Raycasting");
-	mlx->img = mlx_new_image(mlx->mlx, SCREENWIDTH, SCREENHEIGHT);
+	mlx->win = mlx_new_window(mlx->mlx, screen_width, screen_height, "Cub3D Raycasting");
+	mlx->img = mlx_new_image(mlx->mlx, screen_width, screen_height);
 	mlx->addr = mlx_get_data_addr(mlx->img, &mlx->bits_per_pixel, &mlx->line_length, &mlx->endian);
 }
 

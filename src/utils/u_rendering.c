@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_rendering.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 14:06:57 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 13:28:09 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:32:58 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,5 @@ int	error_checker(t_game *game, int argc, char **argv)
 
 void	clear_image(t_mlx *data)
 {
-	ft_memset(data->addr, 0, SCREENHEIGHT * data->line_length);
+	ft_memset(data->addr, 0, screen_height * data->line_length);
 }

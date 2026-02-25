@@ -3,110 +3,110 @@
 /*                                                        :::      ::::::::   */
 /*   s_rendering.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:05:08 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 14:05:21 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 16:44:34 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	calculate_spr_transform(t_mlx *mlx, t_spr *spr, t_spr_system *sprs)
+void	calculate_spr_transform(t_mlx *mlx, t_spr *sprs, t_spr_system *spr)
 {
-	sprs->sprX = spr->x - mlx->posX;
-	sprs->sprY = spr->y - mlx->posY;
-	sprs->invDet = 1.0 / (mlx->planeX * mlx->dirY - mlx->dirX * mlx->planeY);
-	sprs->transformX = sprs->invDet * \
-		(mlx->dirY * sprs->sprX - mlx->dirX * sprs->sprY);
-	sprs->transformY = sprs->invDet * \
-		(-mlx->planeY * sprs->sprX + mlx->planeX * sprs->sprY);
+	spr->spr_x = spr->spr_x - mlx->pos_x;
+	spr->spr_y = spr->spr_y - mlx->pos_y;
+	spr->inv_det = 1.0 / (mlx->plane_x * mlx->dir_y - mlx->dir_x * mlx->plane_y);
+	spr->transform_x = spr->inv_det * \
+		(mlx->dir_y * spr->spr_x - mlx->dir_x * spr->spr_y);
+	spr->transform_y = spr->inv_det * \
+		(-mlx->plane_y * spr->spr_x + mlx->plane_x * spr->spr_y);
 }
 
-void	calculate_spr_screen_coords(t_mlx *mlx, t_spr_system *sprs)
+void	calculate_spr_screen_coords(t_mlx *mlx, t_spr_system *spr)
 {
-	sprs->sprScreenX = (int)((screenWidth / 2) * \
-		(1 + sprs->transformX / sprs->transformY));
-	sprs->sprHeight = abs((int)(screenHeight / sprs->transformY)) / 8;
-	sprs->sprWidth = abs((int)(screenHeight / sprs->transformY)) / 6;
-	sprs->horizonY = screenHeight / 2 + (int)mlx->pitch;
-	sprs->groundY = sprs->horizonY + \
-		(int)(screenHeight / (2.0 * sprs->transformY));
+	spr->spr_screen_x = (int)((screen_width / 2) * \
+		(1 + spr->transform_x / spr->transform_y));
+	spr->spr_height = abs((int)(screen_height / spr->transform_y)) / 8;
+	spr->spr_width = abs((int)(screen_height / spr->transform_y)) / 6;
+	spr->horizon_y = screen_height / 2 + (int)mlx->pitch;
+	spr->ground_y = spr->horizon_y + \
+		(int)(screen_height / (2.0 * spr->transform_y));
 }
 
-void	calculate_spr_draw_bounds(t_spr_system *sprs)
+void	calculate_spr_draw_bounds(t_spr_system *spr)
 {
-	sprs->drawStartY = sprs->groundY - sprs->sprHeight;
-	sprs->drawEndY = sprs->groundY;
-	if (sprs->drawStartY < 0)
-		sprs->drawStartY = 0;
-	if (sprs->drawEndY >= screenHeight)
-		sprs->drawEndY = screenHeight - 1;
-	sprs->drawStartX = -sprs->sprWidth / 2 + sprs->sprScreenX;
-	if (sprs->drawStartX < 0)
-		sprs->drawStartX = 0;
-	sprs->drawEndX = sprs->sprWidth / 2 + sprs->sprScreenX;
-	if (sprs->drawEndX >= screenWidth)
-		sprs->drawEndX = screenWidth - 1;
+	spr->draw_s_y = spr->ground_y - spr->spr_height;
+	spr->draw_e_y = spr->ground_y;
+	if (spr->draw_s_y < 0)
+		spr->draw_s_y = 0;
+	if (spr->draw_e_y >= screen_height)
+		spr->draw_e_y = screen_height - 1;
+	spr->draw_s_x = -spr->spr_width / 2 + spr->spr_screen_x;
+	if (spr->draw_s_x < 0)
+		spr->draw_s_x = 0;
+	spr->draw_e_x = spr->spr_width / 2 + spr->spr_screen_x;
+	if (spr->draw_e_x >= screen_width)
+		spr->draw_e_x = screen_width - 1;
 }
 
-void	render_spr_column(t_mlx *mlx, t_spr_system *sprs, \
+void	render_sprite_column(t_mlx *mlx, t_spr_system *spr, \
 		char *grass_data, int stripe)
 {
 	int	y;
 
-	sprs->texX = (int)((stripe - sprs->drawStartX) * \
-		sprs->grass_width / (sprs->drawEndX - sprs->drawStartX));
-	if (sprs->texX < 0)
-		sprs->texX = 0;
-	if (sprs->texX >= sprs->grass_width)
-		sprs->texX = sprs->grass_width - 1;
-	y = sprs->drawStartY;
-	while (y < sprs->drawEndY)
+	spr->tex_x = (int)((stripe - spr->draw_s_x) * \
+		spr->grass_width / (spr->draw_e_x - spr->draw_s_x));
+	if (spr->tex_x < 0)
+		spr->tex_x = 0;
+	if (spr->tex_x >= spr->grass_width)
+		spr->tex_x = spr->grass_width - 1;
+	y = spr->draw_s_y;
+	while (y < spr->draw_e_y)
 	{
-		sprs->texY = (int)((y - sprs->drawStartY) * \
-			sprs->grass_height / (sprs->drawEndY - sprs->drawStartY));
-		if (sprs->texY < 0)
-			sprs->texY = 0;
-		if (sprs->texY >= sprs->grass_height)
-			sprs->texY = sprs->grass_height - 1;
-		sprs->color = get_spr_pixel(grass_data, \
-				sprs->texX, sprs->texY, sprs);
-		if (sprs->color == 0xFF00FF || (sprs->color & 0xFF00FF) == 0xFF00FF)
+		spr->tex_y = (int)((y - spr->draw_s_y) * \
+			spr->grass_height / (spr->draw_e_y - spr->draw_s_y));
+		if (spr->tex_y < 0)
+			spr->tex_y = 0;
+		if (spr->tex_y >= spr->grass_height)
+			spr->tex_y = spr->grass_height - 1;
+		spr->color = get_spr_pixel(grass_data, \
+				spr->tex_x, spr->tex_y, spr);
+		if (spr->color == 0xFF00FF || (spr->color & 0xFF00FF) == 0xFF00FF)
 		{
 			y++;
 			continue ;
 		}
-		if (stripe >= 0 && stripe < screenWidth && y >= 0 && y < screenHeight)
-			ft_mlx_pixel_put(mlx, stripe, y, sprs->color);
+		if (stripe >= 0 && stripe < screen_width && y >= 0 && y < screen_height)
+			ft_mlx_pixel_put(mlx, stripe, y, spr->color);
 		y++;
 	}
 }
 
-void	render_single_spr(t_mlx *mlx, t_spr *spr, t_spr_system *sprs)
+void	render_single_spr(t_mlx *mlx, t_spr *sprs, t_spr_system *spr)
 {
 	int		stripe;
 	char	*current_grass_data;
 
-	calculate_spr_transform(mlx, spr, sprs);
-	if (sprs->transformY <= 0)
+	calculate_spr_transform(mlx, spr, spr);
+	if (spr->transform_y <= 0)
 		return ;
-	calculate_spr_screen_coords(mlx, sprs);
-	calculate_spr_draw_bounds(sprs);
-	if (sprs->drawStartY >= sprs->drawEndY || \
-			sprs->drawStartX >= sprs->drawEndX)
+	calculate_spr_screen_coords(mlx, spr);
+	calculate_spr_draw_bounds(spr);
+	if (spr->draw_s_y >= spr->draw_e_y || \
+			spr->draw_s_x >= spr->draw_e_x)
 		return ;
-	current_grass_data = sprs->grass_data[spr->texture_index];
-	stripe = sprs->drawStartX;
-	while (stripe < sprs->drawEndX)
+	current_grass_data = spr->grass_data[sprs->texture_index];
+	stripe = spr->draw_s_x;
+	while (stripe < spr->draw_e_x)
 	{
-		if (stripe >= 0 && stripe < screenWidth && \
-				sprs->transformY > mlx->zbuffer[stripe])
+		if (stripe >= 0 && stripe < screen_width && \
+				spr->transform_y > mlx->zbuffer[stripe])
 		{
 			stripe++;
 			continue ;
 		}
-		render_spr_column(mlx, sprs, current_grass_data, stripe);
+		render_sprite_column(mlx, spr, current_grass_data, stripe);
 		stripe++;
 	}
 }
