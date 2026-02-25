@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/23 17:36:54 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 12:44:13 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 #define WIN_WIDTH 1280
 #define WIN_HEIGHT 720
-#define MAX_SPRITES 2000
+#define MAX_sprS 2000
 #define MOVEMENT_FPS 60
 #define RENDER_FPS 60
 #define TARGET_FPS 60
@@ -51,29 +51,29 @@
 #define KEY_SHIFT 65505
 #define KEY_INTERACT 101
 
-typedef struct s_sprite
+typedef struct s_spr
 {
 	double x;
 	double y;
 	int texture_index;
 	double distance;
-} t_sprite;
+} t_spr;
 
-typedef struct s_sprite_system
+typedef struct s_spr_system
 {
-	t_sprite *sprites;
-	int sprite_count;
+	t_spr *sprs;
+	int spr_count;
 	double invDet;
-	double spriteX;
-	double spriteY;
+	double sprX;
+	double sprY;
 	double transformX;
 	double transformY;
 	int texX;
 	int texY;
 	int color;
-	int spriteScreenX;
-	int spriteHeight;
-	int spriteWidth;
+	int sprScreenX;
+	int sprHeight;
+	int sprWidth;
 	int horizonY;
 	int groundY;
 	int drawStartY;
@@ -84,10 +84,10 @@ typedef struct s_sprite_system
 	char *grass_data[2];
 	int grass_width;
 	int grass_height;
-	int max_sprites;
+	int max_sprs;
 	int grass_type;
 	int grass_per_tile;
-} t_sprite_system;
+} t_spr_system;
 
 typedef struct s_minimap {
     int map_start_x;
@@ -268,7 +268,7 @@ typedef struct s_game
 {
 	void		*mlx_ptr;
 	void		*win_ptr;
-	t_textures	textures;
+	t_textures	txt;
 	t_color		colors;
 	t_map		maps;
 	t_mlx       mlx;
@@ -276,7 +276,7 @@ typedef struct s_game
     int door_count;
 	int x;
 	int y;
-	t_sprite_system sprites;
+	t_spr_system sprs;
 }	t_game;
 
 
@@ -323,25 +323,24 @@ void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game);
 
 /* Textures */
 int load_all_textures(t_game *game);
-int load_texture(t_mlx *mlx, char *path, void **img, char **data, t_textures *tex);
 char *get_wall_texture_fast(t_render *r, t_textures *textures);
 
-/* Sprites */
-void calculate_sprite_transform(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites);
-void calculate_sprite_screen_coords(t_mlx *mlx, t_sprite_system *sprites);
-void calculate_sprite_draw_bounds(t_sprite_system *sprites);
-void render_sprite_column(t_mlx *mlx, t_sprite_system *sprites, char *grass_data, int stripe);
-void render_single_sprite(t_mlx *mlx, t_sprite *sprite, t_sprite_system *sprites);
+/* sprs */
+void calculate_spr_transform(t_mlx *mlx, t_spr *spr, t_spr_system *sprs);
+void calculate_spr_screen_coords(t_mlx *mlx, t_spr_system *sprs);
+void calculate_spr_draw_bounds(t_spr_system *sprs);
+void render_spr_column(t_mlx *mlx, t_spr_system *sprs, char *grass_data, int stripe);
+void render_single_spr(t_mlx *mlx, t_spr *spr, t_spr_system *sprs);
 int get_texture_pixel(char *texture_data, int tex_x, int tex_y, t_textures *tex);
-int get_sprite_pixel(char *sprite_data, int tex_x, int tex_y, t_sprite_system *sprites);
-void grass_loop_generating(t_game *game, t_minimap *minimap, t_sprite_system *sprites, int i);
-void generate_grass_sprites(t_game *game, t_minimap *minimap);
+int get_spr_pixel(char *spr_data, int tex_x, int tex_y, t_spr_system *sprs);
+void grass_loop_generating(t_game *game, t_minimap *minimap, t_spr_system *sprs, int i);
+void generate_grass_sprs(t_game *game, t_minimap *minimap);
 int load_grass_texture(t_game *game);
-void calculate_sprite_distances(t_mlx *mlx, t_sprite_system *sprites, int *rendered_count);
-void swap_sprites(t_sprite *sprite1, t_sprite *sprite2);
-void sort_sprites_by_distance(t_sprite_system *sprites);
-void render_visible_sprites(t_mlx *mlx, t_sprite_system *sprites);
-void render_sprites(t_mlx *mlx, t_sprite_system *sprites);
+void calculate_spr_distances(t_mlx *mlx, t_spr_system *sprs, int *rendered_count);
+void swap_sprs(t_spr *spr1, t_spr *spr2);
+void sort_sprs_by_distance(t_spr_system *sprs);
+void render_visible_sprs(t_mlx *mlx, t_spr_system *sprs);
+void render_sprs(t_mlx *mlx, t_spr_system *sprs);
 
 /* Controls */
 void mouse_rotation(t_mouse *mouse, t_mlx *mlx);
@@ -375,7 +374,6 @@ long get_time_ms(void);
 int	error_checker(t_game *game, int argc, char **argv);
 void clear_image(t_mlx *data);
 void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color);
-int apply_vignette(int color, int x, int y);
 int 	parse_error_checker(int ret, t_game *game );
 
 /* Free */

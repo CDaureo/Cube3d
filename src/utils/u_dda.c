@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:03:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/18 17:04:27 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 12:45:57 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ void data_update(t_mlx *mlx, t_render *r, t_game *game)
 	else
 		wallX = mlx->posX + r->perpWallDist * r->rayDirX;
 	wallX -= floor(wallX);
-	r->texX = (int)(wallX * (double)game->textures.tex_width);
+	r->texX = (int)(wallX * (double)game->txt.tex_width);
 	if (r->side == 0 && r->rayDirX > 0)
-		r->texX = game->textures.tex_width - r->texX - 1;
+		r->texX = game->txt.tex_width - r->texX - 1;
 	if (r->side == 1 && r->rayDirY < 0)
-		r->texX = game->textures.tex_width - r->texX - 1;
-	r->step = 1.0 * game->textures.tex_height / r->lineHeight;
+		r->texX = game->txt.tex_width - r->texX - 1;
+	r->step = 1.0 * game->txt.tex_height / r->lineHeight;
 	r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
 	r->y = 0;
 }
@@ -59,13 +59,13 @@ void vertical_loop(t_mlx *mlx, t_render *r, t_game *game, char *texture_data)
 	r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
 	while (y <= r->drawEnd)
 	{
-		tex_y = (int)r->texPos % game->textures.tex_height;
+		tex_y = (int)r->texPos % game->txt.tex_height;
 		if (tex_y < 0)
 			tex_y = 0;
-		if (tex_y >= game->textures.tex_height)
-			tex_y = game->textures.tex_height - 1;
+		if (tex_y >= game->txt.tex_height)
+			tex_y = game->txt.tex_height - 1;
 		r->texPos += r->step;
-		color = get_texture_pixel(texture_data, r->texX, tex_y, &game->textures);
+		color = get_texture_pixel(texture_data, r->texX, tex_y, &game->txt);
 		if (r->side == 1)
 			color = ((((color >> 16) & 0xFF) * 9 / 10) << 16) | 
 					((((color >> 8) & 0xFF) * 9 / 10) << 8) | 
@@ -81,8 +81,8 @@ void vertical_update(t_mlx *mlx, t_render *r, t_game *game)
 	char *texture_data;
 
 	if (r->hit_type == 2)
-		texture_data = game->textures.data[4];
+		texture_data = game->txt.data[4];
 	else
-		texture_data = get_wall_texture_fast(r, &game->textures);
+		texture_data = get_wall_texture_fast(r, &game->txt);
 	vertical_loop(mlx, r, game, texture_data);
 }
