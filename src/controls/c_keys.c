@@ -6,13 +6,13 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 14:15:14 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/18 14:16:11 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/22 19:02:34 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-static void check_keycodes(t_mlx *mlx, int keycode, t_game *game)
+static void	check_keycodes(t_mlx *mlx, int keycode, t_game *game)
 {
 	if (keycode == KEY_W)
 		mlx->key_state[0] = 1;
@@ -28,9 +28,9 @@ static void check_keycodes(t_mlx *mlx, int keycode, t_game *game)
 		interact_with_door(game);
 }
 
-int handle_keys(int keycode, t_game *game)
+int	handle_keys(int keycode, t_game *game)
 {
-	t_mlx *mlx;
+	t_mlx	*mlx;
 
 	mlx = &game->mlx;
 	if (keycode == 65307)
@@ -48,10 +48,11 @@ int handle_keys(int keycode, t_game *game)
 	return (0);
 }
 
-int handle_key_release(int keycode, t_game *game)
+int	handle_key_release(int keycode, t_game *game)
 {
-	t_mlx *mlx = &game->mlx;
-	
+	t_mlx	*mlx;
+
+	mlx = &game->mlx;
 	if (keycode == KEY_W)
 		mlx->key_state[0] = 0;
 	if (keycode == KEY_A)

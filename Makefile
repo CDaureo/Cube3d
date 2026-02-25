@@ -56,6 +56,7 @@ SRC = $(SRC_DIR)/main.c \
 	$(UTILS_DIR)/u_blank.c \
 	$(UTILS_DIR)/u_dda.c \
 	$(UTILS_DIR)/u_dda_2.c \
+	$(UTILS_DIR)/u_parser.c \
 	$(UTILS_DIR)/u_arrow.c \
 	$(SPRITES_DIR)/s_rendering.c \
 	$(SPRITES_DIR)/s_rendering_2.c \

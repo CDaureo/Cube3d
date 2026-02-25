@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/19 17:18:38 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/23 17:36:54 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,6 +274,8 @@ typedef struct s_game
 	t_mlx       mlx;
 	t_door *doors;
     int door_count;
+	int x;
+	int y;
 	t_sprite_system sprites;
 }	t_game;
 
@@ -360,6 +362,7 @@ void interact_with_door(t_game *game);
 void initialize_player_from_map(t_mlx *mlx, t_map *map);
 
 /* Utils */
+int	validator(t_game *game);
 char	*trim_whitespace(char *str);
 void trim_line(char *s);
 int		is_blank(const char *s);
@@ -373,6 +376,7 @@ int	error_checker(t_game *game, int argc, char **argv);
 void clear_image(t_mlx *data);
 void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color);
 int apply_vignette(int color, int x, int y);
+int 	parse_error_checker(int ret, t_game *game );
 
 /* Free */
 void cleanup_game(t_game *game);

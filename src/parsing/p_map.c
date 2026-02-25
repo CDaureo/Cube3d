@@ -3,39 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   p_map.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:08:09 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/24 20:46:23 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/23 16:19:43 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/cub3d.h"
 
-int parse_map_line(char *line, t_map *map)
+int	parse_map_line(char *line, t_map *map)
 {
 	char	*row;
 	size_t	len;
+
 	if (!line)
 		return (0);
 	row = ft_strdup(line);
 	if (!row)
-		return(printf("Error: Not enough memory dupping map row"), 0);
+		return (printf("Error: Not enough memory dupping map row"), 0);
 	len = ft_strlen(row);
 	if (len > 0 && (row[len - 1] == '\n' || row[len - 1] == '\r'))
 		row[len - 1] = '\0';
-
 	if (!sanitize_row(row))
-		return (free(row), printf("No valid character on map (sanitize): \"%s\"\n", row), 0);
-
-	return (push_row(map, row));	
+		return (free(row), \
+		printf("No valid character on map (sanitize): \"%s\"\n", row), 0);
+	return (push_row(map, row));
 }
 
-int finalize_map(t_map *map)
+int	finalize_map(t_map *map)
 {
-	int i;
-	int len;
+	int		i;
+	int		len;
 	char	*padded;
 
 	i = 0;
@@ -47,7 +46,7 @@ int finalize_map(t_map *map)
 		{
 			padded = (char *)malloc(map->width + 1);
 			if (!padded)
-				return(printf("Error: Not enough memory normalize map"), 0);
+				return (printf("Error: Not enough memory normalize map"), 0);
 			ft_memcpy(padded, map->rows[i], len);
 			ft_memset(padded + len, ' ', map->width - len);
 			padded[map->width] = '\0';
