@@ -6,57 +6,59 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:08:56 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 13:38:52 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 14:05:01 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void calculate_sprite_distances(t_mlx *mlx, t_sprite_system *sprites, int *rendered_count)
+void	calculate_spr_distances(t_mlx *mlx, t_spr_system *sprs, \
+		int *rendered_count)
 {
-	int i;
-	double dx;
-	double dy;
+	int		i;
+	double	dx;
+	double	dy;
 
 	i = 0;
 	*rendered_count = 0;
-	while(i < sprites->sprite_count)
+	while (i < sprs->spr_count)
 	{
-		dx = sprites->sprites[i].x - mlx->pos_x;
-		dy = sprites->sprites[i].y - mlx->pos_y;
-		sprites->sprites[i].distance = dx * dx + dy * dy;
-		if (sprites->sprites[i].distance > 64.0)
-			sprites->sprites[i].distance = -1;
+		dx = sprs->sprs[i].x - mlx->posX;
+		dy = sprs->sprs[i].y - mlx->posY;
+		sprs->sprs[i].distance = dx * dx + dy * dy;
+		if (sprs->sprs[i].distance > 64.0)
+			sprs->sprs[i].distance = -1;
 		else
 			(*rendered_count)++;
 		i++;
 	}
 }
 
-void swap_sprites(t_sprite *sprite1, t_sprite *sprite2)
+void	swap_sprs(t_spr *spr1, t_spr *spr2)
 {
-	t_sprite temp;
+	t_spr	temp;
 
-	temp = *sprite1;
-	*sprite1 = *sprite2;
-	*sprite2 = temp;
+	temp = *spr1;
+	*spr1 = *spr2;
+	*spr2 = temp;
 }
 
-void sort_sprites_by_distance(t_sprite_system *sprites)
+void	sort_sprs_by_distance(t_spr_system *sprs)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
-	while(i < sprites->sprite_count - 1)
+	while (i < sprs->spr_count - 1)
 	{
 		j = 0;
-		while(j < sprites->sprite_count - 1)
+		while (j < sprs->spr_count - 1)
 		{
-			if (sprites->sprites[j].distance >= 0 && sprites->sprites[j + 1].distance >= 0 &&
-				sprites->sprites[j].distance < sprites->sprites[j + 1].distance)
+			if (sprs->sprs[j].distance >= 0 && \
+					sprs->sprs[j + 1].distance >= 0 && \
+					sprs->sprs[j].distance < sprs->sprs[j + 1].distance)
 			{
-				swap_sprites(&sprites->sprites[j], &sprites->sprites[j + 1]);
+				swap_sprs(&sprs->sprs[j], &sprs->sprs[j + 1]);
 			}
 			j++;
 		}
@@ -64,24 +66,24 @@ void sort_sprites_by_distance(t_sprite_system *sprites)
 	}
 }
 
-void render_visible_sprites(t_mlx *mlx, t_sprite_system *sprites)
+void	render_visible_sprs(t_mlx *mlx, t_spr_system *sprs)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(i < sprites->sprite_count)
+	while (i < sprs->spr_count)
 	{
-		if (sprites->sprites[i].distance >= 0)
-			render_single_sprite(mlx, &sprites->sprites[i], sprites);
+		if (sprs->sprs[i].distance >= 0)
+			render_single_spr(mlx, &sprs->sprs[i], sprs);
 		i++;
 	}
 }
 
-void render_sprites(t_mlx *mlx, t_sprite_system *sprites)
+void	render_sprs(t_mlx *mlx, t_spr_system *sprs)
 {
-	int rendered_count;
+	int	rendered_count;
 
-	calculate_sprite_distances(mlx, sprites, &rendered_count);
-	sort_sprites_by_distance(sprites);
-	render_visible_sprites(mlx, sprites);
+	calculate_spr_distances(mlx, sprs, &rendered_count);
+	sort_sprs_by_distance(sprs);
+	render_visible_sprs(mlx, sprs);
 }

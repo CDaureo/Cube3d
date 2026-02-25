@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:24:18 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 13:42:40 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 14:05:50 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,21 +29,20 @@ void	render_start(t_mlx *mlx, t_render *r)
 		r->delta_dits_x = fabs(1 / r->raydir_x);
 }
 
-void	draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x,
-	int draw_start, int draw_end)
+void	draw_ceiling_floor(t_mlx *mlx, t_color *colors, t_render *r)
 {
 	int	y;
 
 	y = 0;
-	while (y < draw_start)
+	while (y < r->draw_start)
 	{
-		ft_mlx_pixel_put(mlx, x, y, colors->ceiling_color);
+		ft_mlx_pixel_put(mlx, r->x, y, colors->ceiling_color);
 		y++;
 	}
-	y = draw_end + 1;
+	y = r->draw_end + 1;
 	while (y < SCREENHEIGHT)
 	{
-		ft_mlx_pixel_put(mlx, x, y, colors->floor_color);
+		ft_mlx_pixel_put(mlx, r->x, y, colors->floor_color);
 		y++;
 	}
 }

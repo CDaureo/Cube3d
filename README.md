@@ -191,10 +191,10 @@ Este documento describe **el plan completo de desarrollo** del proyecto **cub3D*
 
 ---
 
-### 👾 Sprites animados
+### 👾 sprs animados
 
 * Objetos estáticos y dinámicos
-* Sistema de sprites ordenados por distancia
+* Sistema de sprs ordenados por distancia
 
 ---
 

@@ -1,4 +1,5 @@
 /* ************************************************************************** */
+<<<<<<< HEAD
 /*									  */
 /*							:::	 ::::::::   */
 /*   cub3d.h											:+:   :+:	:+:   */
@@ -8,6 +9,17 @@
 /*   Created: 2026/01/19 14:00:55 by cdaureo-		#+#  #+#		  */
 /*   Updated: 2026/02/23 17:36:54 by simgarci	   ###   ########.fr	*/
 /*									  */
+=======
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
+/*   Updated: 2026/02/25 12:44:13 by simgarci         ###   ########.fr       */
+/*                                                                            */
+>>>>>>> a740eb807fa05dd7436f4b4c22dbf0f6a1dc8672
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
@@ -51,7 +63,7 @@
 # define KEY_SHIFT 65505
 # define KEY_INTERACT 101
 
-typedef struct s_sprite
+typedef struct s_spr
 {
 	double	x;
 	double	y;
@@ -59,7 +71,7 @@ typedef struct s_sprite
 	double	distance;
 }	t_sprite;
 
-typedef struct s_sprite_system
+typedef struct s_spr_system
 {
 	t_sprite	*sprites;
 	int			sprite_count;

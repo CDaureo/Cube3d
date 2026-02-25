@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:29:50 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/23 17:29:54 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 12:45:02 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,27 @@ void	trim_textures(char *trim, t_game *game, char *path)
 	if (ft_strncmp(trim, "NO ", 3) == 0)
 	{
 		path = trim_whitespace(trim + 3);
-		game->textures.north = ft_strdup(path);
+		game->txt.north = ft_strdup(path);
 	}
 	else if (ft_strncmp(trim, "SO ", 3) == 0)
 	{
 		path = trim_whitespace(trim + 3);
-		game->textures.south = ft_strdup(path);
+		game->txt.south = ft_strdup(path);
 	}
 	else if (ft_strncmp(trim, "WE ", 3) == 0)
 	{
 		path = trim_whitespace(trim + 3);
-		game->textures.west = ft_strdup(path);
+		game->txt.west = ft_strdup(path);
 	}
 	else if (ft_strncmp(trim, "EA ", 3) == 0)
 	{
 		path = trim_whitespace(trim + 3);
-		game->textures.east = ft_strdup(path);
+		game->txt.east = ft_strdup(path);
 	}
 	else if (ft_strncmp(trim, "DO ", 3) == 0)
 	{
 		path = trim_whitespace(trim + 3);
-		game->textures.door = ft_strdup(path);
+		game->txt.door = ft_strdup(path);
 	}
 }
 
