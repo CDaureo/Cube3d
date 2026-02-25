@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_minimap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:02:01 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/19 14:05:54 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 12:42:07 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void init_minimap(t_minimap *minimap, t_mlx *mlx)
 	minimap->radius = MINIMAP_SIZE / 2;
 	minimap->player_pixel_x = minimap->center_x;
 	minimap->player_pixel_y = minimap->center_y;
-	minimap->player_angle = atan2(mlx->dirY, mlx->dirX) + M_PI/2;  // Was - M_PI/2
+	minimap->player_angle = atan2(mlx->dirY, mlx->dirX) + M_PI/2;
 	minimap->arrow_length = 6;
 	minimap->arrow_width = 4;
 }
