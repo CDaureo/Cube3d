@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:13:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 13:12:52 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:15:46 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	parse_error_checker(int ret, t_game *game )
 		return (printf("Error:\nvalidate_map_basic failed\n"), 0);
 	if (!validate_map_closed(&game->maps))
 		return (printf("Error:\nMap is not closed by walls\n"), 0);
-	if (!game->txt.north || !game->txt.south ||
+	if (!game->txt.north || !game->txt.south || \
 		!game->txt.west || !game->txt.east || !game->txt.door)
 		return (printf("Error:\nMissing textures\n"), 0);
 	if (!game->colors.floor_set || !game->colors.ceiling_set)
