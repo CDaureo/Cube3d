@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   r_drawing.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 12:23:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:24:49 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 14:03:02 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_mlx_pixel_put(t_mlx *data, int x, int y, int color)
 		printf ("Error: data->addr is NULL\n");
 		return ;
 	}
-	if (x >= 0 && y >= 0 && x < screenWidth && y < screenHeight)
+	if (x >= 0 && y >= 0 && x < SCREENWIDTH && y < SCREENHEIGHT)
 	{
 		dst = data->addr + (y * data->line_length + x * \
 			(data->bits_per_pixel / 8));

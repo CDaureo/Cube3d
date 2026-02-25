@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 12:50:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/25 12:53:45 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:39:10 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void	init_minimap(t_minimap *minimap, t_mlx *mlx)
 {
-	minimap->map_start_x = screenWidth - MINIMAP_SIZE - MINIMAP_OFFSET;
-	minimap->map_start_y = screenHeight - MINIMAP_SIZE - MINIMAP_OFFSET;
+	minimap->map_start_x = SCREENWIDTH - MINIMAP_SIZE - MINIMAP_OFFSET;
+	minimap->map_start_y = SCREENHEIGHT - MINIMAP_SIZE - MINIMAP_OFFSET;
 	minimap->center_x = minimap->map_start_x + MINIMAP_SIZE / 2;
 	minimap->center_y = minimap->map_start_y + MINIMAP_SIZE / 2;
 	minimap->radius = MINIMAP_SIZE / 2;
 	minimap->player_pixel_x = minimap->center_x;
 	minimap->player_pixel_y = minimap->center_y;
-	minimap->player_angle = atan2(mlx->dirY, mlx->dirX) + M_PI / 2;
+	minimap->player_angle = atan2(mlx->dir_y, mlx->dir_x) + M_PI / 2;
 	minimap->arrow_length = 6;
 	minimap->arrow_width = 4;
 }
@@ -44,7 +44,7 @@ static void	draw_dot(t_mlx *mlx, int dot_size, int center_x, int center_y)
 				pixel_x = center_x + x;
 				pixel_y = center_y + y;
 				if (pixel_x >= 0 && pixel_y >= 0
-					&& pixel_x < screenWidth && pixel_y < screenHeight)
+					&& pixel_x < SCREENWIDTH && pixel_y < SCREENHEIGHT)
 				{
 					ft_mlx_pixel_put(mlx, pixel_x, pixel_y, 0xFFFFFF);
 				}
@@ -63,7 +63,7 @@ static void	draw_crosshair_outline(t_mlx *mlx, t_minimap *map)
 		map->pixel_x = map->center_x + map->x;
 		map->pixel_y = map->center_y + map->y;
 		if (map->pixel_x >= 0 && map->pixel_y >= 0
-			&& map->pixel_x < screenWidth && map->pixel_y < screenHeight)
+			&& map->pixel_x < SCREENWIDTH && map->pixel_y < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, map->pixel_x, map->pixel_y, 0x000000);
 	}
 }
@@ -72,8 +72,8 @@ void	draw_crosshair(t_mlx *mlx)
 {
 	t_minimap	map;
 
-	map.center_x = screenWidth / 2;
-	map.center_y = screenHeight / 2;
+	map.center_x = SCREENWIDTH / 2;
+	map.center_y = SCREENHEIGHT / 2;
 	map.dot_size = 2;
 	map.outline_size = map.dot_size + 1;
 	map.y = -map.outline_size;

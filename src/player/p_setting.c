@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   p_setting.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 13:50:18 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:10:52 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:39:27 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,34 @@
 
 static void	set_north_direction(t_mlx *mlx, double plane_length)
 {
-	mlx->dirX = 0;
-	mlx->dirY = -1;
-	mlx->planeX = plane_length;
-	mlx->planeY = 0;
+	mlx->dir_x = 0;
+	mlx->dir_y = -1;
+	mlx->plane_x = plane_length;
+	mlx->plane_y = 0;
 }
 
 static void	set_south_direction(t_mlx *mlx, double plane_length)
 {
-	mlx->dirX = 0;
-	mlx->dirY = 1;
-	mlx->planeX = -plane_length;
-	mlx->planeY = 0;
+	mlx->dir_x = 0;
+	mlx->dir_y = 1;
+	mlx->plane_x = -plane_length;
+	mlx->plane_y = 0;
 }
 
 static void	set_east_direction(t_mlx *mlx, double plane_length)
 {
-	mlx->dirX = 1;
-	mlx->dirY = 0;
-	mlx->planeX = 0;
-	mlx->planeY = plane_length;
+	mlx->dir_x = 1;
+	mlx->dir_y = 0;
+	mlx->plane_x = 0;
+	mlx->plane_y = plane_length;
 }
 
 static void	set_west_direction(t_mlx *mlx, double plane_length)
 {
-	mlx->dirX = -1;
-	mlx->dirY = 0;
-	mlx->planeX = 0;
-	mlx->planeY = -plane_length;
+	mlx->dir_x = -1;
+	mlx->dir_y = 0;
+	mlx->plane_x = 0;
+	mlx->plane_y = -plane_length;
 }
 
 void	set_player_direction(t_mlx *mlx, char player_dir, double plane_length)

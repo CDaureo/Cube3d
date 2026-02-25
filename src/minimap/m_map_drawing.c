@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   m_map_drawing.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 14:43:53 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/23 14:01:54 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:38:52 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ void	background_check(t_minimap *minimap, t_mlx *mlx, \
 			minimap->rel_y * sin(minimap->player_angle);
 		minimap->rotated_y = minimap->rel_x * sin(minimap->player_angle) + \
 				minimap->rel_y * cos(minimap->player_angle);
-		minimap->world_x = mlx->posX + minimap->rotated_x * map_scale;
-		minimap->world_y = mlx->posY + minimap->rotated_y * map_scale;
+		minimap->world_x = mlx->pos_x + minimap->rotated_x * map_scale;
+		minimap->world_y = mlx->pos_y + minimap->rotated_y * map_scale;
 		minimap->map_x = (int)minimap->world_x;
 		minimap->map_y = (int)minimap->world_y;
 		if (get_map_value(map, minimap->map_x, minimap->map_y, game) == 1)
@@ -36,7 +36,7 @@ void	background_check(t_minimap *minimap, t_mlx *mlx, \
 			minimap->color = 0x333333;
 		minimap->screen_x = minimap->map_start_x + minimap->pixel_x;
 		minimap->screen_y = minimap->map_start_y + minimap->pixel_y;
-		if (minimap->screen_x < screenWidth && minimap->screen_y < screenHeight)
+		if (minimap->screen_x < SCREENWIDTH && minimap->screen_y < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->screen_x, minimap->screen_y, \
 					minimap->color);
 	}
@@ -73,8 +73,8 @@ void	draw_minimap_circle(t_mlx *mlx, t_minimap *minimap)
 		minimap->border_y = minimap->center_y + \
 		(int)(sin(minimap->radian) * minimap->radius);
 		if (minimap->border_x >= 0 && minimap->border_y >= 0 && \
-			minimap->border_x < screenWidth && \
-				minimap->border_y < screenHeight)
+			minimap->border_x < SCREENWIDTH && \
+				minimap->border_y < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->border_x, \
 				minimap->border_y, 0xFFFFFF);
 		minimap->inner_border_x = minimap->center_x + \
@@ -82,8 +82,8 @@ void	draw_minimap_circle(t_mlx *mlx, t_minimap *minimap)
 		minimap->inner_border_y = minimap->center_y + \
 			(int)(sin(minimap->radian) * (minimap->radius - 1));
 		if (minimap->inner_border_x >= 0 && minimap->inner_border_y >= 0 && \
-				minimap->inner_border_x < screenWidth && \
-					minimap->inner_border_y < screenHeight)
+				minimap->inner_border_x < SCREENWIDTH && \
+					minimap->inner_border_y < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, minimap->inner_border_x, \
 					minimap->inner_border_y, 0xFFFFFF);
 		minimap->angle++;

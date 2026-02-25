@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   c_mouse.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 13:36:26 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/22 19:25:10 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:39:27 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 void	change_rotation(t_mouse *m, t_mlx *mlx)
 {
 	m->rotation = m->delta_x * MOUSE_SENS_X * 0.5;
-	m->oldDirX = mlx->dirX;
-	mlx->dirX = mlx->dirX * cos(m->rotation) \
-		- mlx->dirY * sin(m->rotation);
-	mlx->dirY = m->oldDirX * sin(m->rotation) \
-		+ mlx->dirY * cos(m->rotation);
-	m->oldPlaneX = mlx->planeX;
-	mlx->planeX = mlx->planeX * cos(m->rotation) \
-		- mlx->planeY * sin(m->rotation);
-	mlx->planeY = m->oldPlaneX * sin(m->rotation) \
-		+ mlx->planeY * cos(m->rotation);
+	m->olddir_x = mlx->dir_x;
+	mlx->dir_x = mlx->dir_x * cos(m->rotation) \
+		- mlx->dir_y * sin(m->rotation);
+	mlx->dir_y = m->olddir_x * sin(m->rotation) \
+		+ mlx->dir_y * cos(m->rotation);
+	m->oldplane_x = mlx->plane_x;
+	mlx->plane_x = mlx->plane_x * cos(m->rotation) \
+		- mlx->plane_y * sin(m->rotation);
+	mlx->plane_y = m->oldplane_x * sin(m->rotation) \
+		+ mlx->plane_y * cos(m->rotation);
 }
 
 void	mouse_rotation(t_mouse *m, t_mlx *mlx)
@@ -49,8 +49,8 @@ int	handle_mouse_move(int x, int y, t_mlx *mlx)
 {
 	t_mouse	mouse;
 
-	mouse.center_x = screenWidth / 2;
-	mouse.center_y = screenHeight / 2;
+	mouse.center_x = SCREENWIDTH / 2;
+	mouse.center_y = SCREENHEIGHT / 2;
 	mouse.delta_x = x - mouse.center_x;
 	mouse.delta_y = y - mouse.center_y;
 	if (!mlx->mouse_locked)
@@ -68,8 +68,8 @@ int	handle_mouse_press(int button, int x, int y, t_mlx *mlx)
 		if (!mlx->mouse_locked)
 		{
 			mlx->mouse_locked = 1;
-			mlx->last_mouse_x = screenWidth / 2;
-			mlx->last_mouse_y = screenHeight / 2;
+			mlx->last_mouse_x = SCREENWIDTH / 2;
+			mlx->last_mouse_y = SCREENHEIGHT / 2;
 			mlx_mouse_hide(mlx->mlx, mlx->win);
 			mlx_mouse_move(mlx->mlx, mlx->win, \
 				mlx->last_mouse_x, mlx->last_mouse_y);

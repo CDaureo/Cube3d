@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   r_txt.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 13:59:08 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:33:04 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:55:26 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,13 @@ char	*get_wall_texture_fast(t_render *r, t_textures *txt)
 {
 	int	tex_index;
 
+<<<<<<< HEAD
+char *get_wall_texture_fast(t_render *r, t_textures *textures)
+{
+	int tex_index = (r->side << 1) | (r->side == 0 ? (r->step_x > 0) : (r->step_y > 0));
+
+	return textures->data[tex_index];
+=======
 	if (r->side == 0)
 	{
 		if (r->stepX > 0)
@@ -69,4 +76,5 @@ char	*get_wall_texture_fast(t_render *r, t_textures *txt)
 			tex_index = 2;
 	}
 	return (txt->data[tex_index]);
+>>>>>>> a740eb807fa05dd7436f4b4c22dbf0f6a1dc8672
 }

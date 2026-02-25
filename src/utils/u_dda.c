@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_dda.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:03:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 13:25:16 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 14:06:12 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	update_vars(t_render *r, t_mlx *mlx, double fov_scale)
 {
-	r->lineHeight = (int)(screenHeight / r->perpWallDist * fov_scale);
-	r->horizon = screenHeight / 2 + mlx->pitch;
-	r->drawStart = -r->lineHeight / 2 + r->horizon;
-	r->drawEnd = r->lineHeight / 2 + r->horizon;
+	r->line_height = (int)(SCREENHEIGHT / r->perp_wall_dist * fov_scale);
+	r->horizon = SCREENHEIGHT / 2 + mlx->pitch;
+	r->draw_start = -r->line_height / 2 + r->horizon;
+	r->draw_end = r->line_height / 2 + r->horizon;
 }
 
 void	data_update(t_mlx *mlx, t_render *r, t_game *game)
@@ -29,9 +29,9 @@ void	data_update(t_mlx *mlx, t_render *r, t_game *game)
 	if (r->side == 0)
 		r->perpWallDist = (r->sideDistX - r->deltaDistX);
 	else
-		r->perpWallDist = (r->sideDistY - r->deltaDistY);
-	if (r->perpWallDist <= 0.001)
-		r->perpWallDist = 0.001;
+		r->perp_wall_dist = (r->side_dist_y - r->delta_dits_y);
+	if (r->perp_wall_dist <= 0.001)
+		r->perp_wall_dist = 0.001;
 	update_vars(r, mlx, fov_scale);
 	if (r->drawStart < 0)
 		r->drawStart = 0;
@@ -58,9 +58,9 @@ void	vertical_loop(t_mlx *mlx, t_render *r, t_game *game, char *texture_data)
 	int	tex_y;
 	int	color;
 
-	y = r->drawStart;
-	r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
-	while (y <= r->drawEnd)
+	y = r->draw_start;
+	r->tex_pos = (r->draw_start - r->horizon + r->line_height / 2) * r->step;
+	while (y <= r->draw_end)
 	{
 		tex_y = (int)r->texPos % game->txt.tex_height;
 		if (tex_y < 0)
@@ -73,7 +73,7 @@ void	vertical_loop(t_mlx *mlx, t_render *r, t_game *game, char *texture_data)
 			color = ((((color >> 16) & 0xFF) * 9 / 10) << 16) | \
 					((((color >> 8) & 0xFF) * 9 / 10) << 8) | \
 					(((color & 0xFF) * 9 / 10));
-		if (y >= 0 && y < screenHeight)
+		if (y >= 0 && y < SCREENHEIGHT)
 			ft_mlx_pixel_put(mlx, r->x, y, color);
 		y++;
 	}
