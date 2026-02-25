@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:03:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:45:57 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:13:32 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ void data_update(t_mlx *mlx, t_render *r, t_game *game)
 
 	if(r->side == 0) 
 		r->perpWallDist = (r->sideDistX - r->deltaDistX);
-	else		  
+	else
 		r->perpWallDist = (r->sideDistY - r->deltaDistY);
-	if(r->perpWallDist <= 0.001)
+	if (r->perpWallDist <= 0.001)
 		r->perpWallDist = 0.001;
 	update_vars(r, mlx, fov_scale);
-	if(r->drawStart < 0) r->drawStart = 0;
-	if(r->drawEnd >= screenHeight) r->drawEnd = screenHeight - 1;
+	if (r->drawStart < 0) r->drawStart = 0;
+	if (r->drawEnd >= screenHeight) r->drawEnd = screenHeight - 1;
 	if (r->side == 0)
 		wallX = mlx->posY + r->perpWallDist * r->rayDirY;
 	else

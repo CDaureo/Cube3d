@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:13:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:46:28 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:12:52 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ int	validator(t_game *game)
 	return (1);
 }
 
-int 	parse_error_checker(int ret, t_game *game )
+int	parse_error_checker(int ret, t_game *game )
 {
 	if (!ret)
-		return (printf("Error:\nInvalid .cub file (parse_line)\n"),0);
+		return (printf("Error:\nInvalid .cub file (parse_line)\n"), 0);
 	if (game->maps.height == 0)
 		return (printf("Error:\nNo map block found\n"), 0);
 	if (!finalize_map(&game->maps))

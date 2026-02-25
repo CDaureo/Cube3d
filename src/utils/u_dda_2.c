@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   u_dda_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:24:18 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/18 17:24:28 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:01:24 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void render_start(t_mlx *mlx, t_render *r)
+void	render_start(t_mlx *mlx, t_render *r)
 {
 	r->cameraX = 2 * r->x / (double)screenWidth - 1;
 	r->rayDirX = mlx->dirX + mlx->planeX * r->cameraX;
@@ -23,16 +23,16 @@ void render_start(t_mlx *mlx, t_render *r)
 		r->deltaDistY = 1e30;
 	else
 		r->deltaDistY = fabs(1 / r->rayDirY);
-
 	if (r->rayDirX == 0)
 		r->deltaDistX = 1e30;
 	else
 		r->deltaDistX = fabs(1 / r->rayDirX);
 }
 
-void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int draw_end)
+void	draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x,
+	int draw_start, int draw_end)
 {
-	int y;
+	int	y;
 
 	y = 0;
 	while (y < draw_start)
@@ -48,7 +48,7 @@ void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int 
 	}
 }
 
-void initialize_dda_step_x(t_mlx *mlx, t_render *r)
+void	initialize_dda_step_x(t_mlx *mlx, t_render *r)
 {
 	if (r->rayDirX < 0)
 	{
@@ -62,7 +62,7 @@ void initialize_dda_step_x(t_mlx *mlx, t_render *r)
 	}
 }
 
-void initialize_dda_step_y(t_mlx *mlx, t_render *r)
+void	initialize_dda_step_y(t_mlx *mlx, t_render *r)
 {
 	if (r->rayDirY < 0)
 	{
@@ -76,7 +76,7 @@ void initialize_dda_step_y(t_mlx *mlx, t_render *r)
 	}
 }
 
-void perform_dda_step(t_render *r)
+void	perform_dda_step(t_render *r)
 {
 	if (r->sideDistX < r->sideDistY)
 	{

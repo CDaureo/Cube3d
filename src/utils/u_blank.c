@@ -6,25 +6,25 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:00:28 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/01/21 14:00:43 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:03:44 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int is_blank(const char *s)
+int	is_blank(const char *s)
 {
-	size_t i;
+	size_t	i;
 
 	if (!s)
-		return 1;
+		return (1);
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] != ' ' && s[i] != '\t' && s[i] != '\n' &&
-			s[i] != '\r' && s[i] != '\v' && s[i] != '\f')
-			return 0;
+		if (s[i] != ' ' && s[i] != '\t' && s[i] != '\n'
+			&& s[i] != '\r' && s[i] != '\v' && s[i] != '\f')
+			return (0);
 		i++;
 	}
-	return 1;
+	return (1);
 }
