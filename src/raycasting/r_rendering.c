@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:21:49 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 12:44:13 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:18:50 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	render_scene(t_game *game)
 		render_start(mlx, &r);
 		apply_dda(mlx, &r, map, game);
 		data_update(mlx, &r, game);
-		draw_ceiling_floor(mlx, &game->colors, r.x, r.drawStart, r.drawEnd);
+		draw_ceiling_floor(mlx, &game->colors, &r);
 		vertical_update(mlx, &r, game);
 		mlx->zbuffer[r.x] = r.perpWallDist;
 		r.x++;

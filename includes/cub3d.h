@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/25 12:44:13 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 13:54:50 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 #define WIN_WIDTH 1280
 #define WIN_HEIGHT 720
-#define MAX_sprS 2000
+#define MAX_SPRITES 2000
 #define MOVEMENT_FPS 60
 #define RENDER_FPS 60
 #define TARGET_FPS 60
@@ -318,7 +318,7 @@ int render_loop(t_game *game);
 void initialize_mlx(t_mlx *mlx);
 int render_loop_wrapper(void *param);
 void render_start(t_mlx *mlx, t_render *r);
-void draw_ceiling_floor(t_mlx *mlx, t_color *colors, int x, int draw_start, int draw_end);
+void draw_ceiling_floor(t_mlx *mlx, t_color *colors, t_render *r);
 void apply_dda(t_mlx *mlx, t_render *r, t_map *map, t_game *game);
 
 /* Textures */
