@@ -6,17 +6,18 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:05:08 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 16:44:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/26 16:37:12 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	calculate_spr_transform(t_mlx *mlx, t_spr *sprs, t_spr_system *spr)
+void	calculate_spr_transform(t_mlx *mlx, t_spr_system *spr)
 {
 	spr->spr_x = spr->spr_x - mlx->pos_x;
 	spr->spr_y = spr->spr_y - mlx->pos_y;
-	spr->inv_det = 1.0 / (mlx->plane_x * mlx->dir_y - mlx->dir_x * mlx->plane_y);
+	spr->inv_det = 1.0 / (mlx->plane_x * mlx->dir_y - \
+			mlx->dir_x * mlx->plane_y);
 	spr->transform_x = spr->inv_det * \
 		(mlx->dir_y * spr->spr_x - mlx->dir_x * spr->spr_y);
 	spr->transform_y = spr->inv_det * \
@@ -88,7 +89,9 @@ void	render_single_spr(t_mlx *mlx, t_spr *sprs, t_spr_system *spr)
 	int		stripe;
 	char	*current_grass_data;
 
-	calculate_spr_transform(mlx, spr, spr);
+	spr->spr_x = sprs->x;
+	spr->spr_y = sprs->y;
+	calculate_spr_transform(mlx, spr);
 	if (spr->transform_y <= 0)
 		return ;
 	calculate_spr_screen_coords(mlx, spr);

@@ -6,18 +6,18 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:07:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/25 16:43:55 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 17:50:15 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_game game;
-	t_minimap minimap;
+	t_game		game;
+	t_minimap	minimap;
 
-	if(error_checker(&game, argc, argv))
+	if (error_checker(&game, argc, argv))
 		return (1);
 	initialize_player_from_map(&game.mlx, &game.maps);
 	load_grass_texture(&game);

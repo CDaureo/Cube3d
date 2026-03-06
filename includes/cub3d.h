@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:00:55 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/02/25 16:44:20 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/26 16:27:05 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 # define WIN_WIDTH 1280
 # define WIN_HEIGHT 720
-# define MAX_sprS 2000
+# define MAX_SPRITES 1000
 # define MOVEMENT_FPS 60
 # define RENDER_FPS 60
 # define TARGET_FPS 60
@@ -330,8 +330,7 @@ int		get_spr_pixel(char *spr_data, int tex_x,
 int		get_texture_pixel(char *texture_data, int tex_x,
 		int tex_y, t_textures *tex);
 int		load_grass_texture(t_game *game);
-void	calculate_spr_transform(t_mlx *mlx, t_spr *spr,
-		t_spr_system *sprs);
+void	calculate_spr_transform(t_mlx *mlx, t_spr_system *sprs);
 void	calculate_spr_screen_coords(t_mlx *mlx, t_spr_system *sprs);
 void	calculate_spr_draw_bounds(t_spr_system *sprs);
 void	render_sprite_column(t_mlx *mlx, t_spr_system *sprs,
@@ -339,7 +338,7 @@ void	render_sprite_column(t_mlx *mlx, t_spr_system *sprs,
 void	render_single_spr(t_mlx *mlx, t_spr *spr,
 		t_spr_system *sprs);
 void	grass_loop_generating(t_game *game, t_minimap *minimap,
-		t_spr_system *sprs, int i);
+		t_spr_system *sprs);
 void	generate_grass_sprite(t_game *game, t_minimap *minimap);
 void	calculate_spr_distances(t_mlx *mlx, t_spr_system *sprs,
 		int *rendered_count);

@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   u_spr.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 17:06:37 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/18 17:07:39 by simgarci         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   u_sprites.c										:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: simgarci <simgarci@student.42.fr>		  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/02/26 16:00:05 by simgarci		  #+#	#+#			 */
+/*   Updated: 2026/02/26 16:24:38 by simgarci		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
@@ -34,22 +34,21 @@ int	get_spr_pixel(char *spr_data, int tex_x, int tex_y, t_spr_system *spr)
 	return (*(int *)(spr_data + pixel_index));
 }
 
-void	grass_loop_generating(t_game *game, \
-		t_minimap *mp, t_spr_system *spr, int i)
+void	grass_loop_generating(t_game *game, t_minimap *mp, t_spr_system *spr)
 {
+	int	i;
+
 	if (get_map_value(&game->maps, mp->map_x, mp->map_y, game) == 0)
 	{
-		spr->grass_per_tile = 1 + (rand() % 2);
-		while (i < spr->grass_per_tile && game->spr.spr_count < spr->max_sprs)
+		spr->grass_per_tile = 3 + (rand() % 4);
+		i = 0;
+		while (i < spr->grass_per_tile && game->spr.spr_count < MAX_SPRITES)
 		{
-			mp->rand_x = mp->map_x + 0.1 + (rand() % 80) / 100.0;
-			mp->rand_y = mp->map_y + 0.1 + (rand() % 80) / 100.0;
-			if (mp->rand_x < mp->map_x + 0.2 || mp->rand_x > mp->map_x + 0.8)
-			{
-				i++;
-				continue ;
-			}
-			if (mp->rand_y < mp->map_y + 0.2 || mp->rand_y > mp->map_y + 0.8)
+			mp->rand_x = mp->map_x + 0.05 + (rand() % 90) / 100.0;
+			mp->rand_y = mp->map_y + 0.05 + (rand() % 90) / 100.0;
+			if (mp->rand_x < mp->map_x + 0.05 || \
+				mp->rand_x > mp->map_x + 0.95 || \
+				mp->rand_y < mp->map_y + 0.05 || mp->rand_y > mp->map_y + 0.95)
 			{
 				i++;
 				continue ;
@@ -66,20 +65,15 @@ void	grass_loop_generating(t_game *game, \
 
 void	generate_grass_sprite(t_game *game, t_minimap *minimap)
 {
-	t_spr_system	spr;
-	int				i;
-
-	spr.max_sprs = MAX_sprS;
 	game->spr.spr_count = 0;
-	game->spr.sprs = malloc(sizeof(t_spr) * spr.max_sprs);
+	game->spr.sprs = malloc(sizeof(t_spr) * MAX_SPRITES);
 	minimap->map_y = 0;
 	while (minimap->map_y < game->maps.height)
 	{
 		minimap->map_x = 0;
 		while (minimap->map_x < game->maps.width)
 		{
-			i = 0;
-			grass_loop_generating(game, minimap, &spr, i);
+			grass_loop_generating(game, minimap, &game->spr);
 			minimap->map_x++;
 		}
 		minimap->map_y++;

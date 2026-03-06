@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:03:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 16:36:11 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 17:25:50 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,28 +27,28 @@ void	data_update(t_mlx *mlx, t_render *r, t_game *game)
 
 	fov_scale = 1.0;
 	if (r->side == 0)
-		r->perpWallDist = (r->sideDistX - r->deltaDistX);
+		r->perp_wall_dist = (r->side_dist_x - r->delta_dits_x);
 	else
 		r->perp_wall_dist = (r->side_dist_y - r->delta_dits_y);
 	if (r->perp_wall_dist <= 0.001)
 		r->perp_wall_dist = 0.001;
 	update_vars(r, mlx, fov_scale);
-	if (r->drawStart < 0)
-		r->drawStart = 0;
-	if (r->drawEnd >= screen_height)
-		r->drawEnd = screen_height - 1;
+	if (r->draw_start < 0)
+		r->draw_start = 0;
+	if (r->draw_end >= screen_height)
+		r->draw_end = screen_height - 1;
 	if (r->side == 0)
-		wall_x = mlx->posY + r->perpWallDist * r->raydir_y;
+		wall_x = mlx->pos_y + r->perp_wall_dist * r->raydir_y;
 	else
-		wall_x = mlx->pos_x + r->perpWallDist * r->rayDirX;
+		wall_x = mlx->pos_x + r->perp_wall_dist * r->raydir_x;
 	wall_x -= floor(wall_x);
 	r->tex_x = (int)(wall_x * (double)game->txt.tex_width);
-	if (r->side == 0 && r->rayDirX > 0)
+	if (r->side == 0 && r->raydir_x > 0)
 		r->tex_x = game->txt.tex_width - r->tex_x - 1;
 	if (r->side == 1 && r->raydir_y < 0)
 		r->tex_x = game->txt.tex_width - r->tex_x - 1;
-	r->step = 1.0 * game->txt.tex_height / r->lineHeight;
-	r->texPos = (r->drawStart - r->horizon + r->lineHeight / 2) * r->step;
+	r->step = 1.0 * game->txt.tex_height / r->line_height;
+	r->tex_pos = (r->draw_start - r->horizon + r->line_height / 2) * r->step;
 	r->y = 0;
 }
 
@@ -62,12 +62,12 @@ void	vertical_loop(t_mlx *mlx, t_render *r, t_game *game, char *texture_data)
 	r->tex_pos = (r->draw_start - r->horizon + r->line_height / 2) * r->step;
 	while (y <= r->draw_end)
 	{
-		tex_y = (int)r->texPos % game->txt.tex_height;
+		tex_y = (int)r->tex_pos % game->txt.tex_height;
 		if (tex_y < 0)
 			tex_y = 0;
 		if (tex_y >= game->txt.tex_height)
 			tex_y = game->txt.tex_height - 1;
-		r->texPos += r->step;
+		r->tex_pos += r->step;
 		color = get_texture_pixel(texture_data, r->tex_x, tex_y, &game->txt);
 		if (r->side == 1)
 			color = ((((color >> 16) & 0xFF) * 9 / 10) << 16) | \

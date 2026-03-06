@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:21:49 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 16:44:25 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/25 17:50:03 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	render_scene(t_game *game)
 	mlx = &game->mlx;
 	r.x = 0;
 	clear_image(mlx);
-	while(r.x < screen_width)
+	while (r.x < screen_width)
 	{
 		render_start(mlx, &r);
 		apply_dda(mlx, &r, map, game);
@@ -30,7 +30,6 @@ void	render_scene(t_game *game)
 		draw_ceiling_floor(mlx, &game->colors, &r);
 		vertical_update(mlx, &r, game);
 		mlx->zbuffer[r.x] = r.perp_wall_dist;
-		
 		r.x++;
 	}
 	render_sprite(mlx, &game->spr);
@@ -73,9 +72,11 @@ void	initialize_mlx(t_mlx *mlx)
 	mlx->last_render_time = 0;
 	mlx->zbuffer = malloc(sizeof(double) * screen_width);
 	mlx->mlx = mlx_init();
-	mlx->win = mlx_new_window(mlx->mlx, screen_width, screen_height, "Cub3D Raycasting");
+	mlx->win = mlx_new_window(mlx->mlx, screen_width, screen_height, \
+			"Cub3D Raycasting");
 	mlx->img = mlx_new_image(mlx->mlx, screen_width, screen_height);
-	mlx->addr = mlx_get_data_addr(mlx->img, &mlx->bits_per_pixel, &mlx->line_length, &mlx->endian);
+	mlx->addr = mlx_get_data_addr(mlx->img, &mlx->bits_per_pixel, \
+			&mlx->line_length, &mlx->endian);
 }
 
 int	render_loop_wrapper(void *param)

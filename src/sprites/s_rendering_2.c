@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:08:56 by simgarci          #+#    #+#             */
-/*   Updated: 2026/02/25 16:44:28 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/02/26 16:22:06 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	calculate_spr_distances(t_mlx *mlx, t_spr_system *spr, \
 		dx = spr->sprs[i].x - mlx->pos_x;
 		dy = spr->sprs[i].y - mlx->pos_y;
 		spr->sprs[i].distance = dx * dx + dy * dy;
-		if (spr->sprs[i].distance > 64.0)
+		if (spr->sprs[i].distance > 27.0)
 			spr->sprs[i].distance = -1;
 		else
 			(*rendered_count)++;
