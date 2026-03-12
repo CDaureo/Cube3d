@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validator_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:14:57 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/12 14:05:43 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,19 @@
 /*File Validator*/
 int	validate_extension(const char *file)
 {
-	size_t	len;
+	const char	*ext;
 
-	len = ft_strlen(file);
 	if (!file)
 		return (0);
-	if (len < 4)
+	ext = ft_strrchr(file, '.');
+	if (!ext)
+	{
+		printf("Error:\nInvalid file name (missing .cub): %s\n", file);
 		return (0);
-	if (ft_strcmp(file + len - 4, ".cub") == 0)
+	}
+	if (ft_strcmp(ext, ".cub") == 0)
 		return (1);
+	printf("Error:\nInvalid extension (require .cub): %s\n", file);
 	return (0);
 }
 

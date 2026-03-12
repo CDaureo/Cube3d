@@ -1,243 +1,76 @@
-# cub3D - Plan de Desarrollo 🎯
-
-Este documento describe **el plan completo de desarrollo** del proyecto **cub3D**, organizado por fases y prioridades, siguiendo los requisitos habituales del proyecto (42 / miniLibX).
-
----
-
-## 📋 Orden de Implementación por Prioridad
-
----
-
-## 🧱 Fase 1: Configuración Inicial (PRIORITARIA)
-
-### 📁 Estructura del proyecto
-      (HECHO PERO ES ESCALABLE)
-* Configurar **Makefile básico**
-* Crear estructura de directorios:
-
-  * `src/`
-  * `include/`
-  * `maps/`
-  * `textures/`
-* Incluir **libft** si es necesaria
-
----
-
-### 📄 Parsing del archivo `.cub`
-
-* ✅ Validar extensión `.cub`
-* ✅ Leer y almacenar rutas de texturas:
-
-  * `NO`, `SO`, `WE`, `EA`
-* ✅ Parsear colores:
-
-  * Suelo `F` (RGB)
-  * Techo `C` (RGB)
-* ✅ Extraer y almacenar el mapa
-
----
-
-### 🧩 Validación del mapa
-
-* ✅ Verificar caracteres válidos:
-
-  * `0`, `1`, `N`, `S`, `E`, `W`
-* ✅ Encontrar posición inicial del jugador
-
-  * Solo **una** posición válida
-* ✅ Determinar orientación inicial del jugador
-* ✅ Validar que el mapa esté **cerrado por paredes**
-* ✅ Manejar espacios correctamente dentro del mapa
-
----
-
-### 🚨 Manejo de errores
-
-* ❌ Mostrar errores con el formato:
-
-  ```
-  Error\n<mensaje explicativo>
-  ```
-* ❌ Liberar **toda la memoria** correctamente en caso de error
-* ❌ Validar existencia y accesibilidad de las rutas de texturas
-
----
-
-## 🖼️ Fase 2: Configuración de miniLibX (CRÍTICA)
-
-### 🪟 Inicialización de ventana
-
-* Inicializar **miniLibX**
-* Crear ventana con tamaño definido
-* Configurar hooks básicos:
-
-  * Cierre de ventana (X roja)
-
----
-
-### 🖌️ Gestión de imágenes
-
-* Cargar texturas desde archivos
-* Crear **buffer de imagen** para el renderizado
-* Implementar `pixel_put` optimizado (uso de imagen, no ventana directa)
-
----
-
-## 🧠 Fase 3: Motor de Ray-Casting (CORE DEL PROYECTO)
-
-### 📐 Algoritmo DDA (Digital Differential Analyzer)
-
-* Implementar cálculo de rayos por columna
-* Detectar colisiones con paredes
-* Determinar distancia **perpendicular** al muro
-
----
-
-### 🧱 Renderizado de paredes
-
-* Calcular altura de las líneas de pared
-* Seleccionar textura según orientación:
-
-  * Norte / Sur / Este / Oeste
-* Mapear correctamente texturas a columnas de píxeles
-* Aplicar **corrección de distorsión fisheye**
-
----
-
-### 🎨 Renderizado de suelo y techo
-
-* Rellenar píxeles superiores con color `C`
-* Rellenar píxeles inferiores con color `F`
-
----
-
-## 🎮 Fase 4: Controles y Movimiento (JUGABILIDAD)
-
-### ⌨️ Sistema de input
-
-* Capturar eventos de teclado
-* Implementar rotación:
-
-  * Flecha izquierda
-  * Flecha derecha
-* Implementar movimiento:
-
-  * `W` avanzar
-  * `S` retroceder
-  * `A` strafe izquierda
-  * `D` strafe derecha
-
----
-
-### 🧭 Cálculo de movimiento
-
-* Actualizar posición del jugador
-* Actualizar vector de dirección
-* Validar colisiones básicas
-
-  * El jugador **no puede atravesar paredes**
-
----
-
-### ❌ Eventos de cierre
-
-* Tecla `ESC` para salir
-* Click en la cruz roja para cerrar la ventana
-
----
-
-## 🧪 Fase 5: Testing y Optimización (PRE-ENTREGA)
-
-### ❌ Validación completa
-
-* Probar mapas válidos e inválidos
-* Verificar fugas de memoria con **valgrind**
-* Probar texturas corruptas o inexistentes
-* Validar gestión de ventana:
-
-  * Minimizar
-  * Cambiar de foco
-
----
-
-### 🚀 Optimización
-
-* Mejorar rendimiento del renderizado
-* Optimizar cálculos del ray-casting
-* Asegurar **mínimo 60 FPS**
-
----
-
-## 🌟 Fase 6: Bonus (SOLO SI LA PARTE OBLIGATORIA ES PERFECTA)
-
-### 🧱 Colisiones mejoradas
-
-* Sliding wall collision
-* Hitboxes más precisas
-
----
-
-### 🗺️ Minimap
-
-* Vista 2D del mapa
-* Indicador de posición y dirección del jugador
-
----
-
-### 🚪 Puertas interactivas
-
-* Abrir / cerrar con tecla (ej: `E`)
-* Animación de apertura
-
----
-
-### 👾 spr animados
-
-* Objetos estáticos y dinámicos
-* Sistema de spr ordenados por distancia
-
----
-
-### 🖱️ Rotación con mouse
-
-* Capturar movimiento del mouse
-* Rotación suave de cámara
-
----
-
-## 📊 Checklist de Funciones Externas Permitidas
-
-* `open`, `close`, `read`, `write`
-* `printf`, `malloc`, `free`
-* `perror`, `strerror`, `exit`
-* `gettimeofday`
-* Librería matemática (`-lm`):
-
-  * `sin`, `cos`, `tan`, `sqrt`, etc.
-* **Todas las funciones de miniLibX**
-
----
-
-## ⚠️ Criterios de Éxito
-
-* ✅ Renderizado 3D fluido
-* ✅ Texturas correctas según orientación
-* ✅ Colores de suelo y techo configurables
-* ✅ Controles responsivos
-* ✅ Parsing robusto con manejo de errores
-* ✅ Sin fugas de memoria
-* ✅ Gestión de ventana impecable
-
----
-
-## 🚨 Errores Comunes a Evitar
-
-* ❌ No validar correctamente el cierre del mapa
-* ❌ No manejar espacios dentro del mapa
-* ❌ Distorsión fisheye sin corregir
-* ❌ Fugas de memoria en texturas o ventana
-* ❌ No liberar recursos al cerrar el programa
-
----
-
-💡 **Consejo final:** Implementa cada fase de forma incremental y verifica su estabilidad antes de continuar. Un parser sólido y un ray-casting limpio son la base del éxito en **cub3D**.
+*This project has been created as part of the 42 curriculum by cdaureo- & simgarci.*
+
+# cub3D
+
+## Description
+cub3D is a simple 3D raycasting engine project inspired by early 3D games (Wolfenstein 3D).  
+The goal is to parse a .cub map file, load textures and colors, and render a realtime 3D view using a raycasting algorithm and miniLibX. The project focuses on correct parsing, map validation, basic textures, and responsive player movement.
+
+## Features (overview)
+- Parse .cub configuration files (textures, floor/ceiling colors, map).
+- Validate map structure (closed by walls, single player start, allowed characters).
+- Load textures and render walls with texture mapping.
+- Player movement (W/A/S/D) and rotation (left/right arrow).
+- Basic window and input handling via miniLibX.
+
+## Instructions
+
+Prerequisites
+- Linux
+- gcc / clang
+- miniLibX (setup and linked during compilation)
+- libft (if used by the project)
+- make
+
+Build
+1. From project root:
+   make
+
+Run
+- Correct usage:
+  ./cub3D maps/your_map.cub
+- Examples:
+  ./cub3D maps/example.cub
+
+Notes
+- The program validates the input file extension (.cub) and map content. Running with a path missing the .cub extension will produce an error and exit.
+- Use valgrind to check for memory leaks:
+  valgrind --leak-check=full ./cub3D maps/example.cub
+
+## File format (.cub) summary
+- Texture lines:
+  - NO ./path/to/north_texture.xpm
+  - SO ./path/to/south_texture.xpm
+  - WE ./path/to/west_texture.xpm
+  - EA ./path/to/east_texture.xpm
+- Colors:
+  - F 220,100,0   (floor RGB)
+  - C 225,30,0    (ceiling RGB)
+- Map:
+  - A rectangular grid of characters:
+  - 1 = wall, 0 = empty, N/S/E/W = player start and orientation, spaces allowed for padding.
+
+## Resources
+- miniLibX documentation and examples
+- Raycasting tutorials (e.g., Lode Vandevenne's raycasting tutorial)
+- C standard library and POSIX manual pages (open, read, close)
+- 42 project subject and guidelines
+
+AI usage disclosure
+- AI tools were used to assist with:
+  - Drafting and improving this README content.
+  - Suggesting code refactors and small helper functions during development (parsing helpers, validation routines).
+  - Generating unit-test ideas and example validation checks.
+- All core logic, final code decisions, and testing were implemented and validated by the project authors. AI output was reviewed and adjusted manually.
+
+## Testing & Validation
+- Verify map parsing and validation with both valid and invalid .cub files.
+- Test texture file accessibility and correct error messages when resources are missing.
+- Check for memory leaks and resource cleanup with valgrind.
+
+## Where to find help
+- Inspect the `mandatory_src/` and `includes/` folders for implementation details.
+- Open an issue or contact the authors for project-specific questions.
+
+```<!-- filepath: /home/cdaureo-/Cub/README.md -->
+*This project has been created as part of the 42 curriculum by cdaureo-. & simgarci*
