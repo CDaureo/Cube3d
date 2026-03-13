@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 13:38:17 by simgarci          #+#    #+#             */
-/*   Updated: 2026/03/13 15:50:43 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/13 18:10:58 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,12 @@ typedef struct s_spr
 	int		texture_index;
 	double	distance;
 }	t_spr;
+
+typedef struct s_parse_state
+{
+	int	map_started;
+	int	map_ended;
+}	t_parse_state;
 
 typedef struct s_spr_system
 {
@@ -295,6 +301,12 @@ int		parse_file(const char *path, t_game *game);
 int		parse_map_line(char *line, t_map *map);
 int		finalize_map(t_map *map);
 int		parse_map(int fd, t_game *game);
+void	loop_doors(t_game *game, int door_index);
+void	parse_map_doors(t_game *game);
+char	*ptex_dup_n(const char *s, size_t n);
+char	**ptex_get_texture_dst(t_game *game, char *trim, char **after);
+int		ptex_has_xpm_ext(const char *path);
+
 
 /* Minimap */
 void	init_minimap(t_minimap *minimap, t_mlx *mlx);
@@ -386,6 +398,14 @@ int		get_map_value(t_map *map, int x, int y, t_game *game);
 int		error_checker(t_game *game, int argc, char **argv);
 int		apply_vignette(int color, int x, int y);
 int		parse_error_checker(int ret, t_game *game);
+int		is_space(char c);
+int		is_playable_tile(char c);
+int		has_space_around(t_map *map, int y, int x);
+int		print_open_map_error(int y, int x);
+int		print_map_line_error(char *trim, int started);
+int		handle_map_line(char *line, t_game *game, int *started);
+
+
 
 /* Free */
 void	cleanup_game(t_game *game);

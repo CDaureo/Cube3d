@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_maps.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 14:15:39 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/13 18:13:44 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,12 @@ int	get_map_value(t_map *map, int x, int y, t_game *game)
 		return (0);
 	else
 		return (1);
+}
+
+int	print_map_line_error(char *trim, int started)
+{
+	if (started)
+		return (printf("Error: línea inválida dentro del mapa: \"%s\"\n",
+				trim), 0);
+	return (printf("Error: línea inválida antes del mapa: \"%s\"\n", trim), 0);
 }

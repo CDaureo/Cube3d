@@ -56,6 +56,8 @@ SRC = $(MANDATORY_DIR)/main.c \
 	 $(M_PARSING_DIR)/p_colors.c \
 	 $(M_PARSING_DIR)/p_map.c \
 	 $(M_PARSING_DIR)/p_textures.c \
+	 $(M_PARSING_DIR)/p_textures_utils.c \
+	 $(M_PARSING_DIR)/p_doors.c \
 	 $(M_RAYCASTING_DIR)/r_drawing.c \
 	 $(M_RAYCASTING_DIR)/r_rendering.c \
 	 $(M_RAYCASTING_DIR)/r_textures.c \

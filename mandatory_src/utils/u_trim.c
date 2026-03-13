@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_trim.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 12:35:16 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/13 18:13:56 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,10 @@ void	trim_line(char *s)
 	len = ft_strlen(s);
 	if (len > 0 && s[len - 1] == '\n')
 		s[len - 1] = '\0';
+}
+
+int	is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\r'
+		|| c == '\v' || c == '\f');
 }

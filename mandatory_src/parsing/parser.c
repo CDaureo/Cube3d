@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/23 17:30:11 by simgarci          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   parser.c										   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: cdaureo- <cdaureo-@student.42.fr>		  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/02/23 17:30:11 by simgarci		  #+#	#+#			 */
+/*   Updated: 2026/03/13 17:28:08 by cdaureo-		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
@@ -29,103 +29,85 @@ static int	is_map_line_start(const char *s)
 	while (s[i] && s[i] != '\n')
 	{
 		c = s[i];
-		if (c == '0' || c == '1' || c == 'N' || c == 'S' || \
-			c == 'E' || c == 'W' || c == 'D')
+		if (c == '0' || c == '1' || c == 'N' || c == 'S'
+			|| c == 'E' || c == 'W' || c == 'D')
 			has_map_char = 1;
-		if (c != '0' && c != '1' && c != 'N' && c != 'S' && \
-			c != 'E' && c != 'W' && c != 'D' && c != ' ' && c != '\t')
+		if (c != '0' && c != '1' && c != 'N' && c != 'S'
+			&& c != 'E' && c != 'W' && c != 'D' && c != ' ' && c != '\t')
 			return (0);
 		i++;
 	}
 	return (has_map_char);
 }
 
-void	loop_doors(t_game *game, int door_index)
+static int	is_config_line(const char *line)
 {
-	while (game->y < game->maps.height)
-	{
-		game->x = 0;
-		while (game->x < game->maps.width)
-		{
-			if (game->maps.rows[game->y][game->x] == 'D')
-			{
-				game->doors[door_index].x = game->x;
-				game->doors[door_index].y = game->y;
-				game->doors[door_index].is_open = 0;
-				game->doors[door_index].open_progress = 0.0f;
-				door_index++;
-			}
-			game->x++;
-		}
-		game->y++;
-	}
+	if (!ft_strncmp(line, "NO ", 3) || !ft_strncmp(line, "SO ", 3)
+		|| !ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3)
+		|| !ft_strncmp(line, "DO ", 3))
+		return (1);
+	if (line[0] == 'F' && (line[1] == ' ' || line[1] == '\t'))
+		return (1);
+	if (line[0] == 'C' && (line[1] == ' ' || line[1] == '\t'))
+		return (1);
+	return (0);
 }
 
-void	parse_map_doors(t_game *game)
+static int	parse_config_line(char *line, t_game *game)
 {
-	int	door_count;
-	int	door_index;
-
-	game->y = 0;
-	door_count = 0;
-	while (game->y < game->maps.height)
-	{
-		game->x = 0;
-		while (game->x < game->maps.width)
-		{
-			if (game->maps.rows[game->y][game->x] == 'D')
-				door_count++;
-			game->x++;
-		}
-		game->y++;
-	}
-	game->doors = malloc(sizeof(t_door) * door_count);
-	game->door_count = door_count;
-	door_index = 0;
-	game->y = 0;
-	loop_doors(game, door_index);
+	if (!is_config_line(line))
+		return (printf("Error:\nLine not recognised: %s\n", line), 0);
+	if (!ft_strncmp(line, "NO ", 3) || !ft_strncmp(line, "SO ", 3)
+		|| !ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3)
+		|| !ft_strncmp(line, "DO ", 3))
+		return (parse_texture_line(line, game));
+	if (line[0] == 'F')
+		return (parse_floor_color(line, &game->colors));
+	return (parse_ceiling_color(line, &game->colors));
 }
 
-static int	parse_line(char *line, t_game *game)
+static int	parse_line(char *line, t_game *game, t_parse_state *st)
 {
 	trim_line(line);
 	if (is_blank(line))
+	{
+		if (st->map_started)
+			st->map_ended = 1;
 		return (1);
-	if (!ft_strncmp(line, "NO ", 3) || !ft_strncmp(line, "SO ", 3) || \
-		!ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3) || \
-		!ft_strncmp(line, "DO ", 3))
-		return (parse_texture_line(line, game));
-	if (line[0] == 'F' && (line[1] == ' ' || line[1] == '\t'))
-		return (parse_floor_color(line, &game->colors));
-	if (line[0] == 'C' && (line[1] == ' ' || line[1] == '\t'))
-		return (parse_ceiling_color(line, &game->colors));
+	}
 	if (is_map_line_start(line))
+	{
+		if (st->map_ended)
+			return (printf("Error:\nMapa inválido: hueco en mapa\n"), 0);
+		st->map_started = 1;
 		return (parse_map_line(line, &game->maps));
-	printf("Error:\nLine not recognised: %s\n", line);
-	return (0);
+	}
+	if (st->map_started)
+		return (printf("Error:\nLínea inválida del mapa: %s\n", line), 0);
+	return (parse_config_line(line, game));
 }
 
 int	parse_file(const char *path, t_game *game)
 {
-	int		fd;
-	char	*line;
-	int		ret;
-	int		r;
+	int				fd;
+	int				ret;
+	char			*line;
+	t_parse_state	st;
 
 	ret = 1;
+	st.map_started = 0;
+	st.map_ended = 0;
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		return (printf("Error:\nCannot be opened %s\n", path), 0);
 	line = get_next_line(fd);
-	while (line != NULL)
+	while (line)
 	{
-		r = parse_line(line, game);
-		free(line);
-		if (r == 0)
-		{
+		if (!parse_line(line, game, &st))
 			ret = 0;
+		free(line);
+		if (!ret)
 			break ;
-		}
 		line = get_next_line(fd);
 	}
 	close(fd);
