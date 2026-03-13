@@ -6,7 +6,7 @@
 /*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 13:38:17 by simgarci          #+#    #+#             */
-/*   Updated: 2026/03/12 13:38:28 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/13 15:50:43 by simgarci         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,6 +294,7 @@ int		parse_ceiling_color(char *line, t_color *data);
 int		parse_file(const char *path, t_game *game);
 int		parse_map_line(char *line, t_map *map);
 int		finalize_map(t_map *map);
+int		parse_map(int fd, t_game *game);
 
 /* Minimap */
 void	init_minimap(t_minimap *minimap, t_mlx *mlx);
