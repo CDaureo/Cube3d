@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   p_map_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/21 14:08:09 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/13 15:43:00 by simgarci         ###   ########.fr       */
+/*   Created: 2026/03/13 17:44:12 by cdaureo-          #+#    #+#             */
+/*   Updated: 2026/03/13 18:32:24 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	parse_map_line(char *line, t_map *map)
 	char	*row;
 	size_t	len;
 
-	
 	if (!line)
 		return (0);
 	row = ft_strdup(line);
@@ -56,5 +55,67 @@ int	finalize_map(t_map *map)
 		}
 		i++;
 	}
+	return (1);
+}
+
+static int	check_map_tile(t_map *map, int y, int x)
+{
+	char	c;
+
+	c = map->rows[y][x];
+	if (!is_playable_tile(c))
+		return (1);
+	if (y == 0 || x == 0)
+		return (print_open_map_error(y, x));
+	if (y == map->height - 1 || x == map->width - 1)
+		return (print_open_map_error(y, x));
+	if (has_space_around(map, y, x))
+		return (print_open_map_error(y, x));
+	return (1);
+}
+
+int	is_map_closed(t_map *map)
+{
+	int		y;
+	int		x;
+
+	if (!map || map->height <= 0 || map->width <= 0)
+		return (printf("Error: map vacío o inválido\n"), 0);
+	y = 0;
+	while (y < map->height)
+	{
+		x = 0;
+		while (x < map->width)
+		{
+			if (!check_map_tile(map, y, x))
+				return (0);
+			x++;
+		}
+		y++;
+	}
+	return (1);
+}
+
+int	parse_map(int fd, t_game *game)
+{
+	char	*line;
+	int		started;
+	int		status;
+
+	started = 0;
+	line = get_next_line(fd);
+	while (line)
+	{
+		status = handle_map_line(line, game, &started);
+		if (status == 0)
+			return (0);
+		if (status == 2)
+			break ;
+		line = get_next_line(fd);
+	}
+	if (!started)
+		return (printf("Error: no se encontró ninguna fila de mapa\n"), 0);
+	if (!finalize_map(&game->maps) || !is_map_closed(&game->maps))
+		return (printf("Failed to parse map\n"), 0);
 	return (1);
 }

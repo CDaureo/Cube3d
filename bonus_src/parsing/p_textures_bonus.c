@@ -1,54 +1,79 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   p_textures_bonus.c                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/23 17:29:50 by simgarci          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   p_textures.c									   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: cdaureo- <cdaureo-@student.42.fr>		  +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/03/13 17:19:10 by cdaureo-		  #+#	#+#			 */
+/*   Updated: 2026/03/13 17:33:38 by cdaureo-		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	trim_textures(char *trim, t_game *game, char *path)
+static int	assign_texture_path(char *trim, t_game *game)
 {
-	if (ft_strncmp(trim, "NO ", 3) == 0)
-	{
-		path = trim_whitespace(trim + 3);
-		game->txt.north = ft_strdup(path);
-	}
-	else if (ft_strncmp(trim, "SO ", 3) == 0)
-	{
-		path = trim_whitespace(trim + 3);
-		game->txt.south = ft_strdup(path);
-	}
-	else if (ft_strncmp(trim, "WE ", 3) == 0)
-	{
-		path = trim_whitespace(trim + 3);
-		game->txt.west = ft_strdup(path);
-	}
-	else if (ft_strncmp(trim, "EA ", 3) == 0)
-	{
-		path = trim_whitespace(trim + 3);
-		game->txt.east = ft_strdup(path);
-	}
-	else if (ft_strncmp(trim, "DO ", 3) == 0)
-	{
-		path = trim_whitespace(trim + 3);
-		game->txt.door = ft_strdup(path);
-	}
+	char	*after;
+	char	*path_token;
+	char	**dst;
+	size_t	i;
+
+	dst = ptex_get_texture_dst(game, trim, &after);
+	if (!dst)
+		return (0);
+	after = trim_whitespace(after);
+	i = 0;
+	while (after[i] && !is_space(after[i]))
+		i++;
+	if (i == 0)
+		return (0);
+	path_token = ptex_dup_n(after, i);
+	if (!path_token)
+		return (0);
+	while (after[i] && is_space(after[i]))
+		i++;
+	if ((after[i] && after[i] != '\n') || !ptex_has_xpm_ext(path_token)
+		|| access(path_token, R_OK) != 0)
+		return (free(path_token), 0);
+	if (*dst)
+		free(*dst);
+	return (*dst = path_token, 1);
+}
+
+void	trim_textures(char *trim, t_game *game)
+{
+	char	*after;
+	char	*path_token;
+	char	**dst;
+	size_t	i;
+
+	dst = ptex_get_texture_dst(game, trim, &after);
+	if (!dst)
+		return ;
+	after = trim_whitespace(after);
+	i = 0;
+	while (after[i] && !is_space(after[i]))
+		i++;
+	if (i == 0)
+		return ;
+	path_token = ptex_dup_n(after, i);
+	if (!path_token)
+		return ;
+	while (after[i] && is_space(after[i]))
+		i++;
+	if (after[i] != '\0' && after[i] != '\n')
+		return (free(path_token));
+	*dst = path_token;
 }
 
 int	parse_texture_line(char *line, t_game *game)
 {
 	char	*trim;
-	char	*path;
 
-	path = "NULL";
 	trim = trim_whitespace(line);
-	trim_textures(trim, game, path);
+	if (!assign_texture_path(trim, game))
+		return (printf("Error:\nInvalid texture line: %s\n", line), 0);
 	return (1);
 }
 
@@ -61,14 +86,13 @@ int	parse_textures(int fd, t_game *game)
 	line = get_next_line(fd);
 	while (counter < 5 && line)
 	{
-		if (ft_strncmp(line, "NO ", 3) == 0
-			|| ft_strncmp(line, "SO ", 3) == 0
+		if (ft_strncmp(line, "NO ", 3) == 0 || ft_strncmp(line, "SO ", 3) == 0
 			|| ft_strncmp(line, "WE ", 3) == 0
 			|| ft_strncmp(line, "EA ", 3) == 0
 			|| ft_strncmp(line, "DO ", 3) == 0)
 		{
-			parse_texture_line(line, game);
-			counter++;
+			if (parse_texture_line(line, game))
+				counter++;
 		}
 		free(line);
 		line = get_next_line(fd);

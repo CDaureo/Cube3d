@@ -64,6 +64,7 @@ SRC = $(MANDATORY_DIR)/main.c \
 	 $(M_UTILS_DIR)/u_trim.c \
 	 $(M_UTILS_DIR)/u_rendering.c \
 	 $(M_UTILS_DIR)/u_maps.c \
+	 $(M_UTILS_DIR)/u_maps2.c \
 	 $(M_UTILS_DIR)/u_blank.c \
 	 $(M_UTILS_DIR)/u_dda.c \
 	 $(M_UTILS_DIR)/u_parser.c \
@@ -90,6 +91,8 @@ BONUS_SRC = $(BONUS_DIR)/main_bonus.c \
 	 $(B_PARSING_DIR)/p_colors_bonus.c \
 	 $(B_PARSING_DIR)/p_map_bonus.c \
 	 $(B_PARSING_DIR)/p_textures_bonus.c \
+	 $(B_PARSING_DIR)/p_textures_utils_bonus.c \
+	 $(B_PARSING_DIR)/p_doors_bonus.c \
 	 $(B_RAYCASTING_DIR)/r_drawing_bonus.c \
 	 $(B_RAYCASTING_DIR)/r_rendering_bonus.c \
 	 $(B_RAYCASTING_DIR)/r_textures_bonus.c \
@@ -106,6 +109,7 @@ BONUS_SRC = $(BONUS_DIR)/main_bonus.c \
 	 $(B_UTILS_DIR)/u_minimap_bonus.c \
 	 $(B_UTILS_DIR)/u_sprites_bonus.c \
 	 $(B_UTILS_DIR)/u_maps_bonus.c \
+	 $(B_UTILS_DIR)/u_maps2_bonus.c \
 	 $(B_UTILS_DIR)/u_blank_bonus.c \
 	 $(B_UTILS_DIR)/u_dda_bonus.c \
 	 $(B_UTILS_DIR)/u_dda_2_bonus.c \
