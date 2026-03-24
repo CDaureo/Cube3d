@@ -22,8 +22,6 @@ static void	texture_setter(t_game *game)
 		game->txt.west, &game->txt.tex_width, &game->txt.tex_height);
 	game->txt.img[3] = mlx_xpm_file_to_image(game->mlx.mlx, \
 		game->txt.east, &game->txt.tex_width, &game->txt.tex_height);
-	game->txt.img[4] = mlx_xpm_file_to_image(game->mlx.mlx, \
-		game->txt.door, &game->txt.tex_width, &game->txt.tex_height);
 	game->txt.data[0] = mlx_get_data_addr(game->txt.img[0], \
 		&game->txt.bits_per_pixel, &game->txt.line_length, &game->txt.endian);
 	game->txt.data[1] = mlx_get_data_addr(game->txt.img[1], \
@@ -31,8 +29,6 @@ static void	texture_setter(t_game *game)
 	game->txt.data[2] = mlx_get_data_addr(game->txt.img[2], \
 		&game->txt.bits_per_pixel, &game->txt.line_length, &game->txt.endian);
 	game->txt.data[3] = mlx_get_data_addr(game->txt.img[3], \
-		&game->txt.bits_per_pixel, &game->txt.line_length, &game->txt.endian);
-	game->txt.data[4] = mlx_get_data_addr(game->txt.img[4], \
 		&game->txt.bits_per_pixel, &game->txt.line_length, &game->txt.endian);
 }
 

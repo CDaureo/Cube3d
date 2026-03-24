@@ -84,12 +84,11 @@ int	parse_textures(int fd, t_game *game)
 
 	counter = 0;
 	line = get_next_line(fd);
-	while (counter < 5 && line)
+	while (counter < 4 && line)
 	{
 		if (ft_strncmp(line, "NO ", 3) == 0 || ft_strncmp(line, "SO ", 3) == 0
 			|| ft_strncmp(line, "WE ", 3) == 0
-			|| ft_strncmp(line, "EA ", 3) == 0
-			|| ft_strncmp(line, "DO ", 3) == 0)
+			|| ft_strncmp(line, "EA ", 3) == 0)
 		{
 			if (parse_texture_line(line, game))
 				counter++;

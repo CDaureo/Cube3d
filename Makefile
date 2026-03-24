@@ -5,7 +5,7 @@
 NAME = cub3D
 BONUS_NAME = cub3D_bonus
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 INCLUDES = -I./includes
 
 # miniLibX (fuente local)

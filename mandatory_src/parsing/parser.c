@@ -43,8 +43,7 @@ static int	is_map_line_start(const char *s)
 static int	is_config_line(const char *line)
 {
 	if (!ft_strncmp(line, "NO ", 3) || !ft_strncmp(line, "SO ", 3)
-		|| !ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3)
-		|| !ft_strncmp(line, "DO ", 3))
+		|| !ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3))
 		return (1);
 	if (line[0] == 'F' && (line[1] == ' ' || line[1] == '\t'))
 		return (1);
@@ -58,8 +57,7 @@ static int	parse_config_line(char *line, t_game *game)
 	if (!is_config_line(line))
 		return (printf("Error:\nLine not recognised: %s\n", line), 0);
 	if (!ft_strncmp(line, "NO ", 3) || !ft_strncmp(line, "SO ", 3)
-		|| !ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3)
-		|| !ft_strncmp(line, "DO ", 3))
+		|| !ft_strncmp(line, "WE ", 3) || !ft_strncmp(line, "EA ", 3))
 		return (parse_texture_line(line, game));
 	if (line[0] == 'F')
 		return (parse_floor_color(line, &game->colors));
@@ -113,5 +111,5 @@ int	parse_file(const char *path, t_game *game)
 	close(fd);
 	if (!parse_error_checker(ret, game))
 		return (0);
-	return (parse_map_doors(game), 1);
+	return (1);
 }

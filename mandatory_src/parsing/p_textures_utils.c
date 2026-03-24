@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 17:40:23 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/24 13:27:59 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/03/24 13:39:30 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ char	**ptex_get_texture_dst(t_game *game, char *trim, char **after)
 		return (*after = trim + 3, &game->txt.west);
 	if (ft_strncmp(trim, "EA ", 3) == 0)
 		return (*after = trim + 3, &game->txt.east);
-	if (ft_strncmp(trim, "DO ", 3) == 0)
-		return (*after = trim + 3, &game->txt.door);
 	return (NULL);
 }
 
