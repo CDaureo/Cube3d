@@ -37,7 +37,7 @@ static int	assign_texture_path(char *trim, t_game *game)
 		|| access(path_token, R_OK) != 0)
 		return (free(path_token), 0);
 	if (*dst)
-		free(*dst);
+		return (free(path_token), 0);
 	return (*dst = path_token, 1);
 }
 

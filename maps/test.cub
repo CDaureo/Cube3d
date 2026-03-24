@@ -1,11 +1,12 @@
 SO textures/BRICK_1A.xpm
-EA textures/BRICK_2B.xpm a
+EA textures/BRICK_2B.xpm
 WE textures/BRICK_3D.xpm
-NO textures/BRICK_3B.xpm
 DO textures/DOOR_4A.xpm
+NO textures/BRICK_3B.xpm
+NO textures/BRICK_3B.xpm
 
-F 160,160,160
 C 50,50,50
+F 160,160,160
 
 1111111111111111111111111
 1000000000110000000000001

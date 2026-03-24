@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   p_colors.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:29:25 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:58:45 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	parse_rgb(char *rgb_str, t_color *data)
 	if (red < 0 || red > 255 || green < 0 || green > 255
 		|| blue < 0 || blue > 255)
 		return (ft_free_split(parts), \
-			printf("GB values out of range [0-255]\n "), -1);
+			printf("RGB values out of range [0-255]\n "), -1);
 	ft_free_split(parts);
 	return ((red << 16) | (green << 8) | blue);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   u_parser.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/23 17:13:58 by simgarci          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/24 13:23:44 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	parse_error_checker(int ret, t_game *game )
 	if (!validate_map_closed(&game->maps))
 		return (printf("Error:\nMap is not closed by walls\n"), 0);
 	if (!game->txt.north || !game->txt.south || \
-		!game->txt.west || !game->txt.east || !game->txt.door)
+		!game->txt.west || !game->txt.east)
 		return (printf("Error:\nMissing textures\n"), 0);
 	if (!game->colors.floor_set || !game->colors.ceiling_set)
 		return (printf("Error:\nMissing colors F/C\n"), 0);

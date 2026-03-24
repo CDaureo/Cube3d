@@ -78,12 +78,12 @@ static int	parse_line(char *line, t_game *game, t_parse_state *st)
 	if (is_map_line_start(line))
 	{
 		if (st->map_ended)
-			return (printf("Error:\nMapa inválido: hueco en mapa\n"), 0);
+			return (printf("Error:\nInvalid map: hole in map\n"), 0);
 		st->map_started = 1;
 		return (parse_map_line(line, &game->maps));
 	}
 	if (st->map_started)
-		return (printf("Error:\nLínea inválida del mapa: %s\n", line), 0);
+		return (printf("Error:\nInvalid map line: %s\n", line), 0);
 	return (parse_config_line(line, game));
 }
 

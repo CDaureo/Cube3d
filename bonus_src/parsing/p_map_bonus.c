@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 17:44:12 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/13 18:32:24 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/03/24 12:57:39 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	is_map_closed(t_map *map)
 	int		x;
 
 	if (!map || map->height <= 0 || map->width <= 0)
-		return (printf("Error: map vacío o inválido\n"), 0);
+		return (printf("Error:\n Empty or invalid map"), 0);
 	y = 0;
 	while (y < map->height)
 	{
@@ -114,7 +114,7 @@ int	parse_map(int fd, t_game *game)
 		line = get_next_line(fd);
 	}
 	if (!started)
-		return (printf("Error: no se encontró ninguna fila de mapa\n"), 0);
+		return (printf("Error:\n No line map found"), 0);
 	if (!finalize_map(&game->maps) || !is_map_closed(&game->maps))
 		return (printf("Failed to parse map\n"), 0);
 	return (1);

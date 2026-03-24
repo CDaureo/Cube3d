@@ -37,7 +37,7 @@ static int	assign_texture_path(char *trim, t_game *game)
 		|| access(path_token, R_OK) != 0)
 		return (free(path_token), 0);
 	if (*dst)
-		free(*dst);
+		return (free(path_token), 0);
 	return (*dst = path_token, 1);
 }
 
@@ -73,7 +73,8 @@ int	parse_texture_line(char *line, t_game *game)
 
 	trim = trim_whitespace(line);
 	if (!assign_texture_path(trim, game))
-		return (printf("Error:\nInvalid texture line: %s\n", line), 0);
+		return (printf("Error:\nInvalid or duplicated texture line: %s\n",
+				line), 0);
 	return (1);
 }
 

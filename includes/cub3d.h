@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 13:38:17 by simgarci          #+#    #+#             */
-/*   Updated: 2026/03/13 18:10:58 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/03/24 13:05:20 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,7 +307,6 @@ char	*ptex_dup_n(const char *s, size_t n);
 char	**ptex_get_texture_dst(t_game *game, char *trim, char **after);
 int		ptex_has_xpm_ext(const char *path);
 
-
 /* Minimap */
 void	init_minimap(t_minimap *minimap, t_mlx *mlx);
 void	draw_arrow_outline(t_mlx *mlx, t_minimap *minimap);
@@ -404,8 +403,6 @@ int		has_space_around(t_map *map, int y, int x);
 int		print_open_map_error(int y, int x);
 int		print_map_line_error(char *trim, int started);
 int		handle_map_line(char *line, t_game *game, int *started);
-
-
 
 /* Free */
 void	cleanup_game(t_game *game);

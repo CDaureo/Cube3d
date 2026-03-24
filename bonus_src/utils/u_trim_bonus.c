@@ -6,7 +6,7 @@
 /*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 12:35:16 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/13 18:44:16 by cdaureo-         ###   ########.fr       */
+/*   Updated: 2026/03/24 13:03:35 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	trim_line(char *s)
 	if (len > 0 && s[len - 1] == '\n')
 		s[len - 1] = '\0';
 }
+
 int	is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\r'
