@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   p_colors_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: simgarci <simgarci@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cdaureo- <cdaureo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 13:29:25 by cdaureo-          #+#    #+#             */
-/*   Updated: 2026/03/12 13:26:34 by simgarci         ###   ########.fr       */
+/*   Updated: 2026/03/24 14:02:03 by cdaureo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
+
+static int	has_valid_rgb_commas(char *rgb_str)
+{
+	int	i;
+	int	commas;
+
+	i = 0;
+	commas = 0;
+	while (rgb_str[i])
+	{
+		if (rgb_str[i] == ',')
+			commas++;
+		i++;
+	}
+	return (commas == 2);
+}
 
 int	parse_rgb(char *rgb_str, t_color *data)
 {
@@ -22,6 +38,8 @@ int	parse_rgb(char *rgb_str, t_color *data)
 	(void)data;
 	if (!rgb_str || !*rgb_str)
 		return (printf("Invalid RGB color: Empty string\n"), -1);
+	if (!has_valid_rgb_commas(rgb_str))
+		return (printf("Invalid RGB Format: Must be 'R,G,B'\n"), -1);
 	parts = ft_split(rgb_str, ',');
 	if (!parts[0] || !parts[1] || !parts[2] || parts[3])
 		return (ft_free_split(parts), \
